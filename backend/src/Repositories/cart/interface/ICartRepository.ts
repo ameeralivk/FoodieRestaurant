@@ -15,5 +15,7 @@ export interface ICartRepository{
     deleteCart(cartId:string):Promise<ICart|null>
     findCartById(cartId:string,restaurantId:string):Promise<ICart|null>
     findAndUpdate(cartId:string,cart:ICart):Promise<ICart|null>
+    getByCartId(cartId:string):Promise<ICart|null>
+    updateInstruction(cartId:string,cartItemsId:string,instraction:string,variant?:{category:string,option:string,price:number}):Promise<ICart|null>
 
 }

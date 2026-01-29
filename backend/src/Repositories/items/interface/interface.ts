@@ -7,5 +7,5 @@ export interface IItemsRepository {
     deleteItem(id:string):Promise<IItemInterface|null>;
     changeStatus(id:string,isActive:boolean):Promise<IItemInterface|null>;
     find(id:string):Promise<IItemInterface|null>
-    getAllByRestaurant(restaurantId: string,filter: FilterQuery<IItemInterface>,page: number,limit: number):Promise<{ data: IItemInterface[]; total: number }>
+    getAllByRestaurant(restaurantId: string,filter: FilterQuery<IItemInterface>,page: number,limit: number,role:string):Promise<{ data: IItemInterface[]; total: number }>
 }

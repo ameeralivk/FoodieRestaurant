@@ -16,7 +16,6 @@ export class OrderController implements IOrderController {
   getAllOrders = async (req: Request, res: Response): Promise<Response> => {
     try {
       const {
-        restaurentId,
         userId,
         page = 1,
         limit = 10,
@@ -24,7 +23,6 @@ export class OrderController implements IOrderController {
       } = req.query;
 
       const result = await this._orderService.getAllOrders(
-        restaurentId as string,
         userId as string,
         Number(page),
         Number(limit),

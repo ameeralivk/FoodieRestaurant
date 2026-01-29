@@ -3,9 +3,11 @@ import { ICartRepository } from "../interface/ICartRepository";
 import { BaseRepository } from "../../IBaseRepository";
 import { CartDocument } from "../../../models/cart";
 import Cart from "../../../models/cart";
+import { Types } from "mongoose";
 import { ICart, ICartItem } from "../../../types/cart";
 import mongoose, { FilterQuery } from "mongoose";
 import { itemsDocument } from "../../../models/items";
+import varient from "../../../models/varient";
 export class CartRepository
   extends BaseRepository<ICart>
   implements ICartRepository
@@ -16,7 +18,7 @@ export class CartRepository
 
   async findByUserAndRestaurant(
     userId: string,
-    restaurantId: string
+    restaurantId: string,
   ): Promise<ICart | null> {
     return this.getByFilter({
       userId,
@@ -28,7 +30,7 @@ export class CartRepository
     userId: string,
     restaurantId: string,
     tableId: string,
-    items: ICartItem[]
+    items: ICartItem[],
   ): Promise<ICart | null> {
     const objuserId = new mongoose.Types.ObjectId(userId);
     const objrestaurantId = new mongoose.Types.ObjectId(restaurantId);
@@ -54,12 +56,12 @@ export class CartRepository
 
   async findCart(
     userId: string,
-    restaurantId: string
+    restaurantId: string,
   ): Promise<CartDocument | null> {
     return this.model.findOne({
-      userId:userId,
+      userId: userId,
       restaurantId,
-      isDeleted:false
+      isDeleted: false,
     });
   }
 
@@ -68,22 +70,68 @@ export class CartRepository
     return await this.findByIdAndUpdate(cartId, { ...cart });
   }
 
-  async deleteCart(
-    cartId: string,
-  ): Promise<ICart | null> {
-    return this.findByIdAndDel(cartId)
+  async deleteCart(cartId: string): Promise<ICart | null> {
+    return this.findByIdAndDel(cartId);
   }
 
-
   findCartById(cartId: string, restaurantId: string): Promise<ICart | null> {
-      return this.model.findOne({
-      _id:cartId,
+    return this.model.findOne({
+      _id: cartId,
       restaurantId,
-      isDeleted:false
+      isDeleted: false,
     });
   }
 
   findAndUpdate(cartId: string, cart: ICart): Promise<ICart | null> {
-    return this.findByIdAndUpdate(cartId,{...cart})
+    return this.findByIdAndUpdate(cartId, { ...cart });
+  }
+
+  // async updateInstruction(cartId: string,cartItemId:string, instraction: string,variant:{category:string,option:string,price:number}): Promise<ICart | null> {
+
+  //    return this.updateOne(
+  //     {
+  //       _id: new Types.ObjectId(cartId),
+  //       "items.itemId": new Types.ObjectId(cartItemId),
+  //     },
+  //     {
+  //       $set: {
+  //         "items.$.instraction": instraction,
+  //       },
+  //     }
+  //   );
+  // }
+
+  async updateInstruction(
+  cartId: string,
+  cartItemId: string,
+  instraction: string,
+  variant?: { category: string; option: string; price: number }
+): Promise<ICart | null> {
+
+  const updatePath = variant
+    ? "items.$[item].instraction"
+    : "items.$[item].instraction";
+  const arrayFilter: any = { "item.itemId": new Types.ObjectId(cartItemId) };
+
+  if (variant) {
+    arrayFilter["item.variant.category"] = variant.category;
+    arrayFilter["item.variant.option"] = variant.option;
+  }
+
+  const result = await this.model.collection.findOneAndUpdate(
+    { _id: new Types.ObjectId(cartId) },
+    { $set: { [updatePath]: instraction } },
+    {
+      arrayFilters: [arrayFilter],
+      returnDocument: "after"
+    }
+  );
+
+  return result?.value as ICart | null;
+}
+
+
+  getByCartId(cartId: string): Promise<ICart | null> {
+    return this.getById(cartId);
   }
 }

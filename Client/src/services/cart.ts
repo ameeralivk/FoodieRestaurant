@@ -39,7 +39,7 @@ export const CartUpdate = (
     restaurantId,
     itemId,
     action,
-    variant
+    variant,
   });
 };
 
@@ -47,9 +47,24 @@ export const deleteCart = (
   cartId: string,
   restaurantId: string,
   itemId: string,
-  variant:Variant| undefined
+  variant: Variant | undefined,
 ): Promise<ResponseCart> => {
   return apiRequest("DELETE", `/user/cart/${cartId}/${restaurantId}`, {
-    itemId,variant
+    itemId,
+    variant,
+  });
+};
+
+export const addInstruction = (
+  cartId: string,
+  cartItemId: string,
+  instruction: string,
+  variant:Variant|null
+): Promise<{ success: boolean; message: string }> => {
+  return apiRequest("PATCH", `/user/instruction`, {
+    cartId,
+    cartItemId,
+    instruction,
+    variant
   });
 };

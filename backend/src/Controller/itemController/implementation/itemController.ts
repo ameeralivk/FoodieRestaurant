@@ -152,6 +152,8 @@ export class ItemController implements IItemController {
   getAllItems = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { restaurantId } = req.params;
+       const user = (req as any).user; 
+       const role = user.role;
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
       const search = req.query.search as string | undefined;
@@ -159,7 +161,8 @@ export class ItemController implements IItemController {
         restaurantId as string,
         page,
         limit,
-        search,
+        role,
+        search
       );
       return res.status(HttpStatus.OK).json({
         success: true,

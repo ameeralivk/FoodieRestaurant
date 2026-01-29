@@ -95,6 +95,8 @@ export const MESSAGES = {
   CART_DELETED_SUCCESS: "Cart deleted successfully",
   CART_DELETED_FAILED: "Cart deleted Failed",
   CART_NOT_FOUND: "Cart not found",
+  CART_INSTRUCTION__SUCCESS:"Instruction updated successfully",
+  CART_INSTRUCTION__FAILED:"Instruction updated Failed",
   CART_ITEM_REMOVED_SUCCES: "cartItem Removed Successfully",
   CART_EMPTY_OR_NOT_FOUND: "Cart is empty and removed",
   PROFILE_UPDATE_SUCCESS: "Profile updated successfully",
@@ -114,5 +116,8 @@ export const MESSAGES = {
   VARIENT_DEL_SUCCESS:"Varient Deleted Successfully",
   VARIENT_DEL_FAILED:"Varient Deleted Failed",
   VARIENT_EXIST :"Varient Already Exist",
-  VARIENT_NOT_FOUND:"Varient Not Found"
+  VARIENT_NOT_FOUND:"Varient Not Found",
+  FEEDBACK_EXIST_ALREADY:"Feedback already exists for this item",
+  FEEDBACK_ADDED_SUCCESS:"Feedback Added successfully",
+  FEEDBACK_ADDED_FAILED:"feedback Added Failed",
 };

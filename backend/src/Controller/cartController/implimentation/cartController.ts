@@ -116,4 +116,31 @@ export class CartController implements ICartController {
       throw new AppError(error.message);
     }
   };
+
+  addInstruction = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { cartId, userId, cartItemId, instruction, variant } = req.body;
+      console.log(variant,'vari')
+      if (!cartId || !cartItemId) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          success: false,
+          message: "Invalid payload",
+        });
+      }
+
+      const updatedCart = await this._cartService.updateCartItemInstruction(
+        cartId,
+        cartItemId,
+        instruction,
+        variant
+      );
+
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        data: updatedCart,
+      });
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
 }

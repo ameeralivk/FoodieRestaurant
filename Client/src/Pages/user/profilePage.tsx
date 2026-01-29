@@ -1,6 +1,14 @@
-
 import React, { useState } from "react";
-import { ChevronRight, Upload, LogOut, Lock, User, Mail, Phone, Edit2 } from "lucide-react";
+import {
+  ChevronRight,
+  Upload,
+  LogOut,
+  Lock,
+  User,
+  Mail,
+  Phone,
+  Edit2,
+} from "lucide-react";
 import UserModal from "../../Components/Elements/Reusable/userModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
@@ -36,7 +44,7 @@ export default function UserProfile() {
   const email = useSelector((state: RootState) => state.userAuth.user?.email);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const imageUrl = useSelector(
-    (state: RootState) => state.userAuth.user?.imageUrl
+    (state: RootState) => state.userAuth.user?.imageUrl,
   );
   const [passFormData, setPassFormData] = useState({
     oldPassword: "",
@@ -57,10 +65,10 @@ export default function UserProfile() {
   const navigate = useNavigate();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const restaurantId = useSelector(
-    (state: RootState) => state.userAuth.user?.restaurantId
+    (state: RootState) => state.userAuth.user?.restaurantId,
   );
   const tableNo = useSelector(
-    (state: RootState) => state.userAuth.user?.tableNo
+    (state: RootState) => state.userAuth.user?.tableNo,
   );
   const [errors, setErrors] = useState<ProfileFormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +88,7 @@ export default function UserProfile() {
             name: formData.name,
             phone: formData.phone,
             email: formData.email,
-          })
+          }),
         );
         showSuccessToast(result.message);
       }
@@ -127,7 +135,7 @@ export default function UserProfile() {
       const res = await passwordChange(
         user?._id as string,
         passFormData.oldPassword,
-        passFormData.newPassword
+        passFormData.newPassword,
       );
       if (res.success) {
         showSuccessToast("Password updated successfully");
@@ -152,7 +160,7 @@ export default function UserProfile() {
       user._id,
       formData.name,
       formData.phone,
-      formData.email
+      formData.email,
     );
     if (result.success) {
       showSuccessToast("OTP resent successfully");
@@ -182,7 +190,7 @@ export default function UserProfile() {
       user._id,
       formData.name,
       formData.phone,
-      formData.email
+      formData.email,
     );
 
     if (result?.success) {
@@ -196,7 +204,7 @@ export default function UserProfile() {
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
-        })
+        }),
       );
       showSuccessToast(result.message);
     }
@@ -216,7 +224,7 @@ export default function UserProfile() {
       "Change Profile Picture",
       "Are you sure you want to change your profile picture?",
       "Update",
-      "Cancel"
+      "Cancel",
     );
     if (!confirmed) return;
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -240,7 +248,7 @@ export default function UserProfile() {
             updateUserField({
               key: "imageUrl",
               value: result.imageUrl,
-            })
+            }),
           );
           showSuccessToast(result.message);
         }
@@ -254,7 +262,7 @@ export default function UserProfile() {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -265,14 +273,12 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 pb-24">
-      <Navbar />
+      <Navbar showBackButton={true} />
       <ToastContainer />
       <div className="max-w-xl mx-auto px-4 py-8">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-orange-100">
-
           {/* Header Background */}
-          <div className="h-32 bg-gradient-to-r from-orange-400 to-amber-500 relative">
-          </div>
+          <div className="h-32 bg-gradient-to-r from-orange-400 to-amber-500 relative"></div>
 
           {/* Profile Header */}
           <div className="text-center px-6 -mt-16 pb-6 relative z-10">
@@ -281,7 +287,11 @@ export default function UserProfile() {
               onClick={handleImageClick}
             >
               <img
-                src={imagePreview || imageUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200"}
+                src={
+                  imagePreview ||
+                  imageUrl ||
+                  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200"
+                }
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -325,7 +335,9 @@ export default function UserProfile() {
                 <Mail className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Email</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                  Email
+                </p>
                 <p className="text-gray-900 font-medium">{email}</p>
               </div>
             </div>
@@ -335,7 +347,9 @@ export default function UserProfile() {
                 <Phone className="w-5 h-5" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Phone</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                  Phone
+                </p>
                 <p className="text-gray-900 font-medium">{phone}</p>
               </div>
             </div>
@@ -352,11 +366,29 @@ export default function UserProfile() {
                   <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
                     <Lock className="w-5 h-5" />
                   </div>
-                  <span className="text-gray-700 font-semibold">Change Password</span>
+                  <span className="text-gray-700 font-semibold">
+                    Change Password
+                  </span>
                 </div>
                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-orange-500" />
               </button>
             )}
+
+            <button
+              onClick={() => navigate("/user/order")} // navigate to orders page
+              className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-blue-50 cursor-pointer transition-all border border-transparent hover:border-blue-200 group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                  <ChevronRight className="w-5 h-5" />{" "}
+                  {/* Or any icon you want */}
+                </div>
+                <span className="text-gray-700 font-semibold group-hover:text-blue-600">
+                  View Orders
+                </span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500" />
+            </button>
 
             <button
               onClick={() => {
@@ -372,7 +404,9 @@ export default function UserProfile() {
                 <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
                   <LogOut className="w-5 h-5" />
                 </div>
-                <span className="text-gray-700 font-semibold group-hover:text-red-600">Log Out</span>
+                <span className="text-gray-700 font-semibold group-hover:text-red-600">
+                  Log Out
+                </span>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-red-500" />
             </button>
@@ -426,7 +460,9 @@ export default function UserProfile() {
                 placeholder="Your Name"
               />
               {errors.name && (
-                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{errors.name}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">
+                  {errors.name}
+                </p>
               )}
             </UserModal.Field>
 
@@ -440,7 +476,9 @@ export default function UserProfile() {
                 placeholder="name@example.com"
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{errors.email}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">
+                  {errors.email}
+                </p>
               )}
             </UserModal.Field>
 
@@ -454,18 +492,21 @@ export default function UserProfile() {
                 placeholder="+91"
               />
               {errors.phone && (
-                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{errors.phone}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">
+                  {errors.phone}
+                </p>
               )}
             </UserModal.Field>
           </div>
         </UserModal>
       </div>
-      <BottomNavBar
-        defaultActive="profile"
-        restaurantId={restaurantId}
-        tableNo={tableNo}
-      />
+      {restaurantId && (
+        <BottomNavBar
+          defaultActive="profile"
+          restaurantId={restaurantId}
+          tableNo={tableNo}
+        />
+      )}
     </div>
   );
 }
-

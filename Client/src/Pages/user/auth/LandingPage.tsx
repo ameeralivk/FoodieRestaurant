@@ -139,7 +139,7 @@ const UserLandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
-      <Navbar isShowProfile={false} />
+      <Navbar isShowProfile={true} />
       <ToastContainer />
       <RestaurantDetailsModal
         restaurant={selectedRestaurant}

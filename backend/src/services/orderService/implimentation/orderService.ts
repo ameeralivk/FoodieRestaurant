@@ -19,14 +19,12 @@ export class OrderService implements IOrderService {
   ) {}
 
   getAllOrders(
-    restaurantId: string,
     userId: string,
     page: number,
     limit: number,
     search: string
   ): Promise<{ data: IUserOrderDocument[] | null; total: number }> {
     return this._orderRepo.getAllOrders(
-      restaurantId,
       userId,
       page,
       limit,

@@ -3,12 +3,18 @@ import { Check, Circle, Package, Truck } from "lucide-react";
 import Navbar from "../../Components/Layouts/userLayouts/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { generateInvoicePDF } from "../../Components/Helpers/user/invoiceDownloarder";
+import { AddFeedback } from "../../services/feedback";
 import { getAllOrders, getOrder } from "../../services/order";
 import BottomNavBar from "../../Components/user/DownBar";
 import type { IGetOrderResponse } from "../../types/order";
+import FeedbackModal from "../../Components/modals/user/feedbackmodal";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import type { RootState } from "../../redux/store/store";
+import { useState } from "react";
+import { showErrorToast } from "../../Components/Elements/ErrorToast";
+import { showSuccessToast } from "../../Components/Elements/SuccessToast";
+import { ToastContainer } from "react-toastify";
 
 const OrderDetail: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -17,7 +23,11 @@ const OrderDetail: React.FC = () => {
     (state: RootState) => state.userAuth.user?.restaurantId,
   );
   const table = useSelector((state: RootState) => state.userAuth.user?.tableNo);
-
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbacks, setFeedbacks] = useState<
+    Record<string, { rating: number; comment: string }>
+  >({});
+  const [openItemId, setOpenItemId] = useState<string | null>(null);
   const { data, isLoading } = useQuery<IGetOrderResponse>({
     queryKey: ["orders", restaurantId, userId, 1, 10],
     queryFn: () => getOrder(orderId as string),
@@ -32,6 +42,51 @@ const OrderDetail: React.FC = () => {
     });
   };
 
+  const handleSubmitAllFeedback = async () => {
+    if (!order) return;
+
+    try {
+      let res = await Promise.all(
+        Object.entries(feedbacks).map(([itemId, value]) =>
+          AddFeedback(
+            order.restaurantId,
+            order._id,
+            itemId,
+            value.rating,
+            value.comment,
+          ),
+        ),
+      );
+
+      setFeedbackOpen(false);
+      const allSuccess = res.every((res) => res.success);
+      if (allSuccess) {
+        showSuccessToast("Feedback Added successfully");
+      }
+      // optional: toast.success("Feedback submitted successfully");
+    } catch (error: any) {
+      console.error("Failed to submit feedback", error);
+      // optional: toast.error("Something went wrong");
+    }
+  };
+
+  const uniqueItems = React.useMemo(() => {
+    if (!order) return [];
+
+    return Array.from(
+      new Map(
+        order.items.map((item) => [
+          item.itemId, // 👈 uniqueness by product
+          {
+            itemId: item.itemId,
+            itemName: item.itemName,
+            itemImage: item.itemImages?.[0],
+          },
+        ]),
+      ).values(),
+    );
+  }, [order]);
+
   const formatCurrency = (amount: number) => {
     return `₹${amount.toFixed(2)}`;
   };
@@ -39,7 +94,8 @@ const OrderDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
       {/* Header */}
-      <Navbar />
+      <Navbar showBackButton={true} />
+      <ToastContainer />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-4xl font-bold text-gray-900 mb-2">Order Details</h2>
         <p className="text-gray-600 mb-8">
@@ -112,6 +168,14 @@ const OrderDetail: React.FC = () => {
                     {formatCurrency(item.price)}
                   </span>
                 </div>
+                <FeedbackModal
+                  isOpen={feedbackOpen}
+                  onClose={() => setFeedbackOpen(false)}
+                  items={uniqueItems}
+                  feedbacks={feedbacks}
+                  setFeedbacks={setFeedbacks}
+                  onSubmit={handleSubmitAllFeedback}
+                />
 
                 {/* Item Image Placeholder */}
                 <div className="w-full  h-40 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
@@ -190,7 +254,7 @@ const OrderDetail: React.FC = () => {
         </div> */}
 
         {/* Action Buttons */}
-        {/* <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 mb-16">
           <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:from-orange-600 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
             Mark Tip
           </button>
@@ -205,12 +269,20 @@ const OrderDetail: React.FC = () => {
           >
             Download Invoice
           </button>
-          <button className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-bold hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          <button
+            onClick={() => setFeedbackOpen(true)}
+            className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-bold hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
             Add Feedback
           </button>
-        </div> */}
+        </div>
       </div>
-      <BottomNavBar restaurantId={restaurantId} tableNo={table ? table : ""} />
+      {restaurantId && (
+        <BottomNavBar
+          restaurantId={restaurantId}
+          tableNo={table ? table : ""}
+        />
+      )}
     </div>
   );
 };

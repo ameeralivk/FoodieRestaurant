@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getItem, sendToAi } from "../../services/user";
 import type { GetMenuItemsResponse } from "../../types/Items";
+import { getRating } from "../../services/feedback";
 import { AddToCart } from "../../services/cart";
 import type { RootState } from "../../redux/store/store";
 import { useSelector } from "react-redux";
@@ -32,6 +33,7 @@ const ItemDetailPage: React.FC = () => {
   const [loadingNutrition, setLoadingNutrition] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [openVariantModal, setOpenVariantModal] = useState(false);
+  const [rating, setRating] = useState<number | null>(null);
   const [nutrition, setNutrition] = useState({
     calories: 0,
     protein: 0,
@@ -98,6 +100,25 @@ Example format:
     fetchDescriptionAndNutrition();
   }, [item]);
 
+  useEffect(() => {
+    const fetchRating = async () => {
+      if (!item) return;
+      try {
+        const res = await getRating(restaurantId ? restaurantId : ""); // fetch your API
+        if (res.success) {
+          const matchedRating = res.data.find(
+            (r: { itemId: string }) => r.itemId === item._id,
+          );
+          setRating(matchedRating ? matchedRating.avgRating : null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch rating:", error);
+      }
+    };
+
+    fetchRating();
+  }, [item]);
+
   const handleAddToCart = async (
     e: React.MouseEvent<HTMLButtonElement>,
     item: Item, // use your typed Item
@@ -114,7 +135,13 @@ Example format:
     // No variant → add directly
     try {
       if (userId && restaurantId && table) {
-        const res = await AddToCart(userId, restaurantId, item._id, table,quantity.toString());
+        const res = await AddToCart(
+          userId,
+          restaurantId,
+          item._id,
+          table,
+          quantity.toString(),
+        );
         if (res.success) {
           showSuccessToast("Added to Cart Successfully");
         }
@@ -247,7 +274,9 @@ Example format:
             </h1>
             <div className="bg-green-50 px-3 py-1.5 rounded-xl flex items-center gap-1.5 border border-green-100">
               <Star className="w-4 h-4 fill-green-500 text-green-500" />
-              <span className="text-sm font-bold text-green-700">4.5</span>
+              <span className="text-sm font-bold text-green-700">
+                {rating !== null ? rating.toFixed(1) : "-"}
+              </span>
             </div>
           </div>
 

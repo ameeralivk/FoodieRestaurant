@@ -26,6 +26,7 @@ export class OrderRepository
         assignedCookId: null,
         variant: unwrapVariant(item.variant),
         itemStatus: "PENDING" as const,
+        instraction:item.instraction,
       }));
 
       let res = await this.create({
@@ -47,14 +48,12 @@ export class OrderRepository
   }
 
   async getAllOrders(
-    restaurantId: string,
     userId: string,
     page: number,
     limit: number,
     search: string,
   ): Promise<{ data: IUserOrderDocument[]; total: number }> {
     const filter: any = {
-      restaurantId,
       userId,
     };
 

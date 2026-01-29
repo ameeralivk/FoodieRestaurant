@@ -220,4 +220,33 @@ export class CartService implements ICartService {
       message: MESSAGES.CART_ITEM_REMOVED_SUCCES,
     };
   }
+
+  async updateCartItemInstruction(
+    cartId: string,
+    cartItemId: string,
+    instruction: string,
+    varient?: { category: string; option: string ,price:number },
+  ): Promise<{ success: boolean; message: string }> {
+    let cart = await this._cartRepo.getByCartId(cartId);
+    if (!cart) {
+      throw new AppError(MESSAGES.CART_NOT_FOUND);
+    }
+    const res = await this._cartRepo.updateInstruction(
+      cartId,
+      cartItemId,
+      instruction,
+      varient
+    );
+    if (res) {
+      return {
+        success: true,
+        message: "Instruction updated successfully",
+      };
+    } else {
+      return {
+        success: true,
+        message: "Instruction updated Failed",
+      };
+    }
+  }
 }

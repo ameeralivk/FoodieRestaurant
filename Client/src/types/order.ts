@@ -1,6 +1,7 @@
 export type OrderItemStatus = "PENDING" | "PREPARING" | "READY";
 
 export interface IOrderItem {
+  _id?:string;
   itemId: string;
   itemName: string;
   price: number;

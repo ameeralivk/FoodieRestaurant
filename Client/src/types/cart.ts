@@ -21,6 +21,7 @@ export interface CartItem {
   quantity: number;
   varient:Variant;
   images: string[];
+  instruction?:string;
   variant:Variant
   preparationTime: number;
 }

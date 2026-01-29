@@ -52,6 +52,9 @@ import { UserWalletService } from "../services/userWalletService/implementation/
 import { VarientController } from "../Controller/varientController/implementation/varientController";
 import { VarientService } from "../services/varientService/implementation/varientService";
 import { VarientRepository } from "../Repositories/varient/implementation/varientRepository";
+import { FeedbackController } from "../Controller/feedbackController/implementation/feedbackController";
+import { FeedbackService } from "../services/feedback/implementation/feedbackService";
+import { FeedbackRepository } from "../Repositories/feedback/implementation/feedbackRepository";
 
 
 const container = new Container();
@@ -147,4 +150,10 @@ container.bind(TYPES.userWalletService).to(UserWalletService)
 container.bind(TYPES.VarientController).to(VarientController)
 container.bind(TYPES.VarientService).to(VarientService)
 container.bind(TYPES.VarientRepository).to(VarientRepository)
+
+
+//feedback 
+container.bind(TYPES.FeedbackController).to(FeedbackController)
+container.bind(TYPES.FeedbackService).to(FeedbackService)
+container.bind(TYPES.FeedbackRepository).to(FeedbackRepository)
 export { container };

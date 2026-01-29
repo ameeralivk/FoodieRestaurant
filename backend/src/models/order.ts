@@ -47,6 +47,10 @@ const OrderItemSchema = new Schema(
       enum: ["PENDING", "PREPARING", "READY"],
       default: "PENDING",
     },
+    instraction:{
+      type:String,
+      default:null
+    },
     assignedAt: Date,
     preparedAt: Date,
   },

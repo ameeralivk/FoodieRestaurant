@@ -3,7 +3,6 @@ import { IUserOrderDocument } from "../../../types/order";
 
 export interface IOrderService {
   getAllOrders(
-    restaurantId: string,
     userId: string,
     page: number,
     limit: number,

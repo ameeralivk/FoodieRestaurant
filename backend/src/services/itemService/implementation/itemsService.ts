@@ -142,7 +142,8 @@ export class ItemsService implements IItemsService {
     restaurantId: string,
     page: number,
     limit: number,
-    search?: string
+    role:string,
+    search?: string,
   ): Promise<{ data: IItemInterface[]; total: number }> {
     const filter: FilterQuery<IItemInterface> = {};
 
@@ -154,7 +155,8 @@ export class ItemsService implements IItemsService {
       restaurantId,
       filter,
       page,
-      limit
+      limit,
+      role
     );
   }
 

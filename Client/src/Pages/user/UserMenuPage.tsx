@@ -5,21 +5,18 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { getAllItems } from "../../services/ItemsService";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import VariantSelectModal from "../../Components/modals/Admin/varientSelectModal";
 import type { IItemResponse } from "../../types/Items";
 import DraggableAIChatbot from "../../Components/Component/user/chatBot";
 import { AddToCart } from "../../services/cart";
 import { showErrorToast } from "../../Components/Elements/ErrorToast";
 import { showSuccessToast } from "../../Components/Elements/SuccessToast";
-import CategorySubCategoryFilter from "../../Components/user/filterComponent";
 import BottomNavBar from "../../Components/user/DownBar";
 import { setRestaurantId, setTableNo } from "../../redux/slice/userSlice";
 import UserPagination from "../../Components/Component/user/userPagination";
 import { ToastContainer } from "react-toastify";
 import RestaurantHero from "../../Components/Component/user/menuPage/RestaurantHero";
 import SearchFilterBar from "../../Components/Component/user/menuPage/SearchAndFilterBar";
-import VariantHandler from "../../Components/Component/user/menuPage/varientHandler";
-
+import VariantHandler from "../../Components/Component/user/menuPage/VarientHandler";
 const UserRestaurantPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

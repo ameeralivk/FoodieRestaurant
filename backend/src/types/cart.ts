@@ -8,6 +8,7 @@ export interface ICartItem {
   images: string[];
   preparationTime?: number;
   variant?: CartVariant | null; 
+  instraction?:string|null;
 }
 
 export interface ICart extends Document {

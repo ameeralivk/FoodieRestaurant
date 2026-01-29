@@ -80,15 +80,27 @@ export class ItemsRepository
     restaurantId: string,
     filter: FilterQuery<IItemInterface>,
     page: number,
-    limit: number
+    limit: number,
+    role:string
   ): Promise<{ data: IItemInterface[]; total: number }> {
     const skip = (page - 1) * limit;
+    let queryFilter = {}
+    if(role && role === "user"){
+      queryFilter = {
+      restaurantId,
+      isActive:true,
+      isDeleted: false,
+      ...filter,
+    };
+    }else{
 
-    const queryFilter = {
+      queryFilter = {
       restaurantId,
       isDeleted: false,
       ...filter,
     };
+
+    }
 
     const dataPromise = this.model
       .find(queryFilter)

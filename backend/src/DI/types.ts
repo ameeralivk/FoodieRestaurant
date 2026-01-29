@@ -51,6 +51,8 @@ export const TYPES = {
   userWalletController:Symbol("userWalletController"),
   VarientController:Symbol("VarientController"),
   VarientService:Symbol("VarientService"),
-  VarientRepository:Symbol("VarientRepository")
-
+  VarientRepository:Symbol("VarientRepository"),
+  FeedbackController:Symbol("FeedbackController"),
+  FeedbackService:Symbol("FeedbackService"),
+  FeedbackRepository:Symbol("FeedbackRepository")
 };

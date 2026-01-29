@@ -16,7 +16,6 @@ export const orderPayment = async (
 };
 
 export const getAllOrders = async (
-  restaurantId: string,
   userId: string,
   page: number,
   limit: number,
@@ -24,7 +23,7 @@ export const getAllOrders = async (
 ): Promise<IPaginatedOrdersResponse> => {
   return apiRequest(
     "GET",
-    `/user/orders?restaurentId=${restaurantId}&userId=${userId}&page=${page}&limit=${limit}&search=${
+    `/user/orders?userId=${userId}&page=${page}&limit=${limit}&search=${
       search || ""
     }`
   );

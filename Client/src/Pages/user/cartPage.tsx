@@ -6,7 +6,12 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
 import { useNavigate, useParams } from "react-router-dom";
-import { CartUpdate, deleteCart, getCart } from "../../services/cart";
+import {
+  addInstruction,
+  CartUpdate,
+  deleteCart,
+  getCart,
+} from "../../services/cart";
 import { ToastContainer } from "react-toastify";
 import { showSuccessToast } from "../../Components/Elements/SuccessToast";
 import { showConfirm } from "../../Components/Elements/ConfirmationSwall";
@@ -14,6 +19,7 @@ import EmptyCart from "../../Components/Component/user/EmptyCart";
 import BottomNavBar from "../../Components/user/DownBar";
 import { ShoppingBag, ArrowRight } from "lucide-react";
 import type { Variant } from "../../types/Items";
+import { showErrorToast } from "../../Components/Elements/ErrorToast";
 
 const CartPage = () => {
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
@@ -165,6 +171,23 @@ const CartPage = () => {
   );
   const total = subtotal;
 
+  const updateInstruction = async (
+    itemId: string,
+    instruction: string,
+    variant?: Variant,
+  ) => {
+    try {
+      if (!cartData) {
+        showErrorToast("cart not found");
+        return;
+      }
+      const res = await addInstruction(cartData?.cart._id, itemId, instruction,variant?variant:null);
+      console.log(res, "response is here");
+    } catch (error) {
+      return;
+    }
+  };
+
   if (isLoading && !cartData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -216,9 +239,15 @@ const CartPage = () => {
                   key={item._id}
                   className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden"
                 >
+                  {/* <CartItemCard
+                    item={item}
+                    onUpdateQuantity={updateQuantity}
+                    onRemove={removeItem}
+                  /> */}
                   <CartItemCard
                     item={item}
                     onUpdateQuantity={updateQuantity}
+                    onUpdateInstruction={updateInstruction}
                     onRemove={removeItem}
                   />
                 </div>

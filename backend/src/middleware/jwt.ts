@@ -64,6 +64,7 @@ export const verifyAccessToken = (
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedUser;
+    (req as any).user = decoded;
     const user = ((req as any).user = decoded);
     const role = user.role;
     if (role === "admin" || role === "superadmin"|| role === "user") {
