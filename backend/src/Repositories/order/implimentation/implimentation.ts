@@ -85,4 +85,12 @@ export class OrderRepository
   ): Promise<IUserOrderDocument | null> {
     return this.findByIdAndUpdate(orderId, { orderStatus: status });
   }
+
+
+  async getEntireOrdersByStatus(status:"PENDING"|"PREPARING"|"READY"): Promise<IUserOrderDocument[] | null|any> {
+       if(!status){
+        return await this.model.find({})
+       }
+       return await this.model.find({orderStatus:status})
+  }
 }

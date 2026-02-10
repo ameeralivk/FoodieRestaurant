@@ -27,7 +27,7 @@ async login(
   if (!isPasswordValid) {
     throw new AppError(MESSAGES.PASS_NOT_MATCH);
   }
-
+  console
   return {
     success: true,
     message: MESSAGES.LOGIN_SUCCESS,

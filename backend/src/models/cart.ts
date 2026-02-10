@@ -55,6 +55,10 @@ const CartSchema = new Schema<ICart>(
           preparationTime: {
             type: Number,
           },
+          maxQuantityPerOrder:{
+            type:Number,
+            default:null
+          },
           instraction:{
             type:String,
             default:null

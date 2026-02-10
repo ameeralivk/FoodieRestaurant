@@ -78,4 +78,13 @@ export class OrderService implements IOrderService {
       };
     }
   }
+
+  async getEntireOrdersByStatus(status:"PENDING"|"PREPARING"|"READY"): Promise<{ success: boolean; order: IUserOrderDocument[]|[]; }> {
+     let res = await this._orderRepo.getEntireOrdersByStatus(status)
+     if(res){
+          return {success:true,order:res}
+     }else{
+       return {success:false,order:[]}
+     }
+  }
 }

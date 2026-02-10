@@ -2,7 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
+import http from "http"
 import connectDB from "./config/db";
+import { initSocket } from "./config/socket";
 import cookieParser from "cookie-parser";
 import authRouter from "./Routes/authRoutes";
 import { errorHandler } from "./middleware/errorHandler";
@@ -12,6 +14,7 @@ import userAuthRouter from "./Routes/user/authRoutes";
 import superAdminRouter from "./Routes/superAdmin/superAdminRouter";
 import AdminRouter from "./Routes/Admin/adminRouter";
 import staffAuthRouter from "./Routes/staff/authRoutes"
+import staffRouter from "./Routes/staff/staffRoutes"
 import { container } from "./DI/container";
 import { PaymentController } from "./Controller/paymentController/Implimentation/paymentController";
 import { TYPES } from "./DI/types";
@@ -19,6 +22,8 @@ import "reflect-metadata";
 import userRouter from "./Routes/user/userRoutes"
 const paymentController = container.get<PaymentController>(TYPES.PaymentController)
 const app = express();
+const server = http.createServer(app);
+initSocket(server);
 app.use(
   cors({
     origin: process.env.FRONTEND_BASE_URL,
@@ -39,12 +44,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin/auth", authRouter);
 app.use("/api/user/auth", userAuthRouter);
 app.use("/api/staff/auth",staffAuthRouter)
+app.use("/api/staff",staffRouter)
 app.use("/api/superadmin", superAdminRouter);
 app.use("/api/admin", AdminRouter);
 app.use("/api/user",userRouter)
 app.use(errorHandler);
 const port = process.env.PORT;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`server created at ${port}`);
   startSubscriptionScheduler();
 });

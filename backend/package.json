@@ -6,6 +6,7 @@
     "lint": "eslint . --ext .ts,.js",
     "lint:fix": "eslint . --ext .ts,.js --fix",
     "dev": "nodemon --exec ts-node src/server.ts",
+    "stripe":"stripe listen --forward-to localhost:3000/payment/webhook",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -33,6 +34,7 @@
     "react-redux": "^9.2.0",
     "redis": "^5.9.0",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.8.3",
     "stripe": "^20.0.0",
     "winston": "^3.18.3",
     "winston-daily-rotate-file": "^5.0.0",
@@ -50,6 +52,7 @@
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^24.10.0",
     "@types/nodemailer": "^7.0.3",
+    "@types/socket.io": "^3.0.1",
     "@types/stripe": "^8.0.416",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",

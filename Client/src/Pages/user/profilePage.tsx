@@ -466,7 +466,7 @@ export default function UserProfile() {
               )}
             </UserModal.Field>
 
-            <UserModal.Field label="Email Address" htmlFor="email">
+            {/* <UserModal.Field label="Email Address" htmlFor="email">
               <input
                 id="email"
                 name="email"
@@ -480,7 +480,25 @@ export default function UserProfile() {
                   {errors.email}
                 </p>
               )}
-            </UserModal.Field>
+            </UserModal.Field> */}
+
+            {!user?.googleId && (
+              <UserModal.Field label="Email Address" htmlFor="email">
+                <input
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 px-4 py-2.5 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  placeholder="name@example.com"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1 ml-1 font-medium">
+                    {errors.email}
+                  </p>
+                )}
+              </UserModal.Field>
+            )}
 
             <UserModal.Field label="Phone Number" htmlFor="phone">
               <input

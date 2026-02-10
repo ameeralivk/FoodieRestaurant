@@ -134,7 +134,10 @@ const items = new Schema<itemsDocument>(
       type: Boolean,
       default: true,
     },
-
+    maxQuantityPerOrder:{
+      type:Number,
+      default:null
+    },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",

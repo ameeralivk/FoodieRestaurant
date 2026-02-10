@@ -17,6 +17,7 @@ export interface IOrderItem {
 
 
 export interface IUserOrder {
+  _id?:Types.ObjectId;
   restaurantId: Types.ObjectId;
   tableId: string;
 
@@ -34,7 +35,7 @@ export interface IUserOrder {
   orderStatus: "PLACED" | "PREPARING" | "READY" | "SERVED" | "CANCELLED";
 
   assignedByStaffId?: Types.ObjectId;
-
+  status?:string;
   servedAt?: Date;
 }
 

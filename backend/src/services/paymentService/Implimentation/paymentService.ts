@@ -10,6 +10,7 @@ import { IOrderRepo } from "../../../Repositories/order/interface/interface";
 import { ICartRepository } from "../../../Repositories/cart/interface/ICartRepository";
 import { AppError } from "../../../utils/Error";
 import { MESSAGES } from "../../../constants/messages";
+import { getIO } from "../../../config/socket";
 import { generateOrderId } from "../../../helpers/generateOrderId";
 const stripe = new Stripe(process.env.STRIP_SECRET_KEY as string, {
   apiVersion: "2024-06-20" as unknown as Stripe.LatestApiVersion,
@@ -23,15 +24,15 @@ export class PaymentService implements IPaymentService {
     @inject(TYPES.SubcriptionService)
     private _subcriptionServer: ISubcriptionService,
     @inject(TYPES.orderRepository)
-    private _orderRepository:IOrderRepo,
+    private _orderRepository: IOrderRepo,
     @inject(TYPES.cartRepository)
-    private _cartRepository:ICartRepository
+    private _cartRepository: ICartRepository,
   ) {}
   async paymentCreate(
     amount: number,
     restaurentId: string,
     planId: string,
-    planName: string
+    planName: string,
   ): Promise<{ success: boolean; message: string; url: string }> {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -72,9 +73,9 @@ export class PaymentService implements IPaymentService {
     amount: number,
     restaurentId: string,
     userId: string,
-    items: ICartItem[]
+    items: ICartItem[],
   ): Promise<{ success: boolean; url: string }> {
-    const orderId = generateOrderId()
+    const orderId = generateOrderId();
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -111,10 +112,10 @@ export class PaymentService implements IPaymentService {
           metadata.restaurentId || null,
           metadata.planId || null,
           (session.amount_total ?? 0) / 100,
-          session.payment_intent as string
+          session.payment_intent as string,
         );
         const restaurentObjectId = new mongoose.Types.ObjectId(
-          metadata.restaurentId
+          metadata.restaurentId,
         );
         const planObjectId = new mongoose.Types.ObjectId(metadata.planId);
         await this._subcriptionServer.addSubcription({
@@ -127,20 +128,35 @@ export class PaymentService implements IPaymentService {
         });
         return;
       } else if (metadata.paymentType === "orderpayment") {
-        let cart = await this._cartRepository.findCart(metadata.userId as string,metadata.restaurentId as string)
-        if(!cart){
-           throw new AppError(MESSAGES.CART_NOT_FOUND)
+        let cart = await this._cartRepository.findCart(
+          metadata.userId as string,
+          metadata.restaurentId as string,
+        );
+        if (!cart) {
+          throw new AppError(MESSAGES.CART_NOT_FOUND);
         }
         await this._paymentRepository.addOrderPayment(
           session.id,
           "paid",
           metadata.restaurentId as string,
           (session.amount_total ?? 0) / 100,
-          session.payment_intent as string
+          session.payment_intent as string,
         );
-        let res = await this._orderRepository.addOrder(cart,metadata.orderId as string)
-        if(res){
-          await this._cartRepository.deleteCart(cart._id.toString())
+        let res = await this._orderRepository.addOrder(
+          cart,
+          metadata.orderId as string,
+        );
+        if (res) {
+          await this._cartRepository.deleteCart(cart._id.toString());
+          const io = getIO();
+          io.emit("order:new", {
+            orderId: res.orderId,
+            restaurantId: metadata.restaurentId,
+            items: res.items,
+            total: res.totalAmount,
+            status: res.status,
+            createdAt: res.createdAt,
+          });
         }
       }
     }
@@ -165,7 +181,7 @@ export class PaymentService implements IPaymentService {
         metadata.restaurentId || null,
         metadata.planId || null,
         (paymentIntent.amount ?? 0) / 100,
-        paymentIntent.id
+        paymentIntent.id,
       );
 
       return;
@@ -182,7 +198,7 @@ export class PaymentService implements IPaymentService {
         metadata.restaurentId || null,
         metadata.planId || null,
         (session.amount_total ?? 0) / 100,
-        null
+        null,
       );
 
       return;

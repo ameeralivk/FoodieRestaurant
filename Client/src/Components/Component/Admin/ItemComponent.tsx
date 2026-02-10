@@ -169,6 +169,7 @@ const ItemComponent = () => {
     formData.append("name", row.name);
     formData.append("price", row.price);
     formData.append("stock", row.stock);
+    formData.append("maxQuantityPerOrder", row.maxQuantityPerOrder);
     formData.append("preparationTime", row.preparationTime);
     formData.append("categoryId", categoryId || currentRow?.categoryId?._id);
     if (subCategory.length) {
@@ -466,6 +467,13 @@ const ItemComponent = () => {
               type: "number",
               placeholder: "preparationTime : Optional",
               value: currentRow?.preparationTime || "",
+            },
+             {
+              name: "maxQuantityPerOrder",
+              label: "maxQuantityPerOrder *",
+              type: "number",
+              placeholder: "Enter maxQuantityPerOrder: Optional",
+              value: currentRow?.maxQuantityPerOrder || "",
             },
             {
               name: "categoryName",

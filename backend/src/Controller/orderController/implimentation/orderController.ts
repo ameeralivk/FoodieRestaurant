@@ -21,14 +21,12 @@ export class OrderController implements IOrderController {
         limit = 10,
         search = "",
       } = req.query;
-
       const result = await this._orderService.getAllOrders(
         userId as string,
         Number(page),
         Number(limit),
         search as string
       );
-
       return res.status(HttpStatus.OK).json({
         success: true,
         data: result.data,
@@ -80,5 +78,20 @@ export class OrderController implements IOrderController {
     } catch (error: any) {
        throw new AppError(error.message)
     }
+  }
+
+
+  getEntireOrderByStatus = async(req: Request, res: Response): Promise<Response>=> {
+     try {
+      const status = req.query.status as "PENDING"|"PREPARING"|"READY"
+      const result = await this._orderService.getEntireOrdersByStatus(status)
+      if(result){
+        return res.status(HttpStatus.OK).json({success:true,data:result?.order})
+      }else{
+        return res.status(HttpStatus.OK).json({success:false,data:[]})
+      }
+     } catch (error:any) {
+       throw new AppError(error.message)
+     }
   }
   }

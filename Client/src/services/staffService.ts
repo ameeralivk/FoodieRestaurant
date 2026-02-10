@@ -1,4 +1,5 @@
 import { apiRequest } from "../api/apiRequest";
+import type { IUserOrder } from "../types/order";
 import type {
   AddStaffResponse,
   IStaffAdd,
@@ -6,7 +7,7 @@ import type {
 } from "../types/staffTypes";
 
 export const addStaff = async (
-  staffData: IStaffAdd
+  staffData: IStaffAdd,
 ): Promise<AddStaffResponse> => {
   return apiRequest("POST", `/admin/staff`, staffData);
 };
@@ -15,7 +16,7 @@ export const getAllStaff = async (
   restaurantId: string,
   page?: number,
   limit?: number,
-  searchQuery?: string
+  searchQuery?: string,
 ): Promise<StaffListResponse> => {
   let url = `/admin/staff/${restaurantId}?page=${page}&limit=${limit}`;
   if (searchQuery) {
@@ -25,24 +26,27 @@ export const getAllStaff = async (
 };
 
 export const deleteStaff = async (
-  staffId: string
+  staffId: string,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest("DELETE", `/admin/staff/${staffId}`);
 };
 
 export const editStaff = async (
   staffId: string,
-  updatedData: IStaffAdd
+  updatedData: IStaffAdd,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest("PUT", `/admin/staff/${staffId}`, updatedData);
 };
 
 export const changeStaffStatus = async (
   staffId: string,
-  status: boolean
+  status: boolean,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest("PATCH", `/admin/staff/${staffId}`, { status });
 };
 
-
-
+export const getTotalOrders = async (
+  status?: string,
+): Promise<{ success: boolean; data: IUserOrder[] }> => {
+  return apiRequest("GET", `/staff/getOrders?status=${status}`);
+};

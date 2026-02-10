@@ -9,4 +9,5 @@ export interface IOrderRepo{
     getOrder(orderId:string):Promise<IUserOrderDocument|null>
     getOrderById(orderId:string):Promise<IUserOrderDocument|null>
     changeStatus(orderId:string,status:string):Promise<IUserOrderDocument|null>
+    getEntireOrdersByStatus(status:"PENDING"|"PREPARING"|"READY"):Promise<IUserOrderDocument[]|null>
 }

@@ -92,14 +92,18 @@
 # GET http://localhost:3000/api/user/feedback/items/692ea36738a54f8d01ed6747
 
 ### Update cooking instruction for a cart item
-PATCH http://localhost:3000/api/user/instruction
-Content-Type: application/json
+# PATCH http://localhost:3000/api/user/instruction
+# Content-Type: application/json
 
-{
-  "cartId": "69787625b1791ff65437c574",
-  "cartItemId": "696a479aed4aa362e9436b42",
-  "instruction": "Less spicy, extra garlic"
-}
+# {
+#   "cartId": "69787625b1791ff65437c574",
+#   "cartItemId": "696a479aed4aa362e9436b42",
+#   "instruction": "Less spicy, extra garlic"
+# }
+
+
+GET http://localhost:3000/api/staff/getOrders
+Content-Type: application/json
 
 
 

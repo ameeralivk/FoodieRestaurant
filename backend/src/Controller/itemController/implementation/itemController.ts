@@ -48,6 +48,7 @@ export class ItemController implements IItemController {
         isActive: true, 
         isDeleted: false,
         isStock: true, 
+        maxQuantityPerOrder:Number(req.body.maxQuantityPerOrder),
         points: 0, 
       };
       const item = await this._itemsService.addItem(itemData);

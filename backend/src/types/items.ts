@@ -24,6 +24,7 @@ export interface IItemInterface {
   subCategoryId?: Types.ObjectId;
   category: Types.ObjectId;
   isStock: boolean;
+  maxQuantityPerOrder?:number;
   variant?: VariantPricing;
   points: number;
   createdAt?: Date;
