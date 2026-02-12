@@ -124,5 +124,4 @@ const UserOrder = mongoose.model<IUserOrderDocument>(
   "UserOrder",
   UserOrderSchema,
 );
-
 export default UserOrder;

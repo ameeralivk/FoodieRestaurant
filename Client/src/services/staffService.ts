@@ -1,4 +1,5 @@
 import { apiRequest } from "../api/apiRequest";
+import type { ItemStatus } from "../types/dummyOrder";
 import type { IUserOrder } from "../types/order";
 import type {
   AddStaffResponse,
@@ -46,7 +47,21 @@ export const changeStaffStatus = async (
 };
 
 export const getTotalOrders = async (
-  status?: string,
+  restaurantId:string,
+    status?: string
 ): Promise<{ success: boolean; data: IUserOrder[] }> => {
-  return apiRequest("GET", `/staff/getOrders?status=${status}`);
+  return apiRequest("GET", `/staff/getOrders/${restaurantId}?status=${status}`);
+};
+
+
+export const updateOrder = async (
+  orderId: string,
+  itemId: string,
+  status:ItemStatus
+): Promise<{ success: boolean; message: string }> => {
+  return apiRequest("PATCH", `/staff/update-item`, {
+    orderId,
+    itemId,
+    status,
+  });
 };

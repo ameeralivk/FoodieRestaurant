@@ -149,12 +149,39 @@ export class PaymentService implements IPaymentService {
         if (res) {
           await this._cartRepository.deleteCart(cart._id.toString());
           const io = getIO();
-          io.emit("order:new", {
+          // io.emit("order:new", {
+          //   orderId: res.orderId,
+          //   restaurantId: metadata.restaurentId,
+          //   tableId:res.tableId,
+          //   items: res.items,
+          //   total: res.totalAmount,
+          //   status: res.status,
+          //   createdAt: res.createdAt,
+          // });
+          const restaurantId = metadata.restaurentId;
+          console.log(restaurantId, "ameer restaurne id si here");
+          if (!restaurantId) {
+            throw new Error("Restaurant ID missing in metadata");
+          }
+          console.log(restaurantId, "ameerali restaurne id si here");
+          // io.to(
+          //   restaurantId.toString(),
+          // ).emit("order:new", {
+          //   orderId: res.orderId,
+          //   restaurantId: metadata.restaurentId,
+          //   tableId: res.tableId,
+          //   items: res.items,
+          //   total: res.totalAmount,
+          //   status: res.orderStatus,
+          //   createdAt: res.createdAt,
+          // });
+          io.to(`${restaurantId}-chef`).emit("order:new", {
             orderId: res.orderId,
             restaurantId: metadata.restaurentId,
+            tableId: res.tableId,
             items: res.items,
             total: res.totalAmount,
-            status: res.status,
+            status: res.orderStatus,
             createdAt: res.createdAt,
           });
         }

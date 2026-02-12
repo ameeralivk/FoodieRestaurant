@@ -15,6 +15,8 @@ import UserOrderSuccessPage from "../Pages/user/orderSuccessPage";
 import OrderHistory from "../Pages/user/orderPage";
 import OrderDetail from "../Pages/user/orderDetailsPage";
 import WalletPage from "../Pages/user/walletPage";
+import PageWrapper from "../Components/Layouts/userLayouts/PageWrapper";
+import OrderTracking from "../Pages/user/OrderTrackingPage";
 const UserRoutes = () => {
   return (
     <Routes>
@@ -27,23 +29,86 @@ const UserRoutes = () => {
         path="/"
         element={
           <UserPrivateRoute>
-            <UserLandingPage />
+            <PageWrapper>
+              <UserLandingPage />
+            </PageWrapper>
           </UserPrivateRoute>
         }
       />
       <Route path="/*" element={<PageNotFound />} />
       <Route
         path="/restaurant/:restaurantId"
-        element={<UserRestaurantPage />}
+        element={
+          <PageWrapper>
+            <UserRestaurantPage />
+          </PageWrapper>
+        }
       />
-      <Route path="/:restaurantId/items/:itemId" element={<ItemDetailPage />} />
-      <Route path="/:restaurantId/cart" element={<CartPage />} />
-      <Route path="/profile" element={<UserProfile />} />
-      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route
+        path="/:restaurantId/items/:itemId"
+        element={
+          <PageWrapper>
+            <ItemDetailPage />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/:restaurantId/cart"
+        element={
+          <PageWrapper>
+            <CartPage />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <PageWrapper>
+            <UserProfile />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <PageWrapper>
+            <CheckoutPage />
+          </PageWrapper>
+        }
+      />
       <Route path="/payment-success" element={<UserOrderSuccessPage />} />
-      <Route path="/order" element={<OrderHistory />} />
-      <Route path="/order/:orderId" element={<OrderDetail />} />
-      <Route path="/wallet" element={<WalletPage />} />
+      <Route
+        path="/order"
+        element={
+          <PageWrapper>
+            <OrderHistory />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/order/:orderId"
+        element={
+          <PageWrapper>
+            <OrderDetail />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/wallet"
+        element={
+          <PageWrapper>
+            <WalletPage />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/order/track/:orderId"
+        element={
+          <PageWrapper>
+            <OrderTracking />
+          </PageWrapper>
+        }
+      />
     </Routes>
   );
 };

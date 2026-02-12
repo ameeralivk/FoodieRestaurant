@@ -10,22 +10,17 @@ import { success } from "zod";
 @injectable()
 export class OrderController implements IOrderController {
   constructor(
-    @inject(TYPES.orderService) private _orderService: IOrderService
+    @inject(TYPES.orderService) private _orderService: IOrderService,
   ) {}
 
   getAllOrders = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const {
-        userId,
-        page = 1,
-        limit = 10,
-        search = "",
-      } = req.query;
+      const { userId, page = 1, limit = 10, search = "" } = req.query;
       const result = await this._orderService.getAllOrders(
         userId as string,
         Number(page),
         Number(limit),
-        search as string
+        search as string,
       );
       return res.status(HttpStatus.OK).json({
         success: true,
@@ -57,10 +52,10 @@ export class OrderController implements IOrderController {
       throw new AppError(error.message);
     }
   };
-  cancelOrder = async(req: Request, res: Response): Promise<Response> => {
-     try {
+  cancelOrder = async (req: Request, res: Response): Promise<Response> => {
+    try {
       const { orderId } = req.params;
-      const {userId} = req.body // from auth middleware
+      const { userId } = req.body; // from auth middleware
 
       const result = await this._orderService.cancelOrder(
         orderId as string,
@@ -76,22 +71,44 @@ export class OrderController implements IOrderController {
         message: MESSAGES.ORDER_CANCELLED_SUCCESS,
       });
     } catch (error: any) {
-       throw new AppError(error.message)
+      throw new AppError(error.message);
     }
-  }
+  };
 
-
-  getEntireOrderByStatus = async(req: Request, res: Response): Promise<Response>=> {
-     try {
-      const status = req.query.status as "PENDING"|"PREPARING"|"READY"
-      const result = await this._orderService.getEntireOrdersByStatus(status)
-      if(result){
-        return res.status(HttpStatus.OK).json({success:true,data:result?.order})
-      }else{
-        return res.status(HttpStatus.OK).json({success:false,data:[]})
+  getEntireOrderByStatus = async (
+    req: Request,
+    res: Response,
+  ): Promise<Response> => {
+    try {
+      const status = req.query.status as "PENDING" | "PREPARING" | "READY";
+      const restaurantId = req.params.restaurantId as string
+      const result = await this._orderService.getEntireOrdersByStatus(status,restaurantId);
+      if (result) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, data: result?.order });
+      } else {
+        return res.status(HttpStatus.OK).json({ success: false, data: [] });
       }
-     } catch (error:any) {
-       throw new AppError(error.message)
-     }
-  }
-  }
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
+
+  updateItemStatus = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { orderId, itemId, status } = req.body;
+      const updatedOrder = await this._orderService.updateItemStatusService(
+        orderId,
+        itemId,
+        status,
+      );
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        data: updatedOrder,
+      });
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
+}

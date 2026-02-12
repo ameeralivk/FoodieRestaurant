@@ -4,4 +4,5 @@ export interface IOrderController {
   getOrder(req: Request, res: Response): Promise<Response>;
   cancelOrder(req:Request,res:Response):Promise<Response>;
   getEntireOrderByStatus(req:Request,res:Response):Promise<Response>
+  updateItemStatus(req:Request,res:Response):Promise<Response>
 }

@@ -102,8 +102,19 @@
 # }
 
 
-GET http://localhost:3000/api/staff/getOrders
+# GET http://localhost:3000/api/staff/getOrders
+# Content-Type: application/json
+
+
+PATCH  http://localhost:3000/api/staff/update-item
 Content-Type: application/json
+
+{
+  "orderId": "ORD-20260210-VO51HV",
+  "itemId": "6971d3d1e4b3d201c173bb95",
+  "status": "READY"
+}
+
 
 
 

@@ -61,7 +61,7 @@ const OrderHistory: React.FC = () => {
       setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
       return;
     }
-    navigator(`/user/order/${orderId}`);
+    navigator(`/user/order/track/${orderId}`);
   };
 
   useEffect(() => {

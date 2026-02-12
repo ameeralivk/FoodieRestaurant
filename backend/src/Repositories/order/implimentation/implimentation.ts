@@ -87,10 +87,26 @@ export class OrderRepository
   }
 
 
-  async getEntireOrdersByStatus(status:"PENDING"|"PREPARING"|"READY"): Promise<IUserOrderDocument[] | null|any> {
+  async getEntireOrdersByStatus(status:"PENDING"|"PREPARING"|"READY",restaurantId:string): Promise<IUserOrderDocument[] | null|any> {
        if(!status){
-        return await this.model.find({})
+        return await this.model.find({restaurantId:restaurantId})
        }
-       return await this.model.find({orderStatus:status})
+       return await this.model.find({orderStatus:status,restaurantId:restaurantId})
+  }
+
+
+  async updateItem(orderId: string, itemId: string, status: "PENDING" | "PREPARING" | "READY"): Promise<IUserOrderDocument[] | null> {
+     return await this.model.findOneAndUpdate(
+    {
+      orderId: orderId,
+      "items.itemId": itemId,
+    },
+    {
+      $set: {
+        "items.$.itemStatus": status,
+      },
+    },
+    { new: true }
+  );
   }
 }

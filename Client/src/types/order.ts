@@ -7,6 +7,7 @@ export interface IOrderItem {
   price: number;
   itemImages: string[];
   quantity: number;
+  instraction?:string;
   variant?: { category: string,option:string,price:number};
   assignedCookId: string | null;
   itemStatus: OrderItemStatus;

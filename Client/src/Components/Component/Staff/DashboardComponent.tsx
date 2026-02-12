@@ -10,7 +10,9 @@ import { useEffect } from "react";
 import type { RootState } from "../../../redux/store/store";
 import type { IOrderItem } from "../../../types/order";
 import { useRef } from "react";
-import { getTotalOrders } from "../../../services/staffService";
+import { getTotalOrders, updateOrder } from "../../../services/staffService";
+import { showSuccessToast } from "../../Elements/SuccessToast";
+import { ToastContainer } from "react-toastify";
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -33,41 +35,33 @@ interface Order {
   orderTime: string;
 }
 
-const getOrderStatus = (
-  items: IOrderItem[],
-): "Pending" | "Preparing" | "Completed" => {
-  const allReady = items.every((item) => item.itemStatus === "READY");
-  if (allReady) return "Completed";
-
-  const anyPreparing = items.some(
-    (item) => item.itemStatus === "PREPARING" || item.itemStatus === "READY",
-  );
-  if (anyPreparing) return "Preparing";
-
-  return "Pending";
-};
-
 const ChefPage: React.FC = () => {
+  const role = useSelector((state: RootState) => state.userAuth.user?.role);
+  const defaultTab = role === "chef" ? "Pending" : "Completed";
   const [activeTab, setActiveTab] = useState<
     "Pending" | "Preparing" | "Completed"
-  >("Pending");
+  >(defaultTab);
   const [selectedItem, setSelectedItem] = useState<{
     order: IUserOrder;
     item: IOrderItem;
   } | null>(null);
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const role = useSelector((state: RootState) => state.userAuth.user?.role);
+  const [notifications, setNotifications] = useState<
+    { id: string; message: string }[]
+  >([]);
+
   const [currentPage, setCurrentPage] = useState(1);
+  const restaurantId = useSelector(
+    (state: RootState) => state.userAuth.user?.restaurantId,
+  );
   const limit = 10;
 
   const { data } = useQuery<{ success: boolean; data: IUserOrder[] }>({
     queryKey: ["orders", userId, currentPage, limit],
-    queryFn: () => getTotalOrders("PLACED"),
+    queryFn: () => getTotalOrders(restaurantId as string, "PLACED"),
   });
   const [orders, setOrders] = useState<IUserOrder[]>([]);
-
-  console.log(data, "data is here");
 
   useEffect(() => {
     if (data?.data) {
@@ -76,24 +70,62 @@ const ChefPage: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sounds/universfield-new-notification-026-380249.mp3");
+    if (!restaurantId || role !== "staff") return;
+
+    // Join staff room
+    Socket.emit("join-restaurant", {
+      restaurantId,
+      role, // "staff"
+    });
+
+    console.log(`Joining staff room for restaurant ${restaurantId}`);
+  }, [restaurantId, role]);
+
+  useEffect(() => {
+    audioRef.current = new Audio(
+      "/sounds/universfield-new-notification-026-380249.mp3",
+    );
   }, []);
 
   const playSound = () => {
     audioRef.current?.play().catch(() => {});
   };
-
   useEffect(() => {
+    if (!restaurantId || role !== "chef") return; // ensure chef
+
+    console.log("Joining chef room for restaurant:", restaurantId);
+
+    Socket.emit("join-restaurant", {
+      restaurantId,
+      role, // this is critical
+    });
+
     const handleNewOrder = (newOrder: IUserOrder) => {
       console.log("🔥 New order received:", newOrder);
 
       setOrders((prev) => {
-        // prevent duplicates
         if (prev?.some((o) => o.orderId === newOrder.orderId)) {
           return prev;
         }
-        return [newOrder, ...prev];
+        return [newOrder, ...prev].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
       });
+
+      const notification = {
+        id: newOrder.orderId,
+        message: `New Order from Table ${newOrder.tableId}`,
+      };
+
+      setNotifications((prev) => [notification, ...prev]);
+
+      setTimeout(() => {
+        setNotifications((prev) =>
+          prev.filter((n) => n.id !== newOrder.orderId),
+        );
+      }, 4000);
+
       playSound();
     };
 
@@ -102,35 +134,105 @@ const ChefPage: React.FC = () => {
     return () => {
       Socket.off("order:new", handleNewOrder);
     };
-  }, []);
+  }, [restaurantId, role]);
 
-  const handleUpdateItem = (
+  const tabCounts = {
+    Pending:
+      orders?.filter((order) =>
+        order.items.some((item) => item.itemStatus === "PENDING"),
+      ).length ?? 0,
+    Preparing:
+      orders?.filter((order) =>
+        order.items.some((item) => item.itemStatus === "PREPARING"),
+      ).length ?? 0,
+    Completed:
+      orders?.filter((order) =>
+        order.items.every((item) => item.itemStatus === "READY"),
+      ).length ?? 0,
+  };
+
+  const handleUpdateItem = async (
     orderId: string,
     itemId: string,
     newStatus: ItemStatus,
   ) => {
-    setOrders((prev) =>
-      prev?.map((order) =>
-        order.orderId === orderId
-          ? {
+    let result = await updateOrder(orderId, itemId, newStatus);
+    if (result.success) {
+      showSuccessToast("order updated Successfully");
+      setOrders((prev) => {
+        return prev?.map((order) => {
+          if (order.orderId === orderId) {
+            return {
               ...order,
-              items: order.items.map((item) =>
-                item.itemId === itemId
-                  ? {
-                      ...item,
-                      status: newStatus,
-                    }
-                  : item,
-              ),
-            }
-          : order,
-      ),
-    );
+              items: order.items.map((item) => {
+                if (item.itemId === itemId) {
+                  return { ...item, itemStatus: newStatus };
+                }
+                return item;
+              }),
+            };
+          }
+          return order;
+        });
+      });
+    }
   };
 
-  const filteredOrders = orders?.filter(
-    (order) => getOrderStatus(order.items) === activeTab,
-  );
+  useEffect(() => {
+    if (!restaurantId || role !== "staff") return;
+
+    const handleOrderCompleted = (data: {
+      order: IUserOrder;
+      orderId: string;
+      message: string;
+    }) => {
+      console.log("✅ Order completed received on staff:", data.order);
+      setOrders((prev) => [...prev, data.order]);
+      // Add to notifications
+      setNotifications((prev) => [
+        { id: data.orderId, message: data.message },
+        ...prev,
+      ]);
+
+      // Remove notification after 4 seconds
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== data.orderId));
+      }, 4000);
+
+      // Play notification sound
+      playSound();
+    };
+
+    Socket.on("order:completed", handleOrderCompleted);
+
+    return () => {
+      Socket.off("order:completed", handleOrderCompleted);
+    };
+  }, [restaurantId, role]);
+
+  useEffect(() => {
+    console.log("Orders state changed:", orders);
+  }, [orders]);
+  const filteredOrders = orders?.filter((order) => {
+    if (activeTab === "Pending") {
+      return order.items.some((i) => i.itemStatus === "PENDING");
+    }
+    // if (activeTab === "Preparing") {
+    //   return order.items.some((i) => i.itemStatus === "PREPARING");
+    // }
+    if (activeTab === "Preparing") {
+      return (
+        !order.items.every((i) => i.itemStatus === "READY") &&
+        order.items.some((i) => i.itemStatus !== "PENDING")
+      );
+    }
+
+    if (activeTab === "Completed") {
+      return order.items.every((i) => i.itemStatus === "READY");
+    }
+    return false;
+  });
+
   const totalItems = orders?.reduce(
     (sum, order) => sum + order.items.length,
     0,
@@ -143,11 +245,12 @@ const ChefPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-12">
+      <ToastContainer />
       <header className="bg-white border-b border-slate-200 shadow-sm p-6 mb-2">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-black text-slate-900">
-              Chef <span className="text-emerald-600">Dashboard</span>
+              {role} <span className="text-emerald-600">Dashboard</span>
             </h1>
             <p className="text-slate-600">Real-time Kitchen Management</p>
           </div>
@@ -167,6 +270,18 @@ const ChefPage: React.FC = () => {
         </div>
       </header>
 
+      {/* 🔔 Notification Toasts */}
+      <div className="fixed top-5 right-5 space-y-3 z-50">
+        {notifications.map((n) => (
+          <div
+            key={n.id}
+            className="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl animate-slide-in"
+          >
+            🔥 {n.message}
+          </div>
+        ))}
+      </div>
+
       <div className="bg-white border-b border-slate-200 mb-8">
         <div className="max-w-7xl mx-auto px-6 flex gap-8">
           {(role === "chef"
@@ -184,10 +299,7 @@ const ChefPage: React.FC = () => {
             >
               {tab} Orders
               <span className="ml-2 px-2 py-0.5 rounded-full bg-slate-100 text-xs">
-                {
-                  data?.data?.filter((o) => getOrderStatus(o.items) === tab)
-                    .length
-                }
+                {tabCounts[tab]}
               </span>
             </button>
           ))}
@@ -200,7 +312,10 @@ const ChefPage: React.FC = () => {
             <OrderCard
               key={order._id}
               order={order}
-              onItemClick={(o, i) => setSelectedItem({ order: o, item: i })}
+              onItemClick={(o, i) => {
+                if (role == "staff") return;
+                setSelectedItem({ order: o, item: i });
+              }}
             />
           ))
         ) : (
@@ -214,12 +329,27 @@ const ChefPage: React.FC = () => {
         <UpdateItemModal
           order={selectedItem.order}
           item={selectedItem.item}
+          tab={activeTab}
           onClose={() => setSelectedItem(null)}
           onUpdate={handleUpdateItem}
         />
       )}
 
       <style>{`
+      @keyframes slide-in {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .animate-slide-in {
+        animation: slide-in 0.3s ease-out forwards;
+      }
         @keyframes scale-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .animate-scale-in { animation: scale-in 0.15s ease-out forwards; }
       `}</style>
