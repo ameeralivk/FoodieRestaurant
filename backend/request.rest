@@ -106,14 +106,30 @@
 # Content-Type: application/json
 
 
-PATCH  http://localhost:3000/api/staff/update-item
+# PATCH  http://localhost:3000/api/staff/update-item
+# Content-Type: application/json
+
+# {
+#   "orderId": "ORD-20260210-VO51HV",
+#   "itemId": "6971d3d1e4b3d201c173bb95",
+#   "status": "READY"
+# }
+
+
+### Assign chef using params
+### Assign chef to item
+# PATCH http://localhost:3000/api/staff/orders/ORD-20260214-IJ4S03/item/694f7c7eb130a027cd281248/assign-cheff
+# Content-Type: application/json
+
+# {
+#   "chefId": "697ca908cfad78f5aa83d4f7"
+# }
+
+
+GET http://localhost:3000/api/staff/getAssignedItems/692ea36738a54f8d01ed6747/698dbb06bcc74a177f8719f0
 Content-Type: application/json
 
-{
-  "orderId": "ORD-20260210-VO51HV",
-  "itemId": "6971d3d1e4b3d201c173bb95",
-  "status": "READY"
-}
+
 
 
 

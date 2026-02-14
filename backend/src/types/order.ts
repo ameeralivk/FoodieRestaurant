@@ -1,4 +1,9 @@
 import { Types } from "mongoose";
+export interface IVariant {
+  category: string;
+  option: string;
+  price: number;
+}
 
 export interface IOrderItem {
   itemId: Types.ObjectId;
@@ -8,9 +13,9 @@ export interface IOrderItem {
   quantity: number;
   itemImages:string[];
   assignedCookId?: Types.ObjectId | null;
-
-  itemStatus: "PENDING" | "PREPARING" | "READY";
-
+  instraction?:string|null;
+  variant?: IVariant | null;
+  itemStatus: "PENDING" | "PREPARING" | "READY" |"ASSIGNED";
   assignedAt?: Date;
   preparedAt?: Date;
 }
@@ -43,4 +48,31 @@ export interface IUserOrderDocument extends IUserOrder, Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+// Each item assigned to a chef
+export interface AssignedItem {
+  orderId: string;
+  item: {
+    itemId: string;
+    itemName: string;
+    itemStatus: "ASSIGNED" | "PREPARING" | "READY"|"PENDING";
+    quantity: number;
+    price: number;
+    station?: string;
+    variant?: string | null;
+    instruction?: string | null;
+    assignedCookId?: string;
+    itemImages?: string[];
+  };
+  tableNumber?: string;
+  orderStatus: string;
+}
+
+// Response type
+export interface AssignedItemsResponse {
+  success: boolean;
+  data: AssignedItem[];
+}
+
 

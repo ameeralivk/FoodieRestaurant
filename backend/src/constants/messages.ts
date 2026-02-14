@@ -120,4 +120,9 @@ export const MESSAGES = {
   FEEDBACK_EXIST_ALREADY:"Feedback already exists for this item",
   FEEDBACK_ADDED_SUCCESS:"Feedback Added successfully",
   FEEDBACK_ADDED_FAILED:"feedback Added Failed",
+  ORDERID_NOT_FOUND:"Order ID is Not Found",
+  ITEMID_NOT_FOUND:"Item ID is Not Found",
+  CHEFFID_NOT_FOUND:"Chef ID is Not Found",
+  CHEFID_ASSIGNED_SUCCESS:"Cheff id assigned",
+  CHEFID_ASSIGNED_FAILED:"Cheff id assigned Failed"
 };

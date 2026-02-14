@@ -24,9 +24,9 @@ export class OrderRepository
         price: item.price,
         quantity: item.quantity,
         assignedCookId: null,
-        variant: unwrapVariant(item.variant),
+        variant: unwrapVariant(item.variant) ?? null,
         itemStatus: "PENDING" as const,
-        instraction:item.instraction,
+        instraction: item.instraction,
       }));
 
       let res = await this.create({
@@ -86,27 +86,54 @@ export class OrderRepository
     return this.findByIdAndUpdate(orderId, { orderStatus: status });
   }
 
-
-  async getEntireOrdersByStatus(status:"PENDING"|"PREPARING"|"READY",restaurantId:string): Promise<IUserOrderDocument[] | null|any> {
-       if(!status){
-        return await this.model.find({restaurantId:restaurantId})
-       }
-       return await this.model.find({orderStatus:status,restaurantId:restaurantId})
+  async getEntireOrdersByStatus(
+    status: "PENDING" | "PREPARING" | "READY",
+    restaurantId: string,
+  ): Promise<IUserOrderDocument[] | null | any> {
+    if (!status) {
+      return await this.model.find({ restaurantId: restaurantId });
+    }
+    return await this.model.find({
+      orderStatus: status,
+      restaurantId: restaurantId,
+    });
   }
 
-
-  async updateItem(orderId: string, itemId: string, status: "PENDING" | "PREPARING" | "READY"): Promise<IUserOrderDocument[] | null> {
-     return await this.model.findOneAndUpdate(
-    {
-      orderId: orderId,
-      "items.itemId": itemId,
-    },
-    {
-      $set: {
-        "items.$.itemStatus": status,
+  async updateItem(
+    orderId: string,
+    itemId: string,
+    status: "PENDING" | "PREPARING" | "READY",
+  ): Promise<IUserOrderDocument[] | null> {
+    return await this.model.findOneAndUpdate(
+      {
+        orderId: orderId,
+        "items.itemId": itemId,
       },
-    },
-    { new: true }
-  );
+      {
+        $set: {
+          "items.$.itemStatus": status,
+        },
+      },
+      { new: true },
+    );
+  }
+
+ async assignChefToItem(
+    orderId: string,
+    itemId: string,
+    chefId: string,
+  ): Promise<IUserOrderDocument| null> {
+    return await this.findOneAndUpdateUpsert(
+      { orderId: orderId, "items.itemId": itemId },
+      {
+      $set: {
+        "items.$.assignedCookId": chefId,
+        "items.$.itemStatus": "ASSIGNED"
+      }
+      }
+    );
+  }
+  async getAssignedItems(restaurantId: string): Promise<IUserOrderDocument[] | null> {
+    return await this.model.find({restaurantId:restaurantId})
   }
 }

@@ -81,8 +81,11 @@ export class OrderController implements IOrderController {
   ): Promise<Response> => {
     try {
       const status = req.query.status as "PENDING" | "PREPARING" | "READY";
-      const restaurantId = req.params.restaurantId as string
-      const result = await this._orderService.getEntireOrdersByStatus(status,restaurantId);
+      const restaurantId = req.params.restaurantId as string;
+      const result = await this._orderService.getEntireOrdersByStatus(
+        status,
+        restaurantId,
+      );
       if (result) {
         return res
           .status(HttpStatus.OK)
@@ -111,4 +114,41 @@ export class OrderController implements IOrderController {
       throw new AppError(error.message);
     }
   };
+
+  assignChefToItem = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { orderId, itemId } = req.params;
+      const { chefId } = req.body;
+      let result = await this._orderService.assignChefToItem(
+        orderId as string,
+        itemId as string,
+        chefId,
+      );
+      if (result.success) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, message: MESSAGES.CHEFID_ASSIGNED_SUCCESS });
+      } else {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ success: false, message: MESSAGES.CHEFID_ASSIGNED_FAILED });
+      }
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
+
+  getAssignedItems = async(req: Request, res: Response): Promise<Response> =>{
+    try {
+      const { restaurantId, chefId } = req.params;
+      let result = await this._orderService.getAssignedItems(restaurantId as string,chefId as string)
+      if(result.success){
+         return res.status(HttpStatus.OK).json({success:true,data:result.data})
+      }else{
+        return res.status(HttpStatus.BAD_REQUEST).json({success:false,message:"Fetched Failed"})
+      }
+    } catch (error: any) {
+      throw new AppError(error.messsage);
+    }
+  }
 }

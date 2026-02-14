@@ -9,6 +9,10 @@ const Router = express.Router();
 Router.route("/getOrders/:restaurantId").get(
   asyncHandler(orderController.getEntireOrderByStatus),
 );
-Router.route("/update-item").patch(asyncHandler(orderController.updateItemStatus))
+Router.route("/getAssignedItems/:restaurantId/:chefId").get(orderController.getAssignedItems)
+Router.route("/update-item").patch(
+  asyncHandler(orderController.updateItemStatus),
+);
+Router.route("/orders/:orderId/item/:itemId/assign-cheff").patch(asyncHandler(orderController.assignChefToItem))
 
 export default Router;

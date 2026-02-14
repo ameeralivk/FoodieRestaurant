@@ -44,7 +44,7 @@ const OrderItemSchema = new Schema(
     },
     itemStatus: {
       type: String,
-      enum: ["PENDING", "PREPARING", "READY"],
+      enum: ["PENDING", "PREPARING", "READY","ASSIGNED"],
       default: "PENDING",
     },
     instraction:{
@@ -106,7 +106,7 @@ const UserOrderSchema = new Schema<IUserOrderDocument>(
 
     orderStatus: {
       type: String,
-      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED"],
+      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED","ASSIGNED"],
       default: "PLACED",
     },
 

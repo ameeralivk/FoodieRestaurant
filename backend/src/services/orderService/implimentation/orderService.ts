@@ -2,7 +2,13 @@ import { inject, injectable } from "inversify";
 import { IOrderService } from "../interface/IOrderService";
 import { TYPES } from "../../../DI/types";
 import { IOrderRepo } from "../../../Repositories/order/interface/interface";
+import { Types } from "mongoose";
 import { getIO } from "../../../config/socket";
+import {
+  AssignedItemsResponse,
+  AssignedItem,
+  IVariant,
+} from "../../../types/order";
 import {
   IOrderItem,
   IUserOrder,
@@ -100,7 +106,6 @@ export class OrderService implements IOrderService {
     if (res) {
       let AllOrderReady = order?.items.every((o) => o.itemStatus === "READY");
       let AnyPreparing = order?.items.some((o) => o.itemStatus === "PREPARING");
-
       const io = getIO();
       if (order?.userId) {
         const userRoom = `${order.userId.toString()}-user`;
@@ -115,7 +120,6 @@ export class OrderService implements IOrderService {
           message: `Your order item ${itemId} is now ${status}`,
         });
       }
-
       if (AllOrderReady || AnyPreparing) {
         if (!order?._id) return { sucess: false, updatedOrder: [] };
         let updatedOrder = await this._orderRepo.changeStatus(
@@ -151,5 +155,88 @@ export class OrderService implements IOrderService {
       return { sucess: true, updatedOrder: res };
     }
     return { sucess: false, updatedOrder: [] };
+  }
+
+  async assignChefToItem(
+    orderId: string,
+    itemId: string,
+    chefId: string,
+  ): Promise<{ success: boolean; message: string }> {
+    if (!orderId) {
+      return { success: false, message: MESSAGES.ORDERID_NOT_FOUND };
+    } else if (!itemId) {
+      return { success: false, message: MESSAGES.ITEMID_NOT_FOUND };
+    } else if (!chefId) {
+      return { success: false, message: MESSAGES.CHEFFID_NOT_FOUND };
+    }
+    let res = await this._orderRepo.assignChefToItem(orderId, itemId, chefId);
+    let order = await this._orderRepo.getOrder(orderId);
+    let IsAllItemAssigned = order?.items.every(
+      (i) => i.itemStatus === "ASSIGNED",
+    );
+    if (res) {
+      const io = getIO();
+      if (order?.userId) {
+        const userRoom = `${order.userId.toString()}-user`;
+
+        console.log("📤 Emitting to:", userRoom);
+
+        io.to(userRoom).emit("order:itemUpdated", {
+          orderId,
+          itemId,
+          orderStatus: "ASSIGNED",
+          order: order,
+          message: `Your order item ${itemId} is now ASSIGNED`,
+        });
+      }
+
+      if (IsAllItemAssigned) {
+        await this._orderRepo.changeStatus(String(res._id), "ASSIGNED");
+      }
+      return {
+        success: true,
+        message: MESSAGES.CHEFID_ASSIGNED_SUCCESS,
+      };
+    } else {
+      return {
+        success: false,
+        message: MESSAGES.CHEFID_ASSIGNED_FAILED,
+      };
+    }
+  }
+
+  async getAssignedItems(
+    restaurantId: string,
+    chefId: string,
+  ): Promise<AssignedItemsResponse> {
+    const orders = await this._orderRepo.getAssignedItems(restaurantId);
+
+    if (!orders?.length) {
+      return { success: true, data: [] };
+    }
+    const chefObjectId = new Types.ObjectId(chefId);
+    console.log(orders.forEach((x) => console.log(x.items)));
+    const assignedItems: AssignedItem[] = orders.flatMap((order) =>
+      order.items
+        .filter((item) => item.assignedCookId?.equals(chefObjectId))
+        .map((item) => ({
+          orderId: order.orderId,
+          item: {
+            itemId: item.itemId.toString(),
+            itemName: item.itemName,
+            itemStatus: item.itemStatus,
+            quantity: item.quantity,
+            price: item.price,
+            instruction: item.instraction,
+            variant: item.variant?.option,
+            assignedCookId: item.assignedCookId?.toString(),
+            itemImages: item.itemImages,
+          },
+          tableNumber: order.tableId,
+          orderStatus: order.orderStatus,
+        })),
+    );
+
+    return { success: true, data: assignedItems };
   }
 }
