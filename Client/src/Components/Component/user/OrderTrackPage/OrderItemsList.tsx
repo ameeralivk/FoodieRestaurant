@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, Package } from "lucide-react";
+import { Check, Package , ChefHat } from "lucide-react";
 import type { IOrderItem } from "../../../../types/order";
 
 interface Props {
@@ -24,10 +24,15 @@ const OrderItemsList: React.FC<Props> = ({ orderItems, total }) => {
                   <Check className="w-4 h-4" />
                   Ready
                 </span>
+              ) : item.itemStatus === "PREPARING" ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                  <ChefHat className="w-4 h-4" />
+                  Preparing
+                </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-700 text-sm font-medium">
                   <Package className="w-4 h-4" />
-                  Preparing
+                  Pending
                 </span>
               )}
             </div>

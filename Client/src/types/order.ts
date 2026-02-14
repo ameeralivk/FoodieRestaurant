@@ -13,6 +13,7 @@ export interface IOrderItem {
   itemStatus: OrderItemStatus;
 }
 export type OrderStatus =
+    "PREPARING"
   | "PLACED"
   | "IN_KITCHEN"
   | "READY"

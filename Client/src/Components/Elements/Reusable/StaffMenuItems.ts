@@ -1,8 +1,8 @@
 import { Home, Settings, ShoppingCart } from "lucide-react";
 
 const staffmenuItems = [
-  { name: "Dashboard", icon: Home, path: "" },
-  { name: "Orders", icon: ShoppingCart, path: "" },
+  { name: "Dashboard", icon: Home, path: "/staff/dashboard" },
+  { name: "Items", icon: ShoppingCart, path: "/staff/items" },
   { name: "Settings", icon: Settings },
 ];
 

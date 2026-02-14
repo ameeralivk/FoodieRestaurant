@@ -93,7 +93,7 @@ const OrderTracking: React.FC = () => {
   //       Socket.off("order:completed");
   //     };
   //   }, [orderId, userId, restaurantId]);
-
+    const [liveOrder, setLiveOrder] = useState(order);
   useEffect(() => {
     if (order) {
       setLiveOrder(order);
@@ -139,8 +139,6 @@ const OrderTracking: React.FC = () => {
       Socket.off("order:completed");
     };
   }, [orderId, userId, restaurantId]);
-
-  const [liveOrder, setLiveOrder] = useState(order);
   const orderStatuses = [
     {
       label: "Order Placed",

@@ -50,7 +50,7 @@ export const getTotalOrders = async (
   restaurantId:string,
     status?: string
 ): Promise<{ success: boolean; data: IUserOrder[] }> => {
-  return apiRequest("GET", `/staff/getOrders/${restaurantId}?status=${status}`);
+  return apiRequest("GET", `/staff/getOrders/${restaurantId}`);
 };
 
 
