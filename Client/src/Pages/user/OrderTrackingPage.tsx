@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../Components/Layouts/userLayouts/Navbar";
-import { Check, Package, Bell } from "lucide-react";
+import { Check, Package, Bell,ChefHat } from "lucide-react";
 import type { RootState } from "../../redux/store/store";
 import BottomNavBar from "../../Components/user/DownBar";
 import { useSelector } from "react-redux";
@@ -93,7 +93,7 @@ const OrderTracking: React.FC = () => {
   //       Socket.off("order:completed");
   //     };
   //   }, [orderId, userId, restaurantId]);
-    const [liveOrder, setLiveOrder] = useState(order);
+  const [liveOrder, setLiveOrder] = useState(order);
   useEffect(() => {
     if (order) {
       setLiveOrder(order);
@@ -139,12 +139,39 @@ const OrderTracking: React.FC = () => {
       Socket.off("order:completed");
     };
   }, [orderId, userId, restaurantId]);
+  // const orderStatuses = [
+  //   {
+  //     label: "Order Placed",
+  //     time: "",
+  //     icon: <Check className="w-4 h-4" />,
+  //     statusKey: "PLACED",
+  //   },
+  //   {
+  //     label: "Preparing",
+  //     time: "",
+  //     icon: <Package className="w-4 h-4" />,
+  //     statusKey: "PREPARING",
+  //   },
+  //   {
+  //     label: "Ready for Pickup",
+  //     time: "",
+  //     icon: <Bell className="w-4 h-4" />,
+  //     statusKey: "READY",
+  //   },
+  // ];
+
   const orderStatuses = [
     {
       label: "Order Placed",
       time: "",
       icon: <Check className="w-4 h-4" />,
       statusKey: "PLACED",
+    },
+    {
+      label: "Assigned to Chef",
+      time: "",
+      icon: <ChefHat className="w-4 h-4" />,
+      statusKey: "ASSIGNED",
     },
     {
       label: "Preparing",
@@ -184,23 +211,23 @@ const OrderTracking: React.FC = () => {
 
   //     return () => clearInterval(timer);
   //   }, []);
-//   const present = { PLACED: 33, PREPARING: 66, READY: 100 };
-//   const progressPercentage =
-//     present[order?.orderStatus as keyof typeof present] || 0;
+  //   const present = { PLACED: 33, PREPARING: 66, READY: 100 };
+  //   const progressPercentage =
+  //     present[order?.orderStatus as keyof typeof present] || 0;
 
-const itemWeight = {
-  PLACED: 0,
-  PREPARING: 50,
-  READY: 100,
-};
+  const itemWeight = {
+    PLACED: 0,
+    PREPARING: 50,
+    READY: 100,
+  };
 
-
-const progressPercentage = liveOrder?.items?.length
-  ? liveOrder.items.reduce((total, item) => {
-      return total + (itemWeight[item.itemStatus as keyof typeof itemWeight] || 0);
-    }, 0) / liveOrder.items.length
-  : 0;
-
+  const progressPercentage = liveOrder?.items?.length
+    ? liveOrder.items.reduce((total, item) => {
+        return (
+          total + (itemWeight[item.itemStatus as keyof typeof itemWeight] || 0)
+        );
+      }, 0) / liveOrder.items.length
+    : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">

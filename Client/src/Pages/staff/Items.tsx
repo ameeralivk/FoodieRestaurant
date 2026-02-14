@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import StaffNavbar from "../../Components/Layouts/Staff/StaffNavbar";
 import SidebarLayout from "../../Components/Layouts/Admin/SidebarLayout";
 import staffmenuItems from "../../Components/Elements/Reusable/StaffMenuItems";
+import MyItemsSection from "../../Components/Component/Staff/StaffItemPage";
 
 const Items = () => {
   return (
@@ -14,7 +15,7 @@ const Items = () => {
       >
         <StaffNavbar />
         <SidebarLayout theme="light" menuItems={staffmenuItems} active="Items">
-          <h1>hi hllafjdklaf</h1>
+          <MyItemsSection />
         </SidebarLayout>
       </motion.div>
     </div>

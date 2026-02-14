@@ -4,6 +4,7 @@ import Dashboard from "../Pages/staff/Dashboard"
 import StaffPrivateRoute from "./staff/StaffPrivateRoute"
 import StaffPublicRoute from "./staff/StaffPublicRoute"
 import Items from "../Pages/staff/Items"
+import Dashboard1 from "../Pages/staff/Dashboard1"
 const StaffRoutes = () => {
   return (
     <div>
@@ -11,7 +12,7 @@ const StaffRoutes = () => {
           <Route element={<StaffPublicRoute/>}>
            <Route path="/login" element={<StaffLogin/>}/>
           </Route>         
-          <Route path="/dashboard" element={<StaffPrivateRoute><Dashboard/></StaffPrivateRoute>}/>
+          <Route path="/dashboard" element={<StaffPrivateRoute><Dashboard1/></StaffPrivateRoute>}/>
           <Route path ="/items" element={<StaffPrivateRoute><Items/></StaffPrivateRoute>}/>
         </Routes>
     </div>

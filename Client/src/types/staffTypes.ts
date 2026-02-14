@@ -33,4 +33,19 @@ export interface StaffListResponse {
   data: Staff[];
   total?: number;
 }
+type ItemStatus = "assigned" | "preparing" | "ready";
+export interface OrderItem {
+  itemId: string;
+  itemName: string;
+  quantity: number;
+  station?: string;
+  itemStatus: ItemStatus;
+  instruction?: string | null;
+  variant?: string | null;
+}
+
+export interface MyItem {
+  orderId: string;
+  item: OrderItem;
+}
 

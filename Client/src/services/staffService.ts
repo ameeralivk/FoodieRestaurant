@@ -1,6 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
 import type { ItemStatus } from "../types/dummyOrder";
-import type { IUserOrder } from "../types/order";
+import type { AssignedItemsResponse, IUserOrder } from "../types/order";
 import type {
   AddStaffResponse,
   IStaffAdd,
@@ -47,17 +47,16 @@ export const changeStaffStatus = async (
 };
 
 export const getTotalOrders = async (
-  restaurantId:string,
-    status?: string
+  restaurantId: string,
+  status?: string,
 ): Promise<{ success: boolean; data: IUserOrder[] }> => {
   return apiRequest("GET", `/staff/getOrders/${restaurantId}`);
 };
 
-
 export const updateOrder = async (
   orderId: string,
   itemId: string,
-  status:ItemStatus
+  status: ItemStatus,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest("PATCH", `/staff/update-item`, {
     orderId,
@@ -65,3 +64,22 @@ export const updateOrder = async (
     status,
   });
 };
+
+export const assignChefToItem = (
+  orderId: string,
+  itemId: string,
+  chefId: string,
+): Promise<{ success: boolean; message: string }> => {
+  return apiRequest(
+    "PATCH",
+    `/staff/orders/${orderId}/item/${itemId}/assign-cheff`,
+    { chefId: chefId },
+  );
+};
+
+export const getAssignedItems = (
+  restaurentId:string,
+  chefId:string
+):Promise<AssignedItemsResponse> =>{
+  return apiRequest("GET",`/staff/getAssignedItems/${restaurentId}/${chefId}`)
+}

@@ -30,6 +30,7 @@ const StaffLogin: React.FC = () => {
           const data = {
             _id: result.data._id,
             email: result.data.email,
+            name:result.data.staffName,
             status: result.data.status.toString(),
             role: result.data.role,
             restaurantId: result.data.restaurantId,
