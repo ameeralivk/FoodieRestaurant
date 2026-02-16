@@ -161,6 +161,12 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../../redux/store/store";
 import type { AssignedItem, AssignedItemsResponse } from "../../../types/order";
 import { ToastContainer } from "react-toastify";
+import type { IVarientItemType } from "../../../types/varient";
+import { useEffect, useRef } from "react";
+import Socket from "../../../socket";
+
+
+
 
 export type ItemStatus = "ASSIGNED" | "PREPARING" | "READY" | "PENDING";
 
@@ -177,7 +183,7 @@ interface OrderItem {
   station?: string;
   itemStatus: ItemStatus;
   instruction?: string | null;
-  variant?: string | null;
+  variant?:IVarientItemType | null;
   assignedCookId?: string;
   itemImages?: string[];
   price: number;
@@ -207,6 +213,30 @@ const MyItemsSection: React.FC = () => {
   //     () => getTotalOrders(restaurantId as string, "true")
   //   );
 
+
+
+useEffect(() => {
+  if (!userId) return;
+
+  // join cook room
+  Socket.emit("joinRoom", `${userId}-cook`);
+
+  const handleItemAssigned = () => {
+    console.log("🔔 New item assigned");
+
+    showSuccessToast("New item assigned to you 👨‍🍳");
+  };
+
+  Socket.on("order:itemAssigned", handleItemAssigned);
+
+  return () => {
+    Socket.off("order:itemAssigned", handleItemAssigned);
+  };
+
+}, [userId]);
+
+
+
   const { data, refetch } = useQuery<AssignedItemsResponse>({
     queryKey: ["orders", userId, currentPage, limit],
     queryFn: () => getAssignedItems(restaurantId as string, userId as string),
@@ -219,9 +249,10 @@ const MyItemsSection: React.FC = () => {
     orderId: string,
     itemId: string,
     newStatus: ItemStatus,
+    varient?: IVarientItemType,
   ) => {
-    console.log("Updating:", orderId, itemId, newStatus);
-    let result = await updateOrder(orderId, itemId, newStatus);
+    console.log(varient, "varient is here amere");
+    let result = await updateOrder(orderId, itemId, newStatus, varient?._id.toString());
     console.log(result, "resule");
     if (result.success) {
       showSuccessToast("order updated Successfully");

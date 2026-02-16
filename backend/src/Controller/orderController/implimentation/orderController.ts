@@ -7,6 +7,7 @@ import { Response, Request } from "express";
 import HttpStatus from "../../../constants/htttpStatusCode";
 import { MESSAGES } from "../../../constants/messages";
 import { success } from "zod";
+import { IVariant } from "../../../types/order";
 @injectable()
 export class OrderController implements IOrderController {
   constructor(
@@ -100,11 +101,12 @@ export class OrderController implements IOrderController {
 
   updateItemStatus = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { orderId, itemId, status } = req.body;
+      const { orderId, itemId, status , variant} = req.body;
       const updatedOrder = await this._orderService.updateItemStatusService(
         orderId,
         itemId,
         status,
+        variant as string
       );
       return res.status(HttpStatus.OK).json({
         success: true,
@@ -118,11 +120,12 @@ export class OrderController implements IOrderController {
   assignChefToItem = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { orderId, itemId } = req.params;
-      const { chefId } = req.body;
+      const { chefId,varient } = req.body;
       let result = await this._orderService.assignChefToItem(
         orderId as string,
         itemId as string,
         chefId,
+        varient as string
       );
       if (result.success) {
         return res

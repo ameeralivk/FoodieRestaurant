@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUserOrderDocument } from "../types/order";
-
+import { Types } from "mongoose";
 const OrderItemSchema = new Schema(
   {
     itemId: {
@@ -32,10 +32,25 @@ const OrderItemSchema = new Schema(
       required: true,
       min: 1,
     },
+    // variant: {
+    //   category: String,
+    //   option: String,
+    //   price: Number,
+    // },
     variant: {
-      category: String,
-      option: String,
-      price: Number,
+      _id: {
+        type: Schema.Types.ObjectId,
+        default: () => new Types.ObjectId(), 
+      },
+      category: {
+        type: String,
+      },
+      option: {
+        type: String,
+      },
+      price: {
+        type: Number,
+      },
     },
     assignedCookId: {
       type: Schema.Types.ObjectId,
@@ -44,12 +59,12 @@ const OrderItemSchema = new Schema(
     },
     itemStatus: {
       type: String,
-      enum: ["PENDING", "PREPARING", "READY","ASSIGNED"],
+      enum: ["PENDING", "PREPARING", "READY", "ASSIGNED"],
       default: "PENDING",
     },
-    instraction:{
-      type:String,
-      default:null
+    instraction: {
+      type: String,
+      default: null,
     },
     assignedAt: Date,
     preparedAt: Date,
@@ -106,7 +121,7 @@ const UserOrderSchema = new Schema<IUserOrderDocument>(
 
     orderStatus: {
       type: String,
-      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED","ASSIGNED"],
+      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED", "ASSIGNED"],
       default: "PLACED",
     },
 

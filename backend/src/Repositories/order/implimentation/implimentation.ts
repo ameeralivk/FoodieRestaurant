@@ -1,8 +1,9 @@
 import { BaseRepository } from "../../IBaseRepository";
 import { IOrderRepo } from "../interface/interface";
-import { IOrderItem, IUserOrderDocument } from "../../../types/order";
+import { IOrderItem, IUserOrderDocument, IVariant } from "../../../types/order";
 import UserOrder from "../../../models/order";
 import { ICart } from "../../../types/cart";
+import { FilterQuery } from "mongoose";
 import { Types } from "mongoose";
 import { AppError } from "../../../utils/Error";
 import unwrapVariant from "../../../helpers/unwrapter";
@@ -99,16 +100,48 @@ export class OrderRepository
     });
   }
 
+  // async updateItem(
+  //   orderId: string,
+  //   itemId: string,
+  //   status: "PENDING" | "PREPARING" | "READY",
+  //   variantId:string
+  // ): Promise<IUserOrderDocument[] | null> {
+  //   return await this.model.findOneAndUpdate(
+  //     {
+  //       orderId: orderId,
+  //       "items.itemId": itemId,
+  //     },
+  //     {
+  //       $set: {
+  //         "items.$.itemStatus": status,
+  //       },
+  //     },
+  //     { new: true },
+  //   );
+  // }
+
   async updateItem(
     orderId: string,
     itemId: string,
     status: "PENDING" | "PREPARING" | "READY",
+    variantId?: string,
   ): Promise<IUserOrderDocument[] | null> {
-    return await this.model.findOneAndUpdate(
-      {
-        orderId: orderId,
-        "items.itemId": itemId,
+    const query: FilterQuery<IUserOrderDocument> = {
+      orderId,
+      items: {
+        $elemMatch: variantId
+          ? {
+              itemId: new Types.ObjectId(itemId),
+              "variant._id": new Types.ObjectId(variantId),
+            }
+          : {
+              itemId: new Types.ObjectId(itemId),
+            },
       },
+    };
+
+    return await this.model.findOneAndUpdate(
+      query,
       {
         $set: {
           "items.$.itemStatus": status,
@@ -118,22 +151,58 @@ export class OrderRepository
     );
   }
 
- async assignChefToItem(
+  //  async assignChefToItem(
+  //     orderId: string,
+  //     itemId: string,
+  //     chefId: string,
+  //     varient?:IVariant
+  //   ): Promise<IUserOrderDocument| null> {
+  //     return await this.findOneAndUpdateUpsert(
+  //       { orderId: orderId, "items.itemId": itemId ,"items.variant.option":varient?.option },
+  //       {
+  //       $set: {
+  //         "items.$.assignedCookId": chefId,
+  //         "items.$.itemStatus": "ASSIGNED"
+  //       }
+  //       }
+  //     );
+  //   }
+
+  async assignChefToItem(
     orderId: string,
     itemId: string,
     chefId: string,
-  ): Promise<IUserOrderDocument| null> {
-    return await this.findOneAndUpdateUpsert(
-      { orderId: orderId, "items.itemId": itemId },
+    variantId?: string,
+  ): Promise<IUserOrderDocument | null> {
+    const query: FilterQuery<IUserOrderDocument> = {
+      orderId,
+      items: {
+        $elemMatch: variantId
+          ? {
+              itemId: new Types.ObjectId(itemId),
+              "variant._id": new Types.ObjectId(variantId),
+            }
+          : {
+              itemId: new Types.ObjectId(itemId),
+            },
+      },
+    };
+
+    return await this.model.findOneAndUpdate(
+      query,
       {
-      $set: {
-        "items.$.assignedCookId": chefId,
-        "items.$.itemStatus": "ASSIGNED"
-      }
-      }
+        $set: {
+          "items.$.assignedCookId": new Types.ObjectId(chefId),
+          "items.$.itemStatus": "ASSIGNED",
+        },
+      },
+      { new: true },
     );
   }
-  async getAssignedItems(restaurantId: string): Promise<IUserOrderDocument[] | null> {
-    return await this.model.find({restaurantId:restaurantId})
+
+  async getAssignedItems(
+    restaurantId: string,
+  ): Promise<IUserOrderDocument[] | null> {
+    return await this.model.find({ restaurantId: restaurantId });
   }
 }

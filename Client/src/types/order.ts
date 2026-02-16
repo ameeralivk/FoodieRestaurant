@@ -1,3 +1,5 @@
+import type { IVarientItemType } from "./varient";
+
 export type OrderItemStatus = "PENDING" | "PREPARING" | "READY"|"ASSIGNED";
 
 export interface IOrderItem {
@@ -8,7 +10,7 @@ export interface IOrderItem {
   itemImages: string[];
   quantity: number;
   instraction?:string;
-  variant?: { category: string,option:string,price:number};
+  variant?: {_id:string, category: string,option:string,price:number};
   assignedCookId: string | null;
   createdAt?:string;
   itemStatus: OrderItemStatus;
@@ -95,7 +97,7 @@ export interface AssignedItem {
     price: number;
     assignedCookId: string;
     itemImages: string[];
-    variant?: string | null;
+    variant?: IVarientItemType;
     instruction?: string | null;
   };
   tableNumber: string;
@@ -110,7 +112,7 @@ export interface AssignItem {
     price: number;
     assignedCookId: string;
     itemImages: string[];
-    variant?: string | null;
+    variant?: IVarientItemType;
     instruction?: string | null;
 }
 

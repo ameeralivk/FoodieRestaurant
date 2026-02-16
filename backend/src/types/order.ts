@@ -60,7 +60,7 @@ export interface AssignedItem {
     quantity: number;
     price: number;
     station?: string;
-    variant?: string | null;
+    variant?: IVariant|null;
     instruction?: string | null;
     assignedCookId?: string;
     itemImages?: string[];

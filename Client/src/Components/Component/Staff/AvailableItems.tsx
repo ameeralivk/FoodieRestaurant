@@ -6,11 +6,16 @@ import type { IUserOrder } from "../../../types/order";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../redux/store/store";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import Socket from "../../../socket";
 import {
   assignChefToItem,
   getTotalOrders,
 } from "../../../services/staffService";
 import { showSuccessToast } from "../../Elements/SuccessToast";
+import type { IVariant, IVarientItemType } from "../../../types/varient";
+import { ToastContainer } from "react-toastify";
+import { useRef } from "react";
 type UserRole = "chef" | "staff";
 interface User {
   id: string;
@@ -21,16 +26,100 @@ interface User {
 
 const AvailableItemsSection = () => {
   // 🔹 Dummy Data
+
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
   const StaffName = useSelector(
     (state: RootState) => state.userAuth.user?.name,
   );
   const queryClient = useQueryClient();
+   const audioRef = useRef<HTMLAudioElement | null>(null);
   const restaurantId = useSelector(
     (state: RootState) => state.userAuth.user?.restaurantId,
   );
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 1000;
+
+   useEffect(() => {
+      const audio = new Audio(
+        "/sounds/universfield-new-notification-026-380249.mp3",
+      );
+  
+      audio.preload = "auto";
+      audioRef.current = audio;
+  
+      // 🔓 unlock audio after first user interaction
+      const unlockAudio = () => {
+        audio
+          .play()
+          .then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            console.log("🔓 Audio unlocked");
+          })
+          .catch(() => {});
+  
+        window.removeEventListener("click", unlockAudio);
+      };
+  
+      window.addEventListener("click", unlockAudio);
+  
+      return () => {
+        window.removeEventListener("click", unlockAudio);
+      };
+    }, []);
+  
+   const playSound = () => {
+      if (!audioRef.current) return;
+  
+      audioRef.current.currentTime = 0;
+  
+      audioRef.current
+        .play()
+        .then(() => {
+          console.log("🔊 Sound played");
+        })
+        .catch((err) => {
+          console.log("❌ Sound blocked:", err);
+        });
+    };
+
+  useEffect(() => {
+    if (!restaurantId) return;
+
+    // connect socket if not connected
+    if (!Socket.connected) {
+      Socket.connect();
+    }
+
+    // join restaurant room
+    Socket.emit("join-restaurant", {
+      restaurantId,
+      role: "chef", // or "staff" based on your page
+    });
+
+    console.log("✅ Joined restaurant:", restaurantId);
+
+    // ✅ ONLY new order notification
+    const handleNewOrder = (newOrder: IUserOrder) => {
+      console.log("🔥 New order received:", newOrder);
+       
+      playSound()
+
+      showSuccessToast(`New Order from Table ${newOrder.tableId}`);
+
+      // 🔄 refresh orders list
+      queryClient.invalidateQueries({
+        queryKey: ["orders", userId, currentPage, limit],
+      });
+    };
+
+    Socket.on("order:new", handleNewOrder);
+
+    return () => {
+      Socket.off("order:new", handleNewOrder);
+    };
+  }, [restaurantId, userId, currentPage, limit, queryClient]);
+
   const { data } = useQuery<{ success: boolean; data: IUserOrder[] }>({
     queryKey: ["orders", userId, currentPage, limit],
     queryFn: () => getTotalOrders(restaurantId as string),
@@ -46,6 +135,9 @@ const AvailableItemsSection = () => {
           orderStatus: order.orderStatus,
           createdAt: order.createdAt,
           restaurantId: order.restaurantId,
+
+          variantId: item.variant?._id ?? null, // ✅ add this
+          varient: item.variant,
 
           itemId: item.itemId,
           itemName: item.itemName,
@@ -67,8 +159,17 @@ const AvailableItemsSection = () => {
     station: "Main Course",
   };
 
-  const assignItemToChef = async (orderId: string, itemId: string) => {
-    let res = await assignChefToItem(orderId, itemId, userId ? userId : "");
+  const assignItemToChef = async (
+    orderId: string,
+    itemId: string,
+    variant: IVarientItemType,
+  ) => {
+    let res = await assignChefToItem(
+      orderId,
+      itemId,
+      userId ? userId : "",
+      variant?._id?.toString(),
+    );
     if (res.success) {
       showSuccessToast("Item Assignedment Completed");
       queryClient.invalidateQueries({
@@ -81,6 +182,7 @@ const AvailableItemsSection = () => {
 
   return (
     <div>
+      <ToastContainer />
       <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-3">
         Available Items
         <span className="text-sm font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
@@ -100,7 +202,8 @@ const AvailableItemsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {items?.map((item) => (
             <button
-              key={item.itemId}
+              // key={item.itemId}
+              key={`${item.orderId}-${item.itemId}-${item.variantId ?? "no-variant"}`}
               onClick={() =>
                 setSelectedItem({
                   orderId: item.orderId,
@@ -108,7 +211,9 @@ const AvailableItemsSection = () => {
                   price: item.price,
                   itemName: item.itemName,
                   quantity: item.quantity,
+                  variantId: item.variantId,
                   createdAt: item.createdAt,
+                  varient: item.varient,
                   tableId: item.tableId,
                   mode: "assign",
                 })
@@ -179,7 +284,9 @@ const AvailableItemsSection = () => {
           item={selectedItem}
           currentChef={StaffName ? StaffName : ""}
           onClose={() => setSelectedItem(null)}
-          onAssign={(orderId, itemId) => assignItemToChef(orderId, itemId)}
+          onAssign={(orderId, itemId, variant) =>
+            assignItemToChef(orderId, itemId, variant)
+          }
         />
       )}
 

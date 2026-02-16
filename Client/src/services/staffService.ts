@@ -6,6 +6,7 @@ import type {
   IStaffAdd,
   StaffListResponse,
 } from "../types/staffTypes";
+import type { IVarientItemType } from "../types/varient";
 
 export const addStaff = async (
   staffData: IStaffAdd,
@@ -57,11 +58,13 @@ export const updateOrder = async (
   orderId: string,
   itemId: string,
   status: ItemStatus,
+  variant?: string,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest("PATCH", `/staff/update-item`, {
     orderId,
     itemId,
     status,
+    variant,
   });
 };
 
@@ -69,17 +72,18 @@ export const assignChefToItem = (
   orderId: string,
   itemId: string,
   chefId: string,
+  variant: string,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest(
     "PATCH",
     `/staff/orders/${orderId}/item/${itemId}/assign-cheff`,
-    { chefId: chefId },
+    { chefId: chefId, varient: variant },
   );
 };
 
 export const getAssignedItems = (
-  restaurentId:string,
-  chefId:string
-):Promise<AssignedItemsResponse> =>{
-  return apiRequest("GET",`/staff/getAssignedItems/${restaurentId}/${chefId}`)
-}
+  restaurentId: string,
+  chefId: string,
+): Promise<AssignedItemsResponse> => {
+  return apiRequest("GET", `/staff/getAssignedItems/${restaurentId}/${chefId}`);
+};

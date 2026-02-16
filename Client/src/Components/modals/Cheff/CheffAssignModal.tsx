@@ -1,4 +1,5 @@
 import { ChefHat, AlertCircle, X } from "lucide-react";
+import type { IVarientItemType } from "../../../types/varient";
 type FlattenedItem = {
   orderId: string;
   tableId: number;
@@ -6,6 +7,7 @@ type FlattenedItem = {
   itemName: string;
   quantity: number;
   itemStatus: string;
+  varient:IVarientItemType;
   assignedCookId?: string;
   price: number;
   itemImages?: string[];
@@ -16,10 +18,10 @@ const ChefAssignModal: React.FC<{
   item: FlattenedItem;
   currentChef: String;
   onClose: () => void;
-  onAssign: (orderId: string, itemId: string) => void;
+  onAssign: (orderId: string, itemId: string,varient:IVarientItemType) => void;
 }> = ({ item, currentChef, onClose, onAssign }) => {
   const handleAssign = () => {
-    onAssign(item.orderId, item.itemId);
+    onAssign(item.orderId, item.itemId,item.varient);
     onClose();
   };
 

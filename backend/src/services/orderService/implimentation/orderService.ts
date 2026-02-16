@@ -100,8 +100,9 @@ export class OrderService implements IOrderService {
     orderId: string,
     itemId: string,
     status: "PENDING" | "PREPARING" | "READY",
+    variant:string
   ): Promise<{ sucess: boolean; updatedOrder: IUserOrderDocument[] | [] }> {
-    let res = await this._orderRepo.updateItem(orderId, itemId, status);
+    let res = await this._orderRepo.updateItem(orderId, itemId, status,variant);
     let order = await this._orderRepo.getOrder(orderId);
     if (res) {
       let AllOrderReady = order?.items.every((o) => o.itemStatus === "READY");
@@ -161,6 +162,7 @@ export class OrderService implements IOrderService {
     orderId: string,
     itemId: string,
     chefId: string,
+    varient?:string
   ): Promise<{ success: boolean; message: string }> {
     if (!orderId) {
       return { success: false, message: MESSAGES.ORDERID_NOT_FOUND };
@@ -169,7 +171,7 @@ export class OrderService implements IOrderService {
     } else if (!chefId) {
       return { success: false, message: MESSAGES.CHEFFID_NOT_FOUND };
     }
-    let res = await this._orderRepo.assignChefToItem(orderId, itemId, chefId);
+    let res = await this._orderRepo.assignChefToItem(orderId, itemId, chefId,varient);
     let order = await this._orderRepo.getOrder(orderId);
     let IsAllItemAssigned = order?.items.every(
       (i) => i.itemStatus === "ASSIGNED",
@@ -228,7 +230,7 @@ export class OrderService implements IOrderService {
             quantity: item.quantity,
             price: item.price,
             instruction: item.instraction,
-            variant: item.variant?.option,
+            variant: item.variant,
             assignedCookId: item.assignedCookId?.toString(),
             itemImages: item.itemImages,
           },

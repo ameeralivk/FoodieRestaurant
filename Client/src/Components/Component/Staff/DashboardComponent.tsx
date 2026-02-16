@@ -84,14 +84,49 @@ const ChefPage: React.FC = () => {
   }, [restaurantId, role]);
 
   useEffect(() => {
-    audioRef.current = new Audio(
+    const audio = new Audio(
       "/sounds/universfield-new-notification-026-380249.mp3",
     );
+
+    audio.preload = "auto";
+    audioRef.current = audio;
+
+    // 🔓 unlock audio after first user interaction
+    const unlockAudio = () => {
+      audio
+        .play()
+        .then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+          console.log("🔓 Audio unlocked");
+        })
+        .catch(() => {});
+
+      window.removeEventListener("click", unlockAudio);
+    };
+
+    window.addEventListener("click", unlockAudio);
+
+    return () => {
+      window.removeEventListener("click", unlockAudio);
+    };
   }, []);
 
   const playSound = () => {
-    audioRef.current?.play().catch(() => {});
+    if (!audioRef.current) return;
+
+    audioRef.current.currentTime = 0;
+
+    audioRef.current
+      .play()
+      .then(() => {
+        console.log("🔊 Sound played");
+      })
+      .catch((err) => {
+        console.log("❌ Sound blocked:", err);
+      });
   };
+
   useEffect(() => {
     if (!restaurantId || role !== "chef") return; // ensure chef
 

@@ -210,6 +210,7 @@
 import React, { useState } from "react";
 import { X, UserPlus, ChefHat, CheckCircle2 } from "lucide-react";
 import type { AssignedItem, AssignItem } from "../../../types/order";
+import type { IVarientItemType } from "../../../types/varient";
 
 export type ItemStatus = "ASSIGNED" | "PREPARING" | "READY" | "PENDING";
 
@@ -226,7 +227,7 @@ export interface OrderItem {
   station?: string;
   itemStatus: ItemStatus;
   instruction?: string | null;
-  variant?: string | null;
+  variant?: IVarientItemType;
   assignedCookId?: string;
   itemImages?: string[];
   price: number;
@@ -237,7 +238,7 @@ interface Props {
   orderId: string;
   item: AssignItem;
   onClose: () => void;
-  onUpdate: (orderId: string, itemId: string, newStatus: ItemStatus) => void;
+  onUpdate: (orderId: string, itemId: string, newStatus: ItemStatus,variant?:IVarientItemType) => void;
 }
 
 const ChefUpdateItemModal: React.FC<Props> = ({
@@ -252,7 +253,11 @@ const ChefUpdateItemModal: React.FC<Props> = ({
   );
 
   const handleUpdate = () => {
-    onUpdate(orderId, item.itemId, selectedStatus);
+    if(!item.variant){
+      onUpdate(orderId, item.itemId, selectedStatus);
+    }else{
+       onUpdate(orderId, item.itemId, selectedStatus,item.variant);
+    }
     onClose();
   };
 
@@ -295,7 +300,7 @@ const ChefUpdateItemModal: React.FC<Props> = ({
             </div>
             {item.variant && (
               <div className="text-xs text-gray-500 mt-1">
-                Variant: {item.variant}
+                Variant: {item.variant?.option}
               </div>
             )}
             {item.instruction && (

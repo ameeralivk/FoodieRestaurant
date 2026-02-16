@@ -1,11 +1,14 @@
 import React from "react";
 import { Clock, ChefHat, CheckCircle2 } from "lucide-react";
-import type { IOrderItem, IUserOrder } from "../../../types/order";
-
+import type {
+  IOrderItem,
+  IUserOrder,
+  OrderItemStatus,
+} from "../../../types/order";
 // =======================
 // TYPES
 // =======================
-type ItemStatus = "PENDING" | "PREPARING" | "READY";
+type ItemStatus = OrderItemStatus;
 
 interface OrderItem {
   id: string;
@@ -47,19 +50,28 @@ const getProgress = (items: IOrderItem[]) => {
 // ITEM STATUS BADGE
 // =======================
 const ItemStatusBadge: React.FC<{ status: ItemStatus }> = ({ status }) => {
-  const configs = {
+  const configs: Record<ItemStatus, any> = {
     PENDING: {
       bg: "bg-slate-100",
       text: "text-slate-700",
       border: "border-slate-300",
       icon: <Clock className="w-3 h-3" />,
     },
+
+    ASSIGNED: {
+      bg: "bg-purple-100",
+      text: "text-purple-700",
+      border: "border-purple-300",
+      icon: <ChefHat className="w-3 h-3" />,
+    },
+
     PREPARING: {
       bg: "bg-amber-100",
       text: "text-amber-700",
       border: "border-amber-300",
       icon: <ChefHat className="w-3 h-3" />,
     },
+
     READY: {
       bg: "bg-emerald-100",
       text: "text-emerald-700",

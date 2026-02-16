@@ -2,6 +2,7 @@ import {
   AssignedItemsResponse,
   IOrderItem,
   IUserOrder,
+  IVariant,
 } from "../../../types/order";
 import { IUserOrderDocument } from "../../../types/order";
 
@@ -25,11 +26,13 @@ export interface IOrderService {
     orderId: string,
     itemId: string,
     status: "PENDING" | "PREPARING" | "READY",
+    variant:string
   ): Promise<{ sucess: boolean; updatedOrder: IUserOrderDocument[] | [] }>;
   assignChefToItem(
     orderId: string,
     itemId: string,
     chefId: string,
+    varient?:string
   ): Promise<{ success: boolean; message: string }>;
   getAssignedItems(
     restaurantId: string,
