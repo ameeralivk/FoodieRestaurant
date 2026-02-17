@@ -14,5 +14,8 @@ Router.route("/update-item").patch(
   asyncHandler(orderController.updateItemStatus),
 );
 Router.route("/orders/:orderId/item/:itemId/assign-cheff").patch(asyncHandler(orderController.assignChefToItem))
+Router.route("/assignOrder/:orderId").patch(orderController.assignOrder)
+
+Router.route("/order/updatestatus/:orderId").patch(orderController.updateOrderStatus)
 
 export default Router;

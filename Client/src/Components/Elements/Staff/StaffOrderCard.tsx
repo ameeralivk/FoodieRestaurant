@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, User } from "lucide-react";
+import { Clock, User, CheckCircle2 } from "lucide-react";
 import type { IUserOrder, OrderItemStatus } from "../../../types/order";
 export type ItemStatus = "preparing" | "ready" | "served";
 
@@ -46,17 +46,15 @@ const ItemStatusBadge: React.FC<{ status: OrderItemStatus }> = ({ status }) => {
 type Props = {
   order: IUserOrder;
   onAssign?: () => void;
+  onServing?:()=>void
 };
 
-const StaffOrderCard: React.FC<Props> = ({
-  order,
-  onAssign,
-}) => {
+const StaffOrderCard: React.FC<Props> = ({ order, onAssign ,onServing }) => {
   // const isAssignedToMe = order.assignedStaff?.id === currentStaff.id;
 
-return (
-  <div
-    className="
+  return (
+    <div
+      className="
       bg-white
       rounded-xl
       border
@@ -66,35 +64,35 @@ return (
       hover:shadow-md
       transition
     "
-  >
-    {/* Header */}
-    <div className="flex justify-between gap-2 mb-3">
-      <div className="min-w-0">
-        <h3 className="font-bold text-sm sm:text-base truncate">
-          {order.orderId}
-        </h3>
+    >
+      {/* Header */}
+      <div className="flex justify-between gap-2 mb-3">
+        <div className="min-w-0">
+          <h3 className="font-bold text-sm sm:text-base truncate">
+            {order.orderId}
+          </h3>
 
-        <p className="text-xs sm:text-sm text-gray-500">
-          Table {order.tableId}
-        </p>
+          <p className="text-xs sm:text-sm text-gray-500">
+            Table {order.tableId}
+          </p>
 
-        <p className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
-          <Clock size={14} />
-          {new Date(order.createdAt).toLocaleString()}
-        </p>
+          <p className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
+            <Clock size={14} />
+            {new Date(order.createdAt).toLocaleString()}
+          </p>
+        </div>
+
+        <div className="font-bold text-sm sm:text-base whitespace-nowrap">
+          ₹{order.totalAmount}
+        </div>
       </div>
 
-      <div className="font-bold text-sm sm:text-base whitespace-nowrap">
-        ₹{order.totalAmount}
-      </div>
-    </div>
-
-    {/* Items */}
-    <div className="space-y-2 mb-3 max-h-40 overflow-y-auto pr-1">
-      {order.items.map((item) => (
-        <div
-          key={item._id}
-          className="
+      {/* Items */}
+      <div className="space-y-2 mb-3 max-h-40 overflow-y-auto pr-1">
+        {order.items.map((item) => (
+          <div
+            key={item._id}
+            className="
             flex
             justify-between
             items-center
@@ -103,37 +101,63 @@ return (
             rounded
             gap-2
           "
-        >
-          <span className="text-xs sm:text-sm truncate">
-            {item.itemName} × {item.quantity}
-          </span>
+          >
+            <span className="text-xs sm:text-sm truncate">
+              {item.itemName} × {item.quantity}
+            </span>
 
-          <ItemStatusBadge status={item.itemStatus} />
+            <ItemStatusBadge status={item.itemStatus} />
+          </div>
+        ))}
+      </div>
+      <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+        <div className="flex items-center gap-2 text-emerald-700">
+          <CheckCircle2 className="w-5 h-5" />
+          <span className="font-bold text-sm">All items ready for pickup!</span>
         </div>
-      ))}
+      </div>
+
+      {/* Button */}
+      {order.orderStatus === "READY" && (
+        <button
+          onClick={onAssign}
+          className="
+      w-full
+      bg-black
+      hover:bg-gray-800
+      active:bg-gray-900
+      text-white
+      text-xs sm:text-sm
+      py-2
+      rounded
+      transition
+      cursor-pointer
+    "
+        >
+          Assign to Me
+        </button>
+      )}
+
+      {order.orderStatus === "ASSIGNED" && (
+        <button
+          onClick={onServing}
+          className="
+      flex-1
+      bg-blue-600
+      hover:bg-blue-700
+      text-white
+      font-semibold
+      py-2.5
+      px-4
+      rounded-lg
+      transition-colors
+    "
+        >
+          Start Serving
+        </button>
+      )}
     </div>
-
-    {/* Button */}
-    <button
-      onClick={onAssign}
-      className="
-        w-full
-        bg-black
-        hover:bg-gray-800
-        active:bg-gray-900
-        text-white
-        text-xs sm:text-sm
-        py-2
-        rounded
-        transition
-        cursor-pointer
-      "
-    >
-      Assign to Me
-    </button>
-  </div>
-);
-
+  );
 };
 
 export default StaffOrderCard;

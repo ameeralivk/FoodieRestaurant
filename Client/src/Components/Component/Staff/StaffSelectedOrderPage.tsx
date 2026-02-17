@@ -14,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Socket from "../../../socket";
 import { ToastContainer } from "react-toastify";
 import { showErrorToast } from "../../Elements/ErrorToast";
-const StaffDashboard: React.FC = () => {
+const StaffSelectedOrders: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,12 +56,9 @@ const StaffDashboard: React.FC = () => {
   // }, [restaurantId]);
   useEffect(() => {
     if (data?.data) {
-      const ready = data.data.filter((o) =>
-        o.items.every(
-          (i) =>
-            (i.itemStatus === "READY" || i.itemStatus === "ASSIGNED") &&
-            o.orderStatus !== "ASSIGNED",
-        ),
+      const ready = data.data.filter(
+        (o) =>
+          o.assignedByStaffId && o.items.every((i) => i.itemStatus === "READY"),
       );
 
       setReadyOrders(ready);
@@ -134,4 +131,4 @@ const StaffDashboard: React.FC = () => {
   );
 };
 
-export default StaffDashboard;
+export default StaffSelectedOrders;

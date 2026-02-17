@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import StaffNavbar from "../../Components/Layouts/Staff/StaffNavbar";
 import SidebarLayout from "../../Components/Layouts/Admin/SidebarLayout";
-import staffmenuItems from "../../Components/Elements/Reusable/StaffMenuItems";
+import staffmenuItems from "../../Components/Elements/Reusable/CheffMenuItems";
 import MyItemsSection from "../../Components/Component/Staff/StaffItemPage";
 
 const Items = () => {

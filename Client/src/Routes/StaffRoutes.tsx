@@ -5,6 +5,7 @@ import StaffPublicRoute from "./staff/StaffPublicRoute";
 import Items from "../Pages/staff/Items";
 import Dashboard1 from "../Pages/staff/Dashboard1";
 import StaffDashboard from "../Pages/staff/StaffDashboard";
+import StaffOrders from "../Pages/staff/StaffOrders";
 const StaffRoutes = () => {
   return (
     <div>
@@ -29,6 +30,7 @@ const StaffRoutes = () => {
           }
         />
         <Route path="/staffdashboard" element={<StaffDashboard />} />
+        <Route path="/stafforders" element={<StaffOrders/>}/>
       </Routes>
     </div>
   );

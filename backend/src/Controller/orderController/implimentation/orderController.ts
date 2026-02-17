@@ -154,4 +154,34 @@ export class OrderController implements IOrderController {
       throw new AppError(error.messsage);
     }
   }
+
+  assignOrder = async(req: Request, res: Response): Promise<Response>=> {
+    try {
+       const { orderId} = req.params;
+       const {staffId }= req.body
+       let result = await this._orderService.assignOrder(orderId as string,staffId as string)
+       if(result.success){
+         return res.status(HttpStatus.OK).json({success:true,messag:MESSAGES.ASSIGN_STAFF_SUCCESS})
+       }else{
+         return res.status(HttpStatus.BAD_REQUEST).json({success:false,message:MESSAGES.ASSIGN_STAFF_FAILED})
+       }
+    } catch (error:any) {
+       throw new AppError(error.message)
+    }
+  }
+
+  updateOrderStatus = async(req: Request, res: Response): Promise<Response>=> {
+    try {
+       const {orderId} = req.params
+       const {status} = req.body
+       const result = await this._orderService.updateOrderStatus(orderId as string,status as string)
+       if(result.success){
+        return res.status(HttpStatus.OK).json({success:true,message:MESSAGES.ORDER_UPDATED_SUCCESSFULL})
+       }else{
+        return res.status(HttpStatus.BAD_REQUEST).json({success:false,message:MESSAGES.ORDER_UPDATED_FAILED})
+       }
+    } catch (error:any) {
+       throw new AppError(error.message)
+    }
+  }
 }

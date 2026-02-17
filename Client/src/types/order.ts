@@ -47,7 +47,7 @@ export interface IUserOrder {
   currency: "INR";
 
   orderStatus: OrderStatus;
-
+  assignedByStaffId?:string;
   createdAt: string; // ISO Date
   updatedAt: string; // ISO Date
 }

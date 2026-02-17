@@ -32,11 +32,6 @@ const OrderItemSchema = new Schema(
       required: true,
       min: 1,
     },
-    // variant: {
-    //   category: String,
-    //   option: String,
-    //   price: Number,
-    // },
     variant: {
       _id: {
         type: Schema.Types.ObjectId,

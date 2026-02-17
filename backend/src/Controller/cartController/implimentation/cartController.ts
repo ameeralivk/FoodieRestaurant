@@ -120,7 +120,6 @@ export class CartController implements ICartController {
   addInstruction = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { cartId, userId, cartItemId, instruction, variant } = req.body;
-      console.log(variant,'vari')
       if (!cartId || !cartItemId) {
         return res.status(HttpStatus.BAD_REQUEST).json({
           success: false,
@@ -143,4 +142,5 @@ export class CartController implements ICartController {
       throw new AppError(error.message);
     }
   };
+
 }

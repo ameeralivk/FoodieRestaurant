@@ -87,3 +87,7 @@ export const getAssignedItems = (
 ): Promise<AssignedItemsResponse> => {
   return apiRequest("GET", `/staff/getAssignedItems/${restaurentId}/${chefId}`);
 };
+
+export const assignOrder =(orderId:string,staffId:string):Promise<{success:boolean,message:string}>=>{
+  return apiRequest("PATCH",`/staff/assignOrder/${orderId}`,{staffId:staffId})
+}

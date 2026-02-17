@@ -205,4 +205,18 @@ export class OrderRepository
   ): Promise<IUserOrderDocument[] | null> {
     return await this.model.find({ restaurantId: restaurantId });
   }
+
+
+  async assignOrder(orderId: string, staffId: string): Promise<IUserOrderDocument | null> {
+     return await this.model.findOneAndUpdate(
+    { orderId: orderId },
+    { $set: { assignedByStaffId: new Types.ObjectId(staffId) ,orderStatus:"ASSIGNED"} },
+    { new: true }
+  );
+  }
+
+  async updateOrder(orderId: string, status: string): Promise<IUserOrderDocument | null> {
+
+    return await this.model.findOneAndUpdate({orderId:orderId},{orderStatus:status})
+  }
 }

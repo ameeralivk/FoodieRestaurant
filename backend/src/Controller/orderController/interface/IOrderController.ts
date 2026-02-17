@@ -7,4 +7,6 @@ export interface IOrderController {
   updateItemStatus(req: Request, res: Response): Promise<Response>;
   assignChefToItem(req:Request,res:Response):Promise<Response>;
   getAssignedItems(req:Request,res:Response):Promise<Response>
+  assignOrder(req:Request,res:Response):Promise<Response>
+  updateOrderStatus(req:Request,res:Response):Promise<Response>
 }

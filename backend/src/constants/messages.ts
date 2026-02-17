@@ -124,5 +124,13 @@ export const MESSAGES = {
   ITEMID_NOT_FOUND:"Item ID is Not Found",
   CHEFFID_NOT_FOUND:"Chef ID is Not Found",
   CHEFID_ASSIGNED_SUCCESS:"Cheff id assigned",
-  CHEFID_ASSIGNED_FAILED:"Cheff id assigned Failed"
+  CHEFID_ASSIGNED_FAILED:"Cheff id assigned Failed",
+  ASSIGN_STAFF_SUCCESS:"Staff Assigning is Completed",
+  ASSIGN_STAFF_FAILED:"Staff Assigning Failed",
+  RESTAURENT_ID_NOTFOUND:"RestaurentId Not Found",
+  STAFF_ID_NOTFOUND:"StaffId Not Found",
+  ORDER_NOT_FOUND:"Order Not Found",
+  ORDER_ID_NOT_FOUND:"Order id Not Found",
+  ORDER_UPDATED_SUCCESSFULL:"Order updated Successfully",
+  ORDER_UPDATED_FAILED:"Order updated Failed"
 };

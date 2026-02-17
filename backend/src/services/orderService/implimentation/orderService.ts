@@ -241,4 +241,31 @@ export class OrderService implements IOrderService {
 
     return { success: true, data: assignedItems };
   }
+
+  async assignOrder(orderId: string, staffId: string): Promise<{ success:boolean; message: string; }> {
+    if(!orderId){
+      return {success:false,message:MESSAGES.ORDERID_NOT_FOUND}
+    }
+    if(!staffId){
+      return {success:false,message:MESSAGES.STAFF_ID_NOTFOUND}
+    }
+    let result = await this._orderRepo.assignOrder(orderId,staffId)
+
+    if(result){
+      return {success:true,message:"staff Assigning Completed"}
+    }else{
+      return {success:false,message:"staff Assiging Failed"}
+    }
+  }
+
+  async updateOrderStatus(orderId: string, status: string): Promise<{ success: boolean; message: string; }> {
+     let order = await this._orderRepo.getOrder(orderId)
+     if(!order) return {success:false,message:MESSAGES.ORDER_NOT_FOUND}
+     let result =await this._orderRepo.updateOrder(orderId,status)
+     if(result){
+      return {success:true,message:MESSAGES.ORDER_UPDATED_SUCCESSFULL}
+     }else{
+      return {success:false,message:MESSAGES.ORDER_UPDATED_FAILED}
+     }
+  }
 }

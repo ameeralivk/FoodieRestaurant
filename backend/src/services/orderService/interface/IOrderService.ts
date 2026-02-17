@@ -35,7 +35,15 @@ export interface IOrderService {
     varient?:string
   ): Promise<{ success: boolean; message: string }>;
   getAssignedItems(
-    restaurantId: string,
+    orderId: string,
     chefId: string,
   ): Promise<AssignedItemsResponse>;
+   assignOrder(
+    orderId:string,
+    staffId:string
+  ):Promise<{success:boolean,message:string}>
+  updateOrderStatus(
+    orderId:string,
+    status:string
+  ):Promise<{success:boolean,message:string}>
 }

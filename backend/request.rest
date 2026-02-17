@@ -126,8 +126,29 @@
 # }
 
 
-GET http://localhost:3000/api/staff/getAssignedItems/692ea36738a54f8d01ed6747/698dbb06bcc74a177f8719f0
+# GET http://localhost:3000/api/staff/getAssignedItems/692ea36738a54f8d01ed6747/698dbb06bcc74a177f8719f0
+# Content-Type: application/json
+
+
+### Assign Order to Staff
+# PATCH http://localhost:3000/api/staff/assignOrder/ORD-20260216-LDN9O5
+# Content-Type: application/json
+
+# {
+#   "staffId": "65f1a2b3c4d5e6f7890a1b2c"
+# }
+
+
+### Update order status
+PATCH http://localhost:3000/api/staff/order/updatestatus/ORD-20260217-AJ9JSP
 Content-Type: application/json
+
+{
+  "status": "SERVED"
+}
+
+
+
 
 
 

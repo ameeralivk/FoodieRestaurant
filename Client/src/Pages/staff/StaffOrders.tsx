@@ -2,11 +2,8 @@ import SidebarLayout from "../../Components/Layouts/Admin/SidebarLayout";
 import { motion } from "framer-motion";
 import staffmenu from "../../Components/Elements/Reusable/StaffMenuItems";
 import StaffNavbar from "../../Components/Layouts/Staff/StaffNavbar";
-import StaffAvaileble from "../../Components/Component/Staff/StaffAvailableOrders.";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../redux/store/store";
-const Dashboard = () => {
-  const role = useSelector((state: RootState) => state.userAuth.user?.role);
+import StaffSelectedOrders from "../../Components/Component/Staff/StaffSelectedOrderPage";
+const StaffOrders = () => {
   return (
     <div>
       <motion.div
@@ -15,12 +12,12 @@ const Dashboard = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <StaffNavbar />
-        <SidebarLayout theme="light" menuItems={staffmenu} active="Dashboard">
-          <StaffAvaileble />
+        <SidebarLayout theme="light" menuItems={staffmenu} active="My orders">
+          <StaffSelectedOrders />
         </SidebarLayout>
       </motion.div>
     </div>
   );
 };
 
-export default Dashboard;
+export default StaffOrders;

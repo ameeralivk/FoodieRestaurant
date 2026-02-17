@@ -45,7 +45,6 @@ export class UserRepository
     data: { name: string; phone: string; email?: string }
   ): Promise<IUser | null> {
     let result;
-    console.log(data.email,userId,'===============')
     if (data.email) {
       result = {
         Name: data.name,
