@@ -57,11 +57,7 @@ const StaffDashboard: React.FC = () => {
   useEffect(() => {
     if (data?.data) {
       const ready = data.data.filter((o) =>
-        o.items.every(
-          (i) =>
-            (i.itemStatus === "READY" || i.itemStatus === "ASSIGNED") &&
-            o.orderStatus !== "ASSIGNED",
-        ),
+        o.items.every((i) => o.orderStatus === "READY"),
       );
 
       setReadyOrders(ready);
@@ -118,6 +114,7 @@ const StaffDashboard: React.FC = () => {
 
   return (
     <div className="p-6">
+
       <ToastContainer />
       <h1 className="text-2xl font-bold mb-4">Staff Dashboard</h1>
 

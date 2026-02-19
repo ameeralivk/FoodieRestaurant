@@ -6,4 +6,6 @@ export interface IStaffController{
     deleteStaff(req:Request,res:Response):Promise<Response>
     changeStatus(req:Request,res:Response):Promise<Response>
     getAllStaff(req:Request,res:Response):Promise<Response>
+    changePassword(req:Request,res:Response):Promise<Response>
+    getStaff(req:Request,res:Response):Promise<Response>
 }

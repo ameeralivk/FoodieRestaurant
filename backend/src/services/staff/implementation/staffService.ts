@@ -2,13 +2,10 @@ import { injectable, inject } from "inversify";
 import { IStaffRepository } from "../../../Repositories/staff/interface/IStaffRepository";
 import { IStaffService } from "../interface/IStaffService";
 import { TYPES } from "../../../DI/types";
-import { StaffResponseDTO } from "../../../types/staff";
+import { IStaff, StaffResponseDTO } from "../../../types/staff";
 import { Request } from "express";
-import bcrypt from "bcrypt"
-import {
-  EditIStaff,
-  RequestIStaff,
-} from "../../../types/staff";
+import bcrypt from "bcrypt";
+import { EditIStaff, RequestIStaff } from "../../../types/staff";
 import { MESSAGES } from "../../../constants/messages";
 import { generateRandomPassword } from "../../../helpers/staff/generateRandonPass";
 import { sendStaffAccountEmail } from "../../../helpers/sentOtp";
@@ -19,16 +16,15 @@ import HttpStatus from "../../../constants/htttpStatusCode";
 
 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10);
 
-
 @injectable()
 export class StaffService implements IStaffService {
   constructor(
     @inject(TYPES.staffRepository) private _staffRepo: IStaffRepository,
   ) {}
-  
+
   async addStaff(
     req: Request,
-    data: RequestIStaff
+    data: RequestIStaff,
   ): Promise<{ success: boolean; message: string }> {
     const validate = StaffRequestSchema.safeParse(data);
     if (!validate.success) {
@@ -45,26 +41,26 @@ export class StaffService implements IStaffService {
       data.email,
       data.staffName,
       password,
-      "foodieRestaurent"
+      "foodieRestaurent",
     );
-     const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const restaurantId = req.activePlan.restaurentId;
-    const limit = req.activePlan.planSnapshot.noOfStaff
+    const limit = req.activePlan.planSnapshot.noOfStaff;
     const totalstaff = await this._staffRepo.getAllByRestaurantId(restaurantId);
     const totalStaffCount = totalstaff.data.length;
     if (totalStaffCount === limit) {
-      delete req.activePlan
+      delete req.activePlan;
       throw new AppError(
-        "You have reached the maximum staff limit for your current plan."
+        "You have reached the maximum staff limit for your current plan.",
       );
     }
-    delete req.activePlan
+    delete req.activePlan;
     const res = await this._staffRepo.addStaff({
       restaurantId: data.restaurantId,
       staffName: data.staffName,
       email: data.email,
       role,
-      password:hashedPassword,
+      password: hashedPassword,
     });
     if (res.success) {
       return { success: true, message: MESSAGES.STAFF_ADDED_SUCCESS };
@@ -73,7 +69,7 @@ export class StaffService implements IStaffService {
     }
   }
   async editStaff(
-    data: EditIStaff
+    data: EditIStaff,
   ): Promise<{ success: boolean; message: string }> {
     const { staffId, ...updateData } = data;
     const updatedStaff = await this._staffRepo.editStaff(staffId, updateData);
@@ -84,7 +80,7 @@ export class StaffService implements IStaffService {
   }
 
   async deleteStaff(
-    staffId: string
+    staffId: string,
   ): Promise<{ success: boolean; message: string }> {
     const deletedStaff = await this._staffRepo.deleteStaff(staffId);
     if (!deletedStaff) {
@@ -95,7 +91,7 @@ export class StaffService implements IStaffService {
 
   async changeStaffStatus(
     staffId: string,
-    status: boolean
+    status: boolean,
   ): Promise<{ success: boolean; message: string }> {
     const staff = await this._staffRepo.changeStatus(staffId, status);
 
@@ -109,7 +105,7 @@ export class StaffService implements IStaffService {
     restaurantId: string,
     page: number,
     limit: number,
-    search:string,
+    search: string,
   ): Promise<{ data: StaffResponseDTO[]; total: number }> {
     if (!restaurantId) {
       throw new AppError("Restaurant ID is required", 400);
@@ -118,11 +114,51 @@ export class StaffService implements IStaffService {
       restaurantId,
       page,
       limit,
-      search
+      search,
     );
     return {
       total: res.total,
       data: res.data.map(mapStaffToDTO),
     };
   }
-}
+
+  async changePassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<{ success: boolean; message: string }> {
+   const user = await this._staffRepo.findById(userId);
+       if (!user) {
+         return { success: false, message: MESSAGES.USER_NOT_FOUND };
+       }
+       const isPasswordMatch = await bcrypt.compare(
+         oldPassword,
+         user.password
+       );
+       if (!isPasswordMatch) {
+         return { success: false, message: MESSAGES.INVALID_CURRENT_PASSWORD };
+       }
+       const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+       console.log(hashedPassword,'hash')
+       await this._staffRepo.updatePassword(userId, hashedPassword);
+       return {
+         success: true,
+         message: MESSAGES.PASSWORD_CHANGED_SUCCESS,
+       };
+     }
+
+     async getStaff(staffId: string): Promise<{ success: boolean; data: StaffResponseDTO | []; }> {
+         if(!staffId){
+          return {success:false,data:[]}
+         }
+         let result =await this._staffRepo.findById(staffId)
+         if(!result) return {success:false,data:[]}
+         const dtoData = mapStaffToDTO(result)
+         if(result){
+          return {success:true,data:dtoData}
+         }else{
+          return {success:false,data:[]}
+         }
+     }
+  }
+

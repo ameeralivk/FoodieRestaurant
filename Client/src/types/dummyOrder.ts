@@ -1,6 +1,6 @@
 // src/types/order.ts
 
-export type ItemStatus = 'PENDING' | 'PREPARING' | 'READY'|"ASSIGNED";
+export type ItemStatus = 'PENDING' | 'PREPARING' | 'READY'|"ASSIGNED"|"SERVING";
 
 export interface OrderItem {
   id: string;

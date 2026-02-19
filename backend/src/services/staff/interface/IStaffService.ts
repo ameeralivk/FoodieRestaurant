@@ -20,4 +20,6 @@ export interface IStaffService {
     limit: number,
     search:string,
   ): Promise<{ data: StaffResponseDTO[],total:number }>;
+  changePassword(userId:string,oldPassword:string,newPassword:string):Promise<{success:boolean,message:string}>
+  getStaff(staffId:string):Promise<{success:boolean,data:StaffResponseDTO|[]}>
 }

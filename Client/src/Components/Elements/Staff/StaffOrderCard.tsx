@@ -34,6 +34,7 @@ const ItemStatusBadge: React.FC<{ status: OrderItemStatus }> = ({ status }) => {
     ASSIGNED: "bg-blue-100 text-blue-700 border border-blue-300",
     PREPARING: "bg-amber-100 text-amber-700 border border-amber-300",
     READY: "bg-emerald-100 text-emerald-700 border border-emerald-300",
+    SERVING: "bg-orange-100 text-orange-700 border border-orange-300",
   };
 
   return (
@@ -46,10 +47,10 @@ const ItemStatusBadge: React.FC<{ status: OrderItemStatus }> = ({ status }) => {
 type Props = {
   order: IUserOrder;
   onAssign?: () => void;
-  onServing?:()=>void
+  onServing?: () => void;
 };
 
-const StaffOrderCard: React.FC<Props> = ({ order, onAssign ,onServing }) => {
+const StaffOrderCard: React.FC<Props> = ({ order, onAssign, onServing }) => {
   // const isAssignedToMe = order.assignedStaff?.id === currentStaff.id;
 
   return (
@@ -135,6 +136,42 @@ const StaffOrderCard: React.FC<Props> = ({ order, onAssign ,onServing }) => {
     "
         >
           Assign to Me
+        </button>
+      )}
+
+      {order.orderStatus === "SERVING" && (
+        <button
+          onClick={onServing}
+          className="
+      w-full
+      bg-blue-600
+      hover:bg-blue-700
+      text-white
+      font-semibold
+      py-2
+      rounded-lg
+      transition-colors
+    "
+        >
+          Mark as Served
+        </button>
+      )}
+
+      {order.orderStatus === "SERVED" && (
+        <button
+          onClick={onServing} // or a separate handler like onComplete
+          className="
+      w-full
+      bg-green-600
+      hover:bg-green-700
+      text-white
+      font-semibold
+      py-2
+      rounded-lg
+      transition-colors
+    "
+        >
+          SERVED
         </button>
       )}
 

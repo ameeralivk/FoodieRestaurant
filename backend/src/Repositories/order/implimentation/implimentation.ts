@@ -25,6 +25,7 @@ export class OrderRepository
         price: item.price,
         quantity: item.quantity,
         assignedCookId: null,
+        preparationTime:item.preparationTime?item.preparationTime:null,
         variant: unwrapVariant(item.variant) ?? null,
         itemStatus: "PENDING" as const,
         instraction: item.instraction,

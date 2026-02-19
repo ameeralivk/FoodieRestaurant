@@ -9,7 +9,7 @@ import HttpStatus from "../../../constants/htttpStatusCode";
 @injectable()
 export class StaffController implements IStaffController {
   constructor(
-    @inject(TYPES.staffService) private _staffService: IStaffService
+    @inject(TYPES.staffService) private _staffService: IStaffService,
   ) {}
 
   addStaff = async (req: Request, res: Response): Promise<Response> => {
@@ -82,7 +82,7 @@ export class StaffController implements IStaffController {
         restaurantId,
         page,
         limit,
-        search
+        search,
       );
 
       return res.status(200).json({
@@ -90,6 +90,86 @@ export class StaffController implements IStaffController {
         message: "Staff fetched successfully",
         ...staff,
       });
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
+
+  // changePassword = async (req: Request, res: Response): Promise<Response> => {
+  //   try {
+  //     const userId = (req as any).user?.id;
+  //     const { oldPassword, newPassword } = req.body;
+  //     let result = await this._staffService.changePassword(
+  //       userId,
+  //       oldPassword,
+  //       newPassword,
+  //     );
+  //     console.log(result,'resulst is her')
+  //     if (result.success) {
+  //       return res
+  //         .status(HttpStatus.OK)
+  //         .json({ success: true, message: "Password Changed Successfully" });
+  //     }
+  //     return res
+  //       .status(HttpStatus.BAD_REQUEST)
+  //       .json({ success: false, message: result.message });
+  //   } catch (error: any) {
+  //     throw new AppError(error.message);
+  //   }
+  // };
+
+  changePassword = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const userId = (req as any).user?.id; // use _id if that's your DB field
+      const { oldPassword, newPassword } = req.body;
+
+      if (!userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ success: false, message: "User not authenticated" });
+      }
+
+      const result = await this._staffService.changePassword(
+        userId,
+        oldPassword,
+        newPassword,
+      );
+
+      console.log(result, "result is here");
+
+      if (result.success) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, message: "Password Changed Successfully" });
+      }
+
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({
+          success: false,
+          message: result.message || "Password incorrect",
+        });
+    } catch (error: any) {
+      console.error("Error in changePassword:", error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ success: false, message: "Password changing failed" });
+    }
+  };
+
+  getStaff = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { staffId } = req.params;
+      let result = await this._staffService.getStaff(staffId as string);
+      if (result.success) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, data: result.data });
+      } else {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ success: false, data: [] });
+      }
     } catch (error: any) {
       throw new AppError(error.message);
     }

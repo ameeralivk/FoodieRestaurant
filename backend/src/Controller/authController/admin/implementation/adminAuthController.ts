@@ -14,12 +14,13 @@ const refreshTokenMaxAge =
 @injectable()
 export class AdminAuthController implements IAdminAuthController {
   constructor(
-    @inject(TYPES.AdminAuthService) private _adminauthService: IAdminAuthService
+    @inject(TYPES.AdminAuthService)
+    private _adminauthService: IAdminAuthService,
   ) {}
   register = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<Response | void> => {
     try {
       const parsed = registerSchema.safeParse(req.body);
@@ -32,7 +33,7 @@ export class AdminAuthController implements IAdminAuthController {
         restaurantName,
         email,
         password,
-        role
+        role,
       );
       if (message.success) {
         return res.status(HttpStatus.OK).json({ message });
@@ -48,7 +49,7 @@ export class AdminAuthController implements IAdminAuthController {
   verifyOtp = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<Response | void> => {
     try {
       const { email, otp } = req.body;
@@ -68,7 +69,7 @@ export class AdminAuthController implements IAdminAuthController {
   resendOtp = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<Response | void> => {
     try {
       const { email } = req.body;
@@ -77,12 +78,11 @@ export class AdminAuthController implements IAdminAuthController {
       if (!email || !emailRegex.test(email)) {
         throw new AppError(
           "Email Format are not Correct",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
-      const { message, success } = await this._adminauthService.resendOtp(
-        email
-      );
+      const { message, success } =
+        await this._adminauthService.resendOtp(email);
       if (success) {
         return res.status(HttpStatus.OK).json({
           success: true,
@@ -129,7 +129,6 @@ export class AdminAuthController implements IAdminAuthController {
   refreshToken = async (req: Request, res: Response) => {
     try {
       const refreshToken = req.cookies?.refresh_token;
-
       if (!refreshToken) {
         throw {
           status: HttpStatus.UNAUTHORIZED,
@@ -137,9 +136,9 @@ export class AdminAuthController implements IAdminAuthController {
         };
       }
 
-      const { newAccessToken } = await this._adminauthService.refreshToken(
-        refreshToken
-      );
+      const { newAccessToken } =
+        await this._adminauthService.refreshToken(refreshToken);
+      console.log(newAccessToken, "tocknfdlasfjdkasj");
       res.cookie("access_token", newAccessToken, {
         httpOnly: true,
         secure: false,
@@ -224,7 +223,7 @@ export class AdminAuthController implements IAdminAuthController {
       let response = await this._adminauthService.updatePassword(
         token,
         newPassword,
-        email
+        email,
       );
       if (response.success) {
         return res
@@ -242,7 +241,7 @@ export class AdminAuthController implements IAdminAuthController {
 
   registerRestaurant = async (
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response> => {
     try {
       const {
@@ -267,8 +266,8 @@ export class AdminAuthController implements IAdminAuthController {
       const proofDocumentKey = files?.proofDocument?.[0]?.key;
 
       // Construct public URLs directly
-      const restaurantPhoto = getS3PublicUrl(restaurantPhotoKey)
-      const proofDocument = getS3PublicUrl(proofDocumentKey)
+      const restaurantPhoto = getS3PublicUrl(restaurantPhotoKey);
+      const proofDocument = getS3PublicUrl(proofDocumentKey);
       const response = await this._adminauthService.registerRestaurant({
         email,
         restaurantName,
@@ -323,7 +322,7 @@ export class AdminAuthController implements IAdminAuthController {
       }
       const updatedAdmin = await this._adminauthService.updateDocument(
         adminId,
-        file
+        file,
       );
       return res.status(200).json({
         success: true,

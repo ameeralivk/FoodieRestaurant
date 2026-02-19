@@ -85,6 +85,7 @@
 
 import { ChefHat, LogOut, Bell } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { playSound } from "../../../utils/PlaySound";
 import { useNavigate } from "react-router-dom";
 import { showConfirm } from "../../Elements/ConfirmationSwall";
 import Swal from "sweetalert2";
@@ -121,8 +122,47 @@ const Navbar = ({
     localStorage.setItem("notifications", JSON.stringify(notifications));
   }, [notifications]);
 
+  // useEffect(() => {
+  //   if (!user?.restaurantId || !user?._id) return;
+
+  //   Socket.connect();
+
+  //   Socket.emit("join-restaurant", {
+  //     restaurantId: user.restaurantId,
+  //     role: "user",
+  //     userId: user._id,
+  //   });
+
+  //   Socket.on("order:itemUpdated", (data) => {
+  //     setNotifications((prev) => [
+  //       {
+  //         id: Date.now(),
+  //         message: `Order ${data.orderId} item updated`,
+  //         orderId: data.orderId,
+  //       },
+  //       ...prev,
+  //     ]);
+  //   });
+
+  //   Socket.on("order:completed", (data) => {
+  //     setNotifications((prev) => [
+  //       {
+  //         id: Date.now(),
+  //         message: `Order ${data.orderId} completed`,
+  //         orderId: data.orderId,
+  //       },
+  //       ...prev,
+  //     ]);
+  //   });
+
+  //   return () => {
+  //     Socket.off("order:itemUpdated");
+  //     Socket.off("order:completed");
+  //   };
+  // }, [user]);
+
   useEffect(() => {
-    if (!user?.restaurantId || !user?._id) return;
+    if (!user?._id || !user?.restaurantId) return;
 
     Socket.connect();
 
@@ -132,38 +172,40 @@ const Navbar = ({
       userId: user._id,
     });
 
-    Socket.on("order:itemUpdated", (data) => {
-      setNotifications((prev) => [
-        {
-          id: Date.now(),
-          message: `Order ${data.orderId} item updated`,
-          orderId: data.orderId,
-        },
-        ...prev,
-      ]);
-    });
+    const events = [
+      "order:itemUpdated",
+      "order:assigned",
+      "order:statusUpdated",
+      "order:completed",
+    ];
 
-    Socket.on("order:completed", (data) => {
-      setNotifications((prev) => [
-        {
-          id: Date.now(),
-          message: `Order ${data.orderId} completed`,
-          orderId: data.orderId,
-        },
-        ...prev,
-      ]);
+    // ✅ Remove old listeners first
+    events.forEach((event) => Socket.off(event));
+
+    // ✅ Add fresh listeners
+    events.forEach((event) => {
+      Socket.on(event, (data) => {
+        playSound();
+
+        setNotifications((prev) => [
+          {
+            id: Date.now(),
+            message: data.message || `Order ${data.orderId} updated`,
+            orderId: data.orderId,
+          },
+          ...prev,
+        ]);
+      });
     });
 
     return () => {
-      Socket.off("order:itemUpdated");
-      Socket.off("order:completed");
+      events.forEach((event) => Socket.off(event));
     };
-  }, [user]);
+  }, [user?._id, user?.restaurantId]);
 
   const removeNotification = (id: number) => {
-  setNotifications((prev) => prev.filter((n) => n._id !== id));
-};
-
+    setNotifications((prev) => prev.filter((n) => n._id !== id));
+  };
 
   const handleLogout = async () => {
     const confirmed = await showConfirm(
@@ -253,11 +295,10 @@ const Navbar = ({
                   notifications.map((n) => (
                     <div
                       key={n.id}
-                      onClick={() =>{
-                         navigate(`/user/order/${n.orderId}`)
-                         removeNotification(n._id)
-                        }
-                        }
+                      onClick={() => {
+                        navigate(`/user/order/${n.orderId}`);
+                        removeNotification(n._id);
+                      }}
                       className="p-3 hover:bg-gray-100 cursor-pointer border-b text-sm"
                     >
                       {n.message}

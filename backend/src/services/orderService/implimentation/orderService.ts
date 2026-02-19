@@ -100,10 +100,16 @@ export class OrderService implements IOrderService {
     orderId: string,
     itemId: string,
     status: "PENDING" | "PREPARING" | "READY",
-    variant:string
+    variant: string,
   ): Promise<{ sucess: boolean; updatedOrder: IUserOrderDocument[] | [] }> {
-    let res = await this._orderRepo.updateItem(orderId, itemId, status,variant);
+    let res = await this._orderRepo.updateItem(
+      orderId,
+      itemId,
+      status,
+      variant,
+    );
     let order = await this._orderRepo.getOrder(orderId);
+    const item = order?.items.find((i) => i.itemId.toString() === itemId);
     if (res) {
       let AllOrderReady = order?.items.every((o) => o.itemStatus === "READY");
       let AnyPreparing = order?.items.some((o) => o.itemStatus === "PREPARING");
@@ -118,7 +124,7 @@ export class OrderService implements IOrderService {
           itemId,
           orderStatus: status,
           order,
-          message: `Your order item ${itemId} is now ${status}`,
+          message: `Your order item ${item?.itemName} is now ${status}`,
         });
       }
       if (AllOrderReady || AnyPreparing) {
@@ -138,15 +144,13 @@ export class OrderService implements IOrderService {
 
         if (order?.userId) {
           const userRoom = `${order.userId.toString()}-user`;
-
           console.log("📤 Emitting to:", userRoom);
-
           io.to(userRoom).emit("order:itemUpdated", {
             orderId,
             itemId,
             orderStatus: status,
             order: updatedOrder,
-            message: `Your order item ${itemId} is now ${status}`,
+            message: `Your order item ${item?.itemName} is now ${status}`,
           });
         }
 
@@ -162,7 +166,7 @@ export class OrderService implements IOrderService {
     orderId: string,
     itemId: string,
     chefId: string,
-    varient?:string
+    varient?: string,
   ): Promise<{ success: boolean; message: string }> {
     if (!orderId) {
       return { success: false, message: MESSAGES.ORDERID_NOT_FOUND };
@@ -171,8 +175,14 @@ export class OrderService implements IOrderService {
     } else if (!chefId) {
       return { success: false, message: MESSAGES.CHEFFID_NOT_FOUND };
     }
-    let res = await this._orderRepo.assignChefToItem(orderId, itemId, chefId,varient);
+    let res = await this._orderRepo.assignChefToItem(
+      orderId,
+      itemId,
+      chefId,
+      varient,
+    );
     let order = await this._orderRepo.getOrder(orderId);
+    const item = order?.items.find((i)=>i.itemId.toString() === itemId )
     let IsAllItemAssigned = order?.items.every(
       (i) => i.itemStatus === "ASSIGNED",
     );
@@ -188,7 +198,7 @@ export class OrderService implements IOrderService {
           itemId,
           orderStatus: "ASSIGNED",
           order: order,
-          message: `Your order item ${itemId} is now ASSIGNED`,
+          message: `Your order item ${item?.itemName} is now ASSIGNED`,
         });
       }
 
@@ -242,30 +252,59 @@ export class OrderService implements IOrderService {
     return { success: true, data: assignedItems };
   }
 
-  async assignOrder(orderId: string, staffId: string): Promise<{ success:boolean; message: string; }> {
-    if(!orderId){
-      return {success:false,message:MESSAGES.ORDERID_NOT_FOUND}
+  async assignOrder(
+    orderId: string,
+    staffId: string,
+  ): Promise<{ success: boolean; message: string }> {
+    if (!orderId) {
+      return { success: false, message: MESSAGES.ORDERID_NOT_FOUND };
     }
-    if(!staffId){
-      return {success:false,message:MESSAGES.STAFF_ID_NOTFOUND}
+    if (!staffId) {
+      return { success: false, message: MESSAGES.STAFF_ID_NOTFOUND };
     }
-    let result = await this._orderRepo.assignOrder(orderId,staffId)
+    let result = await this._orderRepo.assignOrder(orderId, staffId);
 
-    if(result){
-      return {success:true,message:"staff Assigning Completed"}
-    }else{
-      return {success:false,message:"staff Assiging Failed"}
+    if (result) {
+      const io = getIO();
+      const order = await this._orderRepo.getOrder(orderId);
+      if (order?.userId) {
+        const userRoom = `${order?.userId.toString()}-user`;
+        console.log("📤 Emitting to:", userRoom);
+        io.to(userRoom).emit("order:assigned", {
+          orderId,
+          staffId,
+          orderStatus: "ASSIGNED",
+          message: `Your order ${orderId} has been assigned to staff.`,
+        });
+      }
+      return { success: true, message: "staff Assigning Completed" };
+    } else {
+      return { success: false, message: "staff Assiging Failed" };
     }
   }
 
-  async updateOrderStatus(orderId: string, status: string): Promise<{ success: boolean; message: string; }> {
-     let order = await this._orderRepo.getOrder(orderId)
-     if(!order) return {success:false,message:MESSAGES.ORDER_NOT_FOUND}
-     let result =await this._orderRepo.updateOrder(orderId,status)
-     if(result){
-      return {success:true,message:MESSAGES.ORDER_UPDATED_SUCCESSFULL}
-     }else{
-      return {success:false,message:MESSAGES.ORDER_UPDATED_FAILED}
-     }
+  async updateOrderStatus(
+    orderId: string,
+    status: string,
+  ): Promise<{ success: boolean; message: string }> {
+    let order = await this._orderRepo.getOrder(orderId);
+    if (!order) return { success: false, message: MESSAGES.ORDER_NOT_FOUND };
+    let result = await this._orderRepo.updateOrder(orderId, status);
+    if (result) {
+      const io = getIO();
+      if (order?.userId) {
+        const userRoom = `${order.userId.toString()}-user`;
+        console.log("📤 Emitting to:", userRoom);
+        io.to(userRoom).emit("order:statusUpdated", {
+          orderId,
+          orderStatus: status,
+          message: `Your order ${orderId} status is now ${status}.`,
+        });
+      }
+
+      return { success: true, message: MESSAGES.ORDER_UPDATED_SUCCESSFULL };
+    } else {
+      return { success: false, message: MESSAGES.ORDER_UPDATED_FAILED };
+    }
   }
 }

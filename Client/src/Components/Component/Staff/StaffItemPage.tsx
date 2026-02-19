@@ -159,14 +159,16 @@ import {
 } from "../../../services/staffService";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../redux/store/store";
-import type { AssignedItem, AssignedItemsResponse } from "../../../types/order";
+import type {
+  AssignedItem,
+  AssignedItemsResponse,
+  IUserOrder,
+} from "../../../types/order";
 import { ToastContainer } from "react-toastify";
 import type { IVarientItemType } from "../../../types/varient";
 import { useEffect, useRef } from "react";
 import Socket from "../../../socket";
-
-
-
+import ChefOrderStats from "../../Elements/Staff/chefOrderState";
 
 export type ItemStatus = "ASSIGNED" | "PREPARING" | "READY" | "PENDING";
 
@@ -183,7 +185,7 @@ interface OrderItem {
   station?: string;
   itemStatus: ItemStatus;
   instruction?: string | null;
-  variant?:IVarientItemType | null;
+  variant?: IVarientItemType | null;
   assignedCookId?: string;
   itemImages?: string[];
   price: number;
@@ -207,41 +209,61 @@ const MyItemsSection: React.FC = () => {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
+  const [ordersData, setOrdersData] = useState<{
+    success: boolean;
+    data: IUserOrder[];
+  } | null>(null);
+
+  const [loading, setLoading] = useState(false);
 
   //   const { data } = useQuery<{ success: boolean; data: MyItem[] }>(
   //     ["orders", userId, currentPage, limit],
   //     () => getTotalOrders(restaurantId as string, "true")
   //   );
 
+  useEffect(() => {
+    if (!userId) return;
 
+    // join cook room
+    Socket.emit("joinRoom", `${userId}-cook`);
 
-useEffect(() => {
-  if (!userId) return;
+    const handleItemAssigned = () => {
+      console.log("🔔 New item assigned");
 
-  // join cook room
-  Socket.emit("joinRoom", `${userId}-cook`);
+      showSuccessToast("New item assigned to you 👨‍🍳");
+    };
 
-  const handleItemAssigned = () => {
-    console.log("🔔 New item assigned");
+    Socket.on("order:itemAssigned", handleItemAssigned);
 
-    showSuccessToast("New item assigned to you 👨‍🍳");
-  };
-
-  Socket.on("order:itemAssigned", handleItemAssigned);
-
-  return () => {
-    Socket.off("order:itemAssigned", handleItemAssigned);
-  };
-
-}, [userId]);
-
-
+    return () => {
+      Socket.off("order:itemAssigned", handleItemAssigned);
+    };
+  }, [userId]);
 
   const { data, refetch } = useQuery<AssignedItemsResponse>({
     queryKey: ["orders", userId, currentPage, limit],
     queryFn: () => getAssignedItems(restaurantId as string, userId as string),
   });
 
+  useEffect(() => {
+    const fetchTotalOrders = async () => {
+      try {
+        setLoading(true);
+
+        const response = await getTotalOrders(restaurantId as string);
+
+        setOrdersData(response);
+      } catch (error) {
+        console.error("Failed to fetch total orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (restaurantId) {
+      fetchTotalOrders();
+    }
+  }, [restaurantId]);
 
   // map API data to your MyItem type (if needed)
   const Items: AssignedItem[] = data?.data || [];
@@ -253,7 +275,12 @@ useEffect(() => {
     varient?: IVarientItemType,
   ) => {
     console.log(varient, "varient is here amere");
-    let result = await updateOrder(orderId, itemId, newStatus, varient?._id.toString());
+    let result = await updateOrder(
+      orderId,
+      itemId,
+      newStatus,
+      varient?._id.toString(),
+    );
     console.log(result, "resule");
     if (result.success) {
       showSuccessToast("order updated Successfully");
@@ -263,9 +290,36 @@ useEffect(() => {
     // Call API to update item status
     setSelectedItem(null);
   };
-  console.log(Items, "id");
+
+  const stats = {
+    // Items not assigned to any cook
+    available:
+      ordersData?.data
+        ?.flatMap((order) => order.items)
+        ?.filter((item) => item.itemStatus === "PENDING")?.length ?? 0,
+
+    // Items assigned to this cook but not started (ASSIGNED)
+    myAssigned:
+      data?.data.filter(
+        (d) => d.item.assignedCookId && d.item.itemStatus === "ASSIGNED",
+      ).length || 0,
+
+    // Items preparing
+    myPreparing:
+      data?.data.filter(
+        (d) => d.item.assignedCookId && d.item.itemStatus === "PREPARING",
+      ).length || 0,
+
+    // Items ready
+    myReady:
+      data?.data.filter(
+        (d) => d.item.assignedCookId && d.item.itemStatus === "READY",
+      ).length || 0,
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-6 pb-8">
+    <div className="max-w-9xl mx-auto px-6 pb-8">
+      <ChefOrderStats stats={stats} />
       <h2 className="text-xl font-bold mb-4">My Items ({Items.length})</h2>
       <ToastContainer />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -302,7 +356,6 @@ useEffect(() => {
           </button>
         ))}
       </div>
-
       {selectedItem && (
         <ChefUpdateItemModal
           tableNo={selectedItem.tableNumber}

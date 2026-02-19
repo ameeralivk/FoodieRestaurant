@@ -1,9 +1,9 @@
-import { Home, Settings, ShoppingCart } from "lucide-react";
+import { Home, Settings, ShoppingCart, UserPenIcon } from "lucide-react";
 
 const staffmenuItems = [
   { name: "Dashboard", icon: Home, path: "/staff/dashboard" },
   { name: "My orders", icon: ShoppingCart, path: "/staff/items" },
-  { name: "Settings", icon: Settings },
+  { name: "Profile", icon: UserPenIcon, path: "/staff/profile" },
 ];
 
 export default staffmenuItems;

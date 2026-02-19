@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Clock, ChefHat, CheckCircle2, X, AlertCircle } from "lucide-react";
-import type { IOrderItem, IUserOrder } from "../../../types/order";
+import type { IOrderItem, IUserOrder, OrderItemStatus } from "../../../types/order";
 
 // =======================
 // TYPES
@@ -28,7 +28,7 @@ interface Props {
   item: IOrderItem;
   tab: "Pending" | "Preparing" | "Completed";
   onClose: () => void;
-  onUpdate: (orderId: string, itemId: string, newStatus: ItemStatus) => void;
+  onUpdate: (orderId: string, itemId: string, newStatus: OrderItemStatus) => void;
 }
 
 // =======================
@@ -41,7 +41,7 @@ const UpdateItemModal: React.FC<Props> = ({
   tab,
   onUpdate,
 }) => {
-  const [selectedStatus, setSelectedStatus] = useState<ItemStatus>(
+  const [selectedStatus, setSelectedStatus] = useState<OrderItemStatus>(
     item.itemStatus,
   );
   //   const [chefName, setChefName] = useState(item.preparedBy || '');

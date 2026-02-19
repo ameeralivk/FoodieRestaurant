@@ -17,4 +17,6 @@ export interface IStaffRepository {
     limit?: number,
     search?:string
   ): Promise<{ data: IStaff[],total:number}>;
+  findById(userId:string):Promise<IStaff|null>
+  updatePassword(userId:string,newPassword:string):Promise<IStaff|null>
 }

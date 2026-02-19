@@ -5,6 +5,7 @@ import type {
   AddStaffResponse,
   IStaffAdd,
   StaffListResponse,
+  StaffResponseDTO,
 } from "../types/staffTypes";
 import type { IVarientItemType } from "../types/varient";
 
@@ -88,6 +89,36 @@ export const getAssignedItems = (
   return apiRequest("GET", `/staff/getAssignedItems/${restaurentId}/${chefId}`);
 };
 
-export const assignOrder =(orderId:string,staffId:string):Promise<{success:boolean,message:string}>=>{
-  return apiRequest("PATCH",`/staff/assignOrder/${orderId}`,{staffId:staffId})
-}
+export const assignOrder = (
+  orderId: string,
+  staffId: string,
+): Promise<{ success: boolean; message: string }> => {
+  return apiRequest("PATCH", `/staff/assignOrder/${orderId}`, {
+    staffId: staffId,
+  });
+};
+
+export const changeOrderStatus = (
+  orderId: string,
+  status: string,
+): Promise<{ success: boolean; message: string }> => {
+  return apiRequest("PATCH", `/staff/order/updatestatus/${orderId}`, {
+    status: status,
+  });
+};
+
+export const getStaff = (
+  staffId: string,
+): Promise<{ success: boolean; data: StaffResponseDTO }> => {
+  return apiRequest("GET", `/staff/getstaff/${staffId}`);
+};
+
+export const changeStaffPassword = async (
+  oldPassword: string,
+  newPassword: string,
+): Promise<{ success: boolean; message: string }> => {
+   return apiRequest("PATCH", `/staff/change-password`, {
+    oldPassword,
+    newPassword,
+  });
+};

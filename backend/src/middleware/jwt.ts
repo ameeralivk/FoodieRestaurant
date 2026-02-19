@@ -67,7 +67,7 @@ export const verifyAccessToken = (
     (req as any).user = decoded;
     const user = ((req as any).user = decoded);
     const role = user.role;
-    if (role === "admin" || role === "superadmin"|| role === "user") {
+    if (role === "admin" || role === "superadmin"|| role === "user" || role === "staff" || role === "chef") {
       next();
     } else {
       res

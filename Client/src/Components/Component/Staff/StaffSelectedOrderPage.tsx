@@ -5,7 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { IUserOrder } from "../../../types/order";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../redux/store/store";
-import { getTotalOrders } from "../../../services/staffService";
+import {
+  changeOrderStatus,
+  getTotalOrders,
+} from "../../../services/staffService";
 import { showSuccessToast } from "../../Elements/SuccessToast";
 import { assignOrder } from "../../../services/staffService";
 import { useEffect } from "react";
@@ -14,6 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Socket from "../../../socket";
 import { ToastContainer } from "react-toastify";
 import { showErrorToast } from "../../Elements/ErrorToast";
+import StaffOrderStats from "../../Elements/Staff/StaffOrderState";
 const StaffSelectedOrders: React.FC = () => {
   const queryClient = useQueryClient();
 
@@ -58,12 +62,13 @@ const StaffSelectedOrders: React.FC = () => {
     if (data?.data) {
       const ready = data.data.filter(
         (o) =>
-          o.assignedByStaffId && o.items.every((i) => i.itemStatus === "READY"),
+          o.assignedByStaffId && o.items.every((i) => i.itemStatus === "READY" && o.orderStatus !="SERVED"),
       );
 
       setReadyOrders(ready);
     }
   }, [data]);
+  
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -94,6 +99,24 @@ const StaffSelectedOrders: React.FC = () => {
     };
   }, [restaurantId, role, userId, currentPage, limit, queryClient]);
 
+  const handleServing = async (orderId: string, status: string) => {
+    try {
+      if (status === "SERVED") return showErrorToast("Order already Served");
+      const result = await changeOrderStatus(
+        orderId,
+        status === "SERVING" ? "SERVED" : "SERVING",
+      );
+      if (result.success) {
+        showSuccessToast("Order Status Changed to Serving");
+        refetch();
+      } else if (!result.success) {
+        showErrorToast("Order Status changing failed");
+      }
+    } catch (error: any) {
+      showErrorToast(error.message);
+    }
+  };
+
   // const readyOrders = data?.data.filter((o) =>
   //   o.items.every((i) => i.itemStatus == "READY"),
   // );
@@ -113,8 +136,17 @@ const StaffSelectedOrders: React.FC = () => {
     }
   };
 
+  const readyOrder = data?.data.filter((o) => o.orderStatus === "READY");
+  const servingOrders = data?.data.filter((o) => o.orderStatus === "SERVING");
+  const completedOrders = data?.data.filter((o) => o.orderStatus === "SERVED");
+
   return (
     <div className="p-6">
+      <StaffOrderStats
+        readyCount={readyOrder?.length || 0}
+        servingCount={servingOrders?.length || 0}
+        completedCount={completedOrders?.length || 0}
+      />
       <ToastContainer />
       <h1 className="text-2xl font-bold mb-4">Staff Dashboard</h1>
 
@@ -123,6 +155,7 @@ const StaffSelectedOrders: React.FC = () => {
           <StaffOrderCard
             key={order.orderId}
             order={order}
+            onServing={() => handleServing(order.orderId, order.orderStatus)}
             onAssign={() => handleAssignOrder(order.orderId)}
           />
         ))}

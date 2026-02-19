@@ -1,18 +1,25 @@
 import type { IVarientItemType } from "./varient";
 
-export type OrderItemStatus = "PENDING" | "PREPARING" | "READY"|"ASSIGNED";
+export type OrderItemStatus =
+  | "PENDING"
+  | "PREPARING"
+  | "READY"
+  | "ASSIGNED"
+  | "SERVING";
 
 export interface IOrderItem {
-  _id?:string;
+  _id: string;
   itemId: string;
   itemName: string;
   price: number;
   itemImages: string[];
   quantity: number;
-  instraction?:string;
-  variant?: {_id:string, category: string,option:string,price:number};
+  instraction?: string;
+  variant?: { _id: string; category: string; option: string; price: number };
   assignedCookId: string | null;
-  createdAt?:string;
+  createdAt?: string;
+  preparationTime?:string;
+  updatedAt?:string;
   itemStatus: OrderItemStatus;
 }
 // export type OrderStatus =
@@ -31,8 +38,8 @@ export type OrderStatus =
   | "IN_KITCHEN"
   | "READY"
   | "SERVED"
+  | "SERVING"
   | "FAILED";
-
 
 export interface IUserOrder {
   _id: string;
@@ -47,7 +54,7 @@ export interface IUserOrder {
   currency: "INR";
 
   orderStatus: OrderStatus;
-  assignedByStaffId?:string;
+  assignedByStaffId?: string;
   createdAt: string; // ISO Date
   updatedAt: string; // ISO Date
 }
@@ -70,7 +77,8 @@ export interface IOrder {
   subTotal: number;
   totalAmount: number;
   orderStatus:
-      "ASSIGNED"
+    | "ASSIGNED"
+    | "SERVING"
     | "PLACED"
     | "CONFIRMED"
     | "PREPARING"
@@ -92,7 +100,7 @@ export interface AssignedItem {
   item: {
     itemId: string;
     itemName: string;
-    itemStatus: "ASSIGNED" | "PREPARING" | "READY"|"PENDING";
+    itemStatus: "ASSIGNED" | "PREPARING" | "READY" | "PENDING";
     quantity: number;
     price: number;
     assignedCookId: string;
@@ -101,23 +109,28 @@ export interface AssignedItem {
     instruction?: string | null;
   };
   tableNumber: string;
-  orderStatus: "ASSIGNED" | "PREPARING" | "READY" | "PLACED" | "SERVED" | "CANCELLED";
+  orderStatus:
+    | "ASSIGNED"
+    | "PREPARING"
+    | "READY"
+    | "PLACED"
+    | "SERVED"
+    | "CANCELLED";
 }
 
 export interface AssignItem {
-    itemId: string;
-    itemName: string;
-    itemStatus: "ASSIGNED" | "PREPARING" | "READY"|"PENDING";
-    quantity: number;
-    price: number;
-    assignedCookId: string;
-    itemImages: string[];
-    variant?: IVarientItemType;
-    instruction?: string | null;
+  itemId: string;
+  itemName: string;
+  itemStatus: "ASSIGNED" | "PREPARING" | "READY" | "PENDING";
+  quantity: number;
+  price: number;
+  assignedCookId: string;
+  itemImages: string[];
+  variant?: IVarientItemType;
+  instruction?: string | null;
 }
 
 export interface AssignedItemsResponse {
   success: boolean;
   data: AssignedItem[];
 }
-

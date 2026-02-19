@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../Components/Layouts/userLayouts/Navbar";
-import { Check, Package, Bell,ChefHat } from "lucide-react";
+import { Check, Package, Bell, ChefHat } from "lucide-react";
 import type { RootState } from "../../redux/store/store";
 import BottomNavBar from "../../Components/user/DownBar";
 import { useSelector } from "react-redux";
@@ -12,6 +12,7 @@ import Socket from "../../socket";
 import type { IGetOrderResponse } from "../../types/order";
 import { useParams } from "react-router-dom";
 import { getOrder } from "../../services/order";
+import CountdownTimer from "../../Components/Component/user/OrderTrackPage/CountdownTimer";
 interface OrderItem {
   id: string;
   name: string;
@@ -55,7 +56,7 @@ const OrderTracking: React.FC = () => {
     queryFn: () => getOrder(orderId as string),
   });
   const order = data?.result;
-
+  console.log(order, "order is her");
   //   useEffect(() => {
   //     if (order) {
   //       setLiveOrder(order);

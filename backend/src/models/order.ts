@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { IUserOrderDocument } from "../types/order";
 import { Types } from "mongoose";
+import { string } from "zod";
 const OrderItemSchema = new Schema(
   {
     itemId: {
@@ -57,6 +58,7 @@ const OrderItemSchema = new Schema(
       enum: ["PENDING", "PREPARING", "READY", "ASSIGNED"],
       default: "PENDING",
     },
+    preparationTime:String,
     instraction: {
       type: String,
       default: null,
@@ -64,7 +66,7 @@ const OrderItemSchema = new Schema(
     assignedAt: Date,
     preparedAt: Date,
   },
-  { _id: false },
+  { _id: false ,timestamps:true },
 );
 
 const UserOrderSchema = new Schema<IUserOrderDocument>(
@@ -116,7 +118,7 @@ const UserOrderSchema = new Schema<IUserOrderDocument>(
 
     orderStatus: {
       type: String,
-      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED", "ASSIGNED"],
+      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED", "ASSIGNED","SERVING"],
       default: "PLACED",
     },
 

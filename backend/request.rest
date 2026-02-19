@@ -140,12 +140,24 @@
 
 
 ### Update order status
-PATCH http://localhost:3000/api/staff/order/updatestatus/ORD-20260217-AJ9JSP
-Content-Type: application/json
+# PATCH http://localhost:3000/api/staff/order/updatestatus/ORD-20260217-AJ9JSP
+# Content-Type: application/json
 
-{
-  "status": "SERVED"
-}
+# {
+#   "status": "SERVED"
+# }
+
+
+# PATCH http://localhost:3000/api/staff/change-password
+# Content-Type: application/json
+
+# {
+#   "oldPassword": "old123",
+#   "newPassword": "new456"
+# }
+
+GET  http://localhost:3000/api/staff/getstaff/698dbb06bcc74a177f8719f0
+
 
 
 

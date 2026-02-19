@@ -7,6 +7,7 @@ import { MESSAGES } from "../../../constants/messages";
 import bcrypt from "bcrypt"
 import { StaffResponseDTO } from "../../../types/staff";
 import { mapStaffToDTO } from "../../../utils/dto/staffDto";
+import { generateRefreshToken, generateToken } from "../../../middleware/jwt";
 @injectable()
 export class StaffAuthService implements IStaffAuthService{
     constructor(@inject(TYPES.staffRepository) private _staffRepo:IStaffRepository){}
@@ -14,7 +15,7 @@ export class StaffAuthService implements IStaffAuthService{
 async login(
   email: string,
   password: string
-): Promise<{ success: boolean; message: string ; data:StaffResponseDTO}> {
+): Promise<{ success: boolean; message: string ;token:{token:string,refreshToken:string}, data:StaffResponseDTO}> {
 
   const staff = await this._staffRepo.isExist(email); 
   if(staff?.isBlocked){
@@ -27,10 +28,12 @@ async login(
   if (!isPasswordValid) {
     throw new AppError(MESSAGES.PASS_NOT_MATCH);
   }
-  console
+   const token = generateToken(staff._id as string,staff.role);
+   const refreshToken = generateRefreshToken(staff._id as string, staff.role);
   return {
     success: true,
     message: MESSAGES.LOGIN_SUCCESS,
+    token:{token:token,refreshToken:refreshToken},
     data:mapStaffToDTO(staff)
   };
 }

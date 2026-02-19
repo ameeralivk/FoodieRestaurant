@@ -6,6 +6,7 @@ import Items from "../Pages/staff/Items";
 import Dashboard1 from "../Pages/staff/Dashboard1";
 import StaffDashboard from "../Pages/staff/StaffDashboard";
 import StaffOrders from "../Pages/staff/StaffOrders";
+import Profile from "../Pages/staff/StaffProfile";
 const StaffRoutes = () => {
   return (
     <div>
@@ -30,7 +31,8 @@ const StaffRoutes = () => {
           }
         />
         <Route path="/staffdashboard" element={<StaffDashboard />} />
-        <Route path="/stafforders" element={<StaffOrders/>}/>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/stafforders" element={<StaffOrders />} />
       </Routes>
     </div>
   );

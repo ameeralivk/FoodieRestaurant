@@ -18,7 +18,7 @@ import { ToastContainer } from "react-toastify";
 // TYPES
 // ============================================================================
 
-type ItemStatus = "PENDING" | "PREPARING" | "READY";
+type ItemStatus = "PENDING" | "PREPARING" | "READY"|"ASSIGNED"|"SERVING";
 
 interface OrderItem {
   id: string;

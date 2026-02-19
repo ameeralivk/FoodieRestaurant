@@ -57,4 +57,12 @@ export class StaffRepository
     }
     return this.getAll(filter, { page, limit });
   }
+
+  findById(userId: string): Promise<IStaff | null> {
+    return this.model.findById(userId)
+  }
+
+  updatePassword(userId: string, newPassword: string): Promise<IStaff | null> {
+    return this.findByIdAndUpdate(userId,{password:newPassword})
+  }
 }

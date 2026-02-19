@@ -23,6 +23,7 @@ import { AdminDocument } from "../../../models/admin";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../DI/types";
 import { IUserRepository } from "../../../Repositories/user/interface/IUserRepository";
+import { IStaffRepository } from "../../../Repositories/staff/interface/IStaffRepository";
 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10);
 
 @injectable()
@@ -31,14 +32,16 @@ export class AdminAuthService implements IAdminAuthService {
     @inject(TYPES.AdminAuthRepository)
     private _adminAuthRepository: IAdminAuthRepository,
     @inject(TYPES.userRepository)
-    private _userRepo: IUserRepository
+    private _userRepo: IUserRepository,
+    @inject(TYPES.staffRepository)
+    private _staffRepository:IStaffRepository
   ) {}
 
   async register(
     restaurantName: string,
     email: string,
     password: string,
-    role: string
+    role: string,
   ) {
     const existing = await this._adminAuthRepository.findByEmail(email);
     if (existing) {
@@ -88,7 +91,7 @@ export class AdminAuthService implements IAdminAuthService {
     const accesstoken = generateToken(admin?._id as string, admin?.role);
     const refreshToken = generateRefreshToken(
       admin?._id as string,
-      admin?.role
+      admin?.role,
     );
     const mapedAdmin = adminDTO(admin);
     return { mapedAdmin, accesstoken, refreshToken };
@@ -115,7 +118,7 @@ export class AdminAuthService implements IAdminAuthService {
     if (!userDataString) {
       throw new AppError(
         "Admin data expired or not found",
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -127,11 +130,11 @@ export class AdminAuthService implements IAdminAuthService {
     await redisClient.del(redisDataKey);
     const accesstoken = generateToken(
       createdUser.admin._id as string,
-      createdUser.admin?.role
+      createdUser.admin?.role,
     );
     const refreshToken = generateRefreshToken(
       createdUser.admin._id as string,
-      createdUser.admin?.role
+      createdUser.admin?.role,
     );
     return {
       success: true,
@@ -190,7 +193,6 @@ export class AdminAuthService implements IAdminAuthService {
     }
 
     const decoded = verifyRefreshToken(refreshToken);
-
     if (!decoded) {
       throw {
         status: HttpStatus.UNAUTHORIZED,
@@ -237,6 +239,40 @@ export class AdminAuthService implements IAdminAuthService {
       const newAccessToken = generateToken(decoded.id, decoded.role);
       return { newAccessToken };
     }
+    if (decoded.role === "chef") {
+      const staff = await this._staffRepository.findById(decoded.id);
+      if (!staff) {
+        throw {
+          status: HttpStatus.NOT_FOUND,
+          message: MESSAGES.STAFF_NOT_FOUND,
+        };
+      }
+      if (staff.isBlocked) {
+        throw {
+          status: HttpStatus.FORBIDDEN,
+          message: MESSAGES.ACCOUNT_IS_BLOCKED,
+        };
+      }
+      const newAccessToken = generateToken(decoded.id, decoded.role);
+      return { newAccessToken };
+    }
+    if (decoded.role === "staff") {
+      const staff = await this._staffRepository.findById(decoded.id);
+      if (!staff) {
+        throw {
+          status: HttpStatus.NOT_FOUND,
+          message: MESSAGES.STAFF_NOT_FOUND,
+        };
+      }
+      if (staff.isBlocked) {
+        throw {
+          status: HttpStatus.FORBIDDEN,
+          message: MESSAGES.ACCOUNT_IS_BLOCKED,
+        };
+      }
+      const newAccessToken = generateToken(decoded.id, decoded.role);
+      return { newAccessToken };
+    }
 
     throw {
       status: HttpStatus.UNAUTHORIZED,
@@ -245,7 +281,7 @@ export class AdminAuthService implements IAdminAuthService {
   }
 
   createLink = async (
-    email: string
+    email: string,
   ): Promise<{ success: boolean; message: string }> => {
     const admin = await this._adminAuthRepository.findByEmail(email);
     if (!admin) throw new Error(MESSAGES.ADMIN_NOT_FOUND);
@@ -257,7 +293,7 @@ export class AdminAuthService implements IAdminAuthService {
 
   async login(
     email: string,
-    password: string
+    password: string,
   ): Promise<{ mapedAdmin: AdminDTO; token: string; refreshToken: string }> {
     const admin = await this._adminAuthRepository.findByEmail(email);
     if (admin?.isBlocked) {
@@ -281,7 +317,7 @@ export class AdminAuthService implements IAdminAuthService {
   async updatePassword(
     token: string,
     newPassword: string,
-    email: string
+    email: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
       const storedToken = await redisClient.get(`resetPassword:${email}`);
@@ -292,7 +328,7 @@ export class AdminAuthService implements IAdminAuthService {
 
       const admin = await this._adminAuthRepository.updatePasswordByEmail(
         email,
-        hashedPassword
+        hashedPassword,
       );
       if (!admin) {
         return { success: false, message: MESSAGES.ADMIN_NOT_FOUND };
@@ -306,7 +342,7 @@ export class AdminAuthService implements IAdminAuthService {
   }
 
   async registerRestaurant(
-    data: IRestaurantRegisterData
+    data: IRestaurantRegisterData,
   ): Promise<{ success: boolean; message: string }> {
     try {
       let res = await this._adminAuthRepository.findByEmail(data.email);
@@ -316,7 +352,7 @@ export class AdminAuthService implements IAdminAuthService {
       const adminId = res?._id as string;
       let result = await this._adminAuthRepository.registerRestaurent(
         adminId,
-        data
+        data,
       );
 
       return { success: true, message: MESSAGES.RESTAURANT_REGISTER_COMPLETE };
@@ -360,7 +396,7 @@ export class AdminAuthService implements IAdminAuthService {
       // Extract the S3 object key from full URL
       const key = oldKey.replace(
         `https://${bucketName}.s3.${region}.amazonaws.com/`,
-        ""
+        "",
       );
 
       if (key) {
@@ -368,7 +404,7 @@ export class AdminAuthService implements IAdminAuthService {
           new DeleteObjectCommand({
             Bucket: bucketName,
             Key: key,
-          })
+          }),
         );
       }
     }

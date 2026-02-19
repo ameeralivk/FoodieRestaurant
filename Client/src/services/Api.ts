@@ -1,5 +1,3 @@
-
-
 import axios from "axios";
 import { store } from "../redux/store/store";
 import { logoutAction, setAuth } from "../redux/slice/adminSlice";
@@ -9,14 +7,13 @@ const REFRESH_URL = import.meta.env.VITE_BACKEND_REFRESH_URL;
 
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
@@ -24,14 +21,13 @@ api.interceptors.response.use(
         return axios(originalRequest);
       } catch (err) {
         store.dispatch(logoutAction());
-        store.dispatch(setAuth({isAuthenticated:false}))
+        store.dispatch(setAuth({ isAuthenticated: false }));
         return Promise.reject(err);
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
-
