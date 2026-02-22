@@ -383,12 +383,6 @@ const StaffManagementPage = () => {
               type: "text",
               value: currentRow?.email || "",
             },
-            // {
-            //   name: "skills",
-            //   label: "Skills",
-            //   type: "tags",
-            //   value: currentRow?.tags || [],
-            // },
             {
               name: "role",
               label: "role",

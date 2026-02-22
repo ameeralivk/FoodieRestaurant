@@ -95,28 +95,6 @@ export class StaffController implements IStaffController {
     }
   };
 
-  // changePassword = async (req: Request, res: Response): Promise<Response> => {
-  //   try {
-  //     const userId = (req as any).user?.id;
-  //     const { oldPassword, newPassword } = req.body;
-  //     let result = await this._staffService.changePassword(
-  //       userId,
-  //       oldPassword,
-  //       newPassword,
-  //     );
-  //     console.log(result,'resulst is her')
-  //     if (result.success) {
-  //       return res
-  //         .status(HttpStatus.OK)
-  //         .json({ success: true, message: "Password Changed Successfully" });
-  //     }
-  //     return res
-  //       .status(HttpStatus.BAD_REQUEST)
-  //       .json({ success: false, message: result.message });
-  //   } catch (error: any) {
-  //     throw new AppError(error.message);
-  //   }
-  // };
 
   changePassword = async (req: Request, res: Response): Promise<Response> => {
     try {

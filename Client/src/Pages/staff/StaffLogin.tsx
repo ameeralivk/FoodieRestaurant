@@ -26,7 +26,6 @@ const StaffLogin: React.FC = () => {
       try {
         const result = await staffLogin(email, password);
         if (result.success) {
-          console.log(result.data);
           const data = {
             _id: result.data._id,
             email: result.data.email,

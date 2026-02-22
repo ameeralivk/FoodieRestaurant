@@ -154,38 +154,6 @@ export class AdminAuthService implements IAdminAuthService {
     return { success: true, message: MESSAGES.OTP_RESENT_SUCCESS };
   };
 
-  // async refreshToken(refreshToken: string) {
-  //   if (!refreshToken) throw new Error(MESSAGES.NO_REFRESH_TOKEN_FOUND);
-
-  //   const decoded = verifyRefreshToken(refreshToken);
-
-  //   if (!decoded) {
-  //     throw {
-  //       status: HttpStatus.UNAUTHORIZED,
-  //       message: MESSAGES.INVALID_TOKEN,
-  //     };
-  //   }
-  //   if(decoded.role == "user"){
-  //     const user = await this._userRepo.findById(decoded.id)
-  //     if(!user){
-  //       throw {status:HttpStatus.NOT_FOUND,message:MESSAGES.USER_NOT_FOUND}
-  //     }
-  //   }
-  //   const admin = await this._adminAuthRepository.findById(decoded.id);
-  //   if (!admin) {
-  //     throw { status: HttpStatus.NOT_FOUND, message: MESSAGES.ADMIN_NOT_FOUND };
-  //   }
-
-  //   if (admin.isBlocked) {
-  //     throw {
-  //       status: HttpStatus.FORBIDDEN,
-  //       message: MESSAGES.ACCOUNT_IS_BLOCKED,
-  //     };
-  //   }
-  //   const newAccessToken = generateToken(decoded.id, decoded.role);
-
-  //   return { newAccessToken };
-  // }
 
   async refreshToken(refreshToken: string) {
     if (!refreshToken) {

@@ -37,27 +37,6 @@ const StaffSelectedOrders: React.FC = () => {
     queryFn: () => getTotalOrders(restaurantId as string),
   });
 
-  // useEffect(() => {
-  //   if (!restaurantId || role !== "staff") return;
-
-  //   const handleOrderCompleted = (data: {
-  //     order: IUserOrder;
-  //     orderId: string;
-  //     message: string;
-  //   }) => {
-  //     console.log("✅ Order completed received on staff:", data.order);
-
-  //     // Play notification sound
-  //     playSound();
-
-  //   };
-
-  //   Socket.on("order:completed", handleOrderCompleted);
-
-  //   return () => {
-  //     Socket.off("order:completed", handleOrderCompleted);
-  //   };
-  // }, [restaurantId]);
   useEffect(() => {
     if (data?.data) {
       const ready = data.data.filter(
@@ -83,8 +62,8 @@ const StaffSelectedOrders: React.FC = () => {
       orderId: string;
       message: string;
     }) => {
-      console.log("✅ Order completed received on staff:", socketData.order);
       showSuccessToast("New Order is added");
+      refetch()
       // 🔊 play sound
       playSound();
 
@@ -116,10 +95,6 @@ const StaffSelectedOrders: React.FC = () => {
       showErrorToast(error.message);
     }
   };
-
-  // const readyOrders = data?.data.filter((o) =>
-  //   o.items.every((i) => i.itemStatus == "READY"),
-  // );
 
   const handleAssignOrder = async (orderId: string) => {
     try {

@@ -86,20 +86,6 @@ export class CartRepository
     return this.findByIdAndUpdate(cartId, { ...cart });
   }
 
-  // async updateInstruction(cartId: string,cartItemId:string, instraction: string,variant:{category:string,option:string,price:number}): Promise<ICart | null> {
-
-  //    return this.updateOne(
-  //     {
-  //       _id: new Types.ObjectId(cartId),
-  //       "items.itemId": new Types.ObjectId(cartItemId),
-  //     },
-  //     {
-  //       $set: {
-  //         "items.$.instraction": instraction,
-  //       },
-  //     }
-  //   );
-  // }
 
   async updateInstruction(
   cartId: string,

@@ -11,9 +11,8 @@ const StaffRoutes = () => {
   return (
     <div>
       <Routes>
-        <Route element={<StaffPublicRoute />}>
-          <Route path="/login" element={<StaffLogin />} />
-        </Route>
+        <Route path="/login" element={<StaffLogin />} />
+
         <Route
           path="/dashboard"
           element={

@@ -141,14 +141,11 @@
 //                 }`}
 //               >
 //                 <ChefHat className="text-amber-600" />
-//                 <div>
-//                   <div className="font-semibold">
-//                     Preparing
-//                   </div>
-//                   <div className="text-xs text-gray-500">
-//                     Item is being cooked
-//                   </div>
-//                 </div>
+<div>
+  // <div className="font-semibold">// Preparing // </div>
+  // <div className="text-xs text-gray-500">// Item is being cooked // </div>
+  //{" "}
+</div>;
 //               </button>
 //             )}
 
@@ -238,7 +235,12 @@ interface Props {
   orderId: string;
   item: AssignItem;
   onClose: () => void;
-  onUpdate: (orderId: string, itemId: string, newStatus: ItemStatus,variant?:IVarientItemType) => void;
+  onUpdate: (
+    orderId: string,
+    itemId: string,
+    newStatus: ItemStatus,
+    variant?: IVarientItemType,
+  ) => void;
 }
 
 const ChefUpdateItemModal: React.FC<Props> = ({
@@ -253,10 +255,10 @@ const ChefUpdateItemModal: React.FC<Props> = ({
   );
 
   const handleUpdate = () => {
-    if(!item.variant){
+    if (!item.variant) {
       onUpdate(orderId, item.itemId, selectedStatus);
-    }else{
-       onUpdate(orderId, item.itemId, selectedStatus,item.variant);
+    } else {
+      onUpdate(orderId, item.itemId, selectedStatus, item.variant);
     }
     onClose();
   };

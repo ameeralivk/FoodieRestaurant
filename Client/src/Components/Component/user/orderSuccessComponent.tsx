@@ -13,13 +13,6 @@ const OrderSuccessPage: React.FC = () => {
   const tableNo = useSelector(
     (state: RootState) => state.userAuth.user?.tableNo
   );
-  // const orderNumber =
-  //   "ORD-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-  // const orderDate = new Date().toLocaleDateString("en-US", {
-  //   year: "numeric",
-  //   month: "long",
-  //   day: "numeric",
-  // });
   const Navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">

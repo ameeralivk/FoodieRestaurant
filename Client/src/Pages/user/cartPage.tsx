@@ -92,35 +92,6 @@ const CartPage = () => {
     }
   };
 
-  // const removeItem = async (id: string) => {
-  //   const confirmed = await showConfirm(
-  //     "Remove Item?",
-  //     "Are you sure you want to remove this item from your cart?",
-  //     "Remove",
-  //     "Keep",
-  //   );
-  //   if (!confirmed) return;
-
-  //   // Optimistic update
-  //   setCartItems((items) => items.filter((item) => item.itemId !== id));
-
-  //   try {
-  //     if (cartData?.cart?._id) {
-  //       const result = await deleteCart(
-  //         cartData.cart._id,
-  //         restaurantId as string,
-  //         id,
-  //       );
-  //       if (result.success) {
-  //         showSuccessToast("Item removed");
-  //         queryClient.invalidateQueries({ queryKey: ["ItemsList"] });
-  //       }
-  //     }
-  //   } catch (error) {
-  //     queryClient.invalidateQueries({ queryKey: ["ItemsList"] });
-  //   }
-  // };
-
   const removeItem = async (id: string, variant?: Variant) => {
     const confirmed = await showConfirm(
       "Remove Item?",

@@ -252,9 +252,6 @@ const ItemComponent = () => {
         const res = await changeItemStatus(row._id, newValue);
         if (res.success) {
           showSuccessToast(res.message);
-          // queryClient.invalidateQueries({
-          //   queryKey: ["activeTable", restaurentId],
-          // });
           queryClient.invalidateQueries({
             queryKey: ["ItemsList", restaurentId],
           });

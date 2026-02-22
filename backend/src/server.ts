@@ -15,6 +15,7 @@ import superAdminRouter from "./Routes/superAdmin/superAdminRouter";
 import AdminRouter from "./Routes/Admin/adminRouter";
 import staffAuthRouter from "./Routes/staff/authRoutes"
 import staffRouter from "./Routes/staff/staffRoutes"
+import notificationRoutes from "./Routes/notificationRoutes"
 import { container } from "./DI/container";
 import { PaymentController } from "./Controller/paymentController/Implimentation/paymentController";
 import { TYPES } from "./DI/types";
@@ -46,6 +47,7 @@ app.use("/api/user/auth", userAuthRouter);
 app.use("/api/staff/auth",staffAuthRouter)
 app.use("/api/staff",staffRouter)
 app.use("/api/superadmin", superAdminRouter);
+app.use("/api/notification",notificationRoutes)
 app.use("/api/admin", AdminRouter);
 app.use("/api/user",userRouter)
 app.use(errorHandler);

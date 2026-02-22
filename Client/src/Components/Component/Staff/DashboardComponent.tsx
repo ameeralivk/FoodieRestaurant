@@ -14,9 +14,7 @@ import { getTotalOrders, updateOrder } from "../../../services/staffService";
 import { useQueryClient } from "@tanstack/react-query";
 import { showSuccessToast } from "../../Elements/SuccessToast";
 import { ToastContainer } from "react-toastify";
-// ============================================================================
-// TYPES
-// ============================================================================
+
 
 type ItemStatus = "PENDING" | "PREPARING" | "READY"|"ASSIGNED"|"SERVING";
 
@@ -140,15 +138,6 @@ const ChefPage: React.FC = () => {
     const handleNewOrder = (newOrder: IUserOrder) => {
       console.log("🔥 New order received:", newOrder);
 
-      // setOrders((prev) => {
-      //   if (prev?.some((o) => o.orderId === newOrder.orderId)) {
-      //     return prev;
-      //   }
-      //   return [...prev,newOrder].sort(
-      //     (a, b) =>
-      //       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      //   );
-      // });
 
       queryClient.invalidateQueries({
         queryKey: ["orders"],
@@ -177,20 +166,6 @@ const ChefPage: React.FC = () => {
     };
   }, [restaurantId, role]);
 
-  // const tabCounts = {
-  //   Pending:
-  //     orders?.filter((order) =>
-  //       order.items.some((item) => item.itemStatus === "PENDING") ,
-  //     ).length ?? 0,
-  //   Preparing:
-  //     orders?.filter((order) =>
-  //       order.items.some((item) => item.itemStatus === "PREPARING"),
-  //     ).length ?? 0,
-  //   Completed:
-  //     orders?.filter((order) =>
-  //       order.items.every((item) => item.itemStatus === "READY"),
-  //     ).length ?? 0,
-  // };
 
   const tabCounts = {
     Pending:

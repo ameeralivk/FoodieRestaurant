@@ -132,5 +132,7 @@ export const MESSAGES = {
   ORDER_NOT_FOUND:"Order Not Found",
   ORDER_ID_NOT_FOUND:"Order id Not Found",
   ORDER_UPDATED_SUCCESSFULL:"Order updated Successfully",
-  ORDER_UPDATED_FAILED:"Order updated Failed"
+  ORDER_UPDATED_FAILED:"Order updated Failed",
+  NOTI_MARK_SUCCESS:"Notification marked as Read",
+  NOTI_MARK_FAILED:"Notification failed to mark as Read"
 };

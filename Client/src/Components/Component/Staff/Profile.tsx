@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import type { StaffResponseDTO } from "../../../types/staffTypes";
 import { showErrorToast } from "../../Elements/ErrorToast";
 import { showSuccessToast } from "../../Elements/SuccessToast";
+import { ToastContainer } from "react-toastify";
 
 export interface StaffMember {
   _id: string;
@@ -56,6 +57,7 @@ const StaffProfile: React.FC = () => {
   const staff = data?.data;
   return (
     <div className="min-h-screen bg-gray-50 p-8 font-sans">
+      <ToastContainer />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Staff Profile</h1>
 

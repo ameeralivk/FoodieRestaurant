@@ -6,8 +6,6 @@ import { AppError } from "../../../utils/Error";
 import HttpStatus from "../../../constants/htttpStatusCode";
 import { MESSAGES } from "../../../constants/messages";
 import { Request, Response } from "express";
-import varient from "../../../models/varient";
-import { CartVariant } from "../../../types/cart";
 
 @injectable()
 export class CartController implements ICartController {

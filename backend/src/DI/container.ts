@@ -55,6 +55,9 @@ import { VarientRepository } from "../Repositories/varient/implementation/varien
 import { FeedbackController } from "../Controller/feedbackController/implementation/feedbackController";
 import { FeedbackService } from "../services/feedback/implementation/feedbackService";
 import { FeedbackRepository } from "../Repositories/feedback/implementation/feedbackRepository";
+import { NotificationController } from "../Controller/notificationController/implimentation/notificationController";
+import { NotificationService } from "../services/notificationService/implementation/notificationService";
+import { NotificationRepository } from "../Repositories/notificationRepo/implementation/notificationRepo";
 
 
 const container = new Container();
@@ -156,4 +159,12 @@ container.bind(TYPES.VarientRepository).to(VarientRepository)
 container.bind(TYPES.FeedbackController).to(FeedbackController)
 container.bind(TYPES.FeedbackService).to(FeedbackService)
 container.bind(TYPES.FeedbackRepository).to(FeedbackRepository)
+
+
+//notification
+container.bind(TYPES.NotificationController).to(NotificationController)
+container.bind(TYPES.NotificationService).to(NotificationService)
+container.bind(TYPES.NotificationRepository).to(NotificationRepository)
+
+
 export { container };

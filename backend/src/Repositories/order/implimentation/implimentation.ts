@@ -101,26 +101,6 @@ export class OrderRepository
     });
   }
 
-  // async updateItem(
-  //   orderId: string,
-  //   itemId: string,
-  //   status: "PENDING" | "PREPARING" | "READY",
-  //   variantId:string
-  // ): Promise<IUserOrderDocument[] | null> {
-  //   return await this.model.findOneAndUpdate(
-  //     {
-  //       orderId: orderId,
-  //       "items.itemId": itemId,
-  //     },
-  //     {
-  //       $set: {
-  //         "items.$.itemStatus": status,
-  //       },
-  //     },
-  //     { new: true },
-  //   );
-  // }
-
   async updateItem(
     orderId: string,
     itemId: string,
@@ -152,22 +132,6 @@ export class OrderRepository
     );
   }
 
-  //  async assignChefToItem(
-  //     orderId: string,
-  //     itemId: string,
-  //     chefId: string,
-  //     varient?:IVariant
-  //   ): Promise<IUserOrderDocument| null> {
-  //     return await this.findOneAndUpdateUpsert(
-  //       { orderId: orderId, "items.itemId": itemId ,"items.variant.option":varient?.option },
-  //       {
-  //       $set: {
-  //         "items.$.assignedCookId": chefId,
-  //         "items.$.itemStatus": "ASSIGNED"
-  //       }
-  //       }
-  //     );
-  //   }
 
   async assignChefToItem(
     orderId: string,

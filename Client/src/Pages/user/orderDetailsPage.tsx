@@ -29,7 +29,7 @@ const OrderDetail: React.FC = () => {
   >({});
   const [openItemId, setOpenItemId] = useState<string | null>(null);
   const { data, isLoading } = useQuery<IGetOrderResponse>({
-    queryKey: ["orders", restaurantId, userId, 1, 10],
+    queryKey: ["orders", restaurantId, userId, orderId],
     queryFn: () => getOrder(orderId as string),
   });
   const order = data?.result;
@@ -255,9 +255,9 @@ const OrderDetail: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-16">
-          <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:from-orange-600 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          {/* <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:from-orange-600 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
             Mark Tip
-          </button>
+          </button> */}
           <button
             onClick={() => {
               if (!order) {

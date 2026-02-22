@@ -16,6 +16,7 @@ import {
 } from "../../../types/order";
 import { MESSAGES } from "../../../constants/messages";
 import { IUserWalletRepository } from "../../../Repositories/userWallet/interface/IImplementation";
+import { INotificationService } from "../../notificationService/interface/INotificationService";
 
 @injectable()
 export class OrderService implements IOrderService {
@@ -23,6 +24,8 @@ export class OrderService implements IOrderService {
     @inject(TYPES.orderRepository) private _orderRepo: IOrderRepo,
     @inject(TYPES.userWalletRepository)
     private _userWalletRepo: IUserWalletRepository,
+    @inject(TYPES.NotificationService)
+    private _notificationService: INotificationService,
   ) {}
 
   getAllOrders(
@@ -96,6 +99,73 @@ export class OrderService implements IOrderService {
     }
   }
 
+  // async updateItemStatusService(
+  //   orderId: string,
+  //   itemId: string,
+  //   status: "PENDING" | "PREPARING" | "READY",
+  //   variant: string,
+  // ): Promise<{ sucess: boolean; updatedOrder: IUserOrderDocument[] | [] }> {
+  //   let res = await this._orderRepo.updateItem(
+  //     orderId,
+  //     itemId,
+  //     status,
+  //     variant,
+  //   );
+  //   let order = await this._orderRepo.getOrder(orderId);
+  //   const item = order?.items.find((i) => i.itemId.toString() === itemId);
+  //   if (res) {
+  //     let AllOrderReady = order?.items.every((o) => o.itemStatus === "READY");
+  //     let AnyPreparing = order?.items.some((o) => o.itemStatus === "PREPARING");
+  //     const io = getIO();
+  //     if (order?.userId && !AnyPreparing && !AllOrderReady) {
+  //       const userRoom = `${order.userId.toString()}-user`;
+
+  //       console.log("📤 Emitting to:", userRoom);
+
+  //       io.to(userRoom).emit("order:itemUpdated", {
+  //         orderId,
+  //         itemId,
+  //         orderStatus: status,
+  //         order,
+  //         message: `Your order item ${item?.itemName} is now ${status}`,
+  //       });
+
+  //     }
+  //     if (AllOrderReady || AnyPreparing) {
+  //       if (!order?._id) return { sucess: false, updatedOrder: [] };
+  //       let updatedOrder = await this._orderRepo.changeStatus(
+  //         order?._id?.toString(),
+  //         AnyPreparing ? "PREPARING" : "READY",
+  //       );
+  //       const restaurantId = order?.restaurantId.toString();
+  //       if (!AnyPreparing) {
+  //         io.to(`${restaurantId}-staff`).emit("order:completed", {
+  //           order,
+  //           orderId,
+  //           message: `Order ${orderId} is READY`,
+  //         });
+  //       }
+
+  //       if (order?.userId) {
+  //         const userRoom = `${order.userId.toString()}-user`;
+  //         console.log("📤 Emitting to:", userRoom);
+  //         io.to(userRoom).emit("order:itemUpdated", {
+  //           orderId,
+  //           itemId,
+  //           orderStatus: status,
+  //           order: updatedOrder,
+  //           message: `Your order item ${item?.itemName} is now ${status}`,
+  //         });
+  //       }
+
+  //       console.log("✅ Order completed event emitted to staff room");
+  //     }
+
+  //     return { sucess: true, updatedOrder: res };
+  //   }
+  //   return { sucess: false, updatedOrder: [] };
+  // }
+
   async updateItemStatusService(
     orderId: string,
     itemId: string,
@@ -108,13 +178,17 @@ export class OrderService implements IOrderService {
       status,
       variant,
     );
+
     let order = await this._orderRepo.getOrder(orderId);
     const item = order?.items.find((i) => i.itemId.toString() === itemId);
+
     if (res) {
       let AllOrderReady = order?.items.every((o) => o.itemStatus === "READY");
       let AnyPreparing = order?.items.some((o) => o.itemStatus === "PREPARING");
+
       const io = getIO();
-      if (order?.userId) {
+
+      if (order?.userId && !AnyPreparing && !AllOrderReady) {
         const userRoom = `${order.userId.toString()}-user`;
 
         console.log("📤 Emitting to:", userRoom);
@@ -126,31 +200,61 @@ export class OrderService implements IOrderService {
           order,
           message: `Your order item ${item?.itemName} is now ${status}`,
         });
+
+        await this._notificationService.createNotification(
+          order.userId.toString(),
+          "User",
+          `Your order item ${item?.itemName} is now ${status}`,
+        );
       }
+
       if (AllOrderReady || AnyPreparing) {
         if (!order?._id) return { sucess: false, updatedOrder: [] };
+
         let updatedOrder = await this._orderRepo.changeStatus(
           order?._id?.toString(),
           AnyPreparing ? "PREPARING" : "READY",
         );
+
         const restaurantId = order?.restaurantId.toString();
-        if (!AnyPreparing) {
+
+        if (AllOrderReady) {
+          const userRoom = `${order.userId.toString()}-user`;
           io.to(`${restaurantId}-staff`).emit("order:completed", {
             order,
             orderId,
             message: `Order ${orderId} is READY`,
           });
-        }
-
-        if (order?.userId) {
-          const userRoom = `${order.userId.toString()}-user`;
-          console.log("📤 Emitting to:", userRoom);
           io.to(userRoom).emit("order:itemUpdated", {
             orderId,
             itemId,
             orderStatus: status,
             order: updatedOrder,
-            message: `Your order item ${item?.itemName} is now ${status}`,
+            message: `Your order item ${orderId} is now Ready`,
+          });
+
+          await this._notificationService.createNotification(
+            order.userId.toString(),
+            "User",
+            `Order ${orderId} is READY`,
+          );
+        }
+
+        if (order?.userId && !AllOrderReady) {
+          const userRoom = `${order.userId.toString()}-user`;
+
+          console.log("📤 Emitting to:", userRoom);
+          let res = await this._notificationService.createNotification(
+            order.userId.toString(),
+            "User",
+            `Your order item ${item?.itemName} is now ${status}`,
+          );
+          io.to(userRoom).emit("order:itemUpdated", {
+            orderId,
+            itemId,
+            orderStatus: status,
+            order: updatedOrder,
+            message:res,
           });
         }
 
@@ -159,6 +263,7 @@ export class OrderService implements IOrderService {
 
       return { sucess: true, updatedOrder: res };
     }
+
     return { sucess: false, updatedOrder: [] };
   }
 
@@ -182,7 +287,7 @@ export class OrderService implements IOrderService {
       varient,
     );
     let order = await this._orderRepo.getOrder(orderId);
-    const item = order?.items.find((i)=>i.itemId.toString() === itemId )
+    const item = order?.items.find((i) => i.itemId.toString() === itemId);
     let IsAllItemAssigned = order?.items.every(
       (i) => i.itemStatus === "ASSIGNED",
     );
@@ -200,6 +305,11 @@ export class OrderService implements IOrderService {
           order: order,
           message: `Your order item ${item?.itemName} is now ASSIGNED`,
         });
+        await this._notificationService.createNotification(
+          order.userId.toString(),
+          "User",
+          `Your order item ${item?.itemName} is now ASSIGNED`,
+        );
       }
 
       if (IsAllItemAssigned) {
@@ -276,6 +386,11 @@ export class OrderService implements IOrderService {
           orderStatus: "ASSIGNED",
           message: `Your order ${orderId} has been assigned to staff.`,
         });
+        await this._notificationService.createNotification(
+          order.userId.toString(),
+          "User",
+          `Your order ${orderId} has been assigned to staff.`,
+        );
       }
       return { success: true, message: "staff Assigning Completed" };
     } else {
@@ -300,6 +415,11 @@ export class OrderService implements IOrderService {
           orderStatus: status,
           message: `Your order ${orderId} status is now ${status}.`,
         });
+        await this._notificationService.createNotification(
+          order.userId.toString(),
+          "User",
+          `Your order ${orderId} status is now ${status}.`,
+        );
       }
 
       return { success: true, message: MESSAGES.ORDER_UPDATED_SUCCESSFULL };

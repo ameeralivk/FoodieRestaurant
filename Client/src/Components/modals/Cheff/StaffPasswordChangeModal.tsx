@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Lock, X } from "lucide-react";
-import { changeStaffPassword } from "../../../services/staffService";
-import { showSuccessToast } from "../../Elements/SuccessToast";
-import { showErrorToast } from "../../Elements/ErrorToast";
-import { ToastContainer } from "react-toastify";
 import type { StaffResponseDTO } from "../../../types/staffTypes";
 export interface StaffMember {
   _id: string;
@@ -41,29 +37,6 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
   if (!isOpen) return null;
 
-  //   const handleSubmit = async (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     if (formData.newPassword !== formData.confirmPassword) {
-  //       alert("Passwords do not match!");
-  //       return;
-  //     }
-  //     try {
-  //       const result = await changeStaffPassword(
-  //         formData.currentPassword,
-  //         formData.newPassword,
-  //       );
-  //       console.log(result, "reusl");
-  //       if (result.succcess) {
-  //         showSuccessToast("Password changed Successfully");
-  //       } else if (!result.succcess) {
-  //         showErrorToast(result.message);
-  //       }
-  //     } catch (error) {
-  //       showErrorToast("Password changing failed");
-  //     }
-  //     // Add your API call logic here
-  //     onClose();
-  //   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +53,6 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <ToastContainer />
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">

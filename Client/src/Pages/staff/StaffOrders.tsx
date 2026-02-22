@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import staffmenu from "../../Components/Elements/Reusable/StaffMenuItems";
 import StaffNavbar from "../../Components/Layouts/Staff/StaffNavbar";
 import StaffSelectedOrders from "../../Components/Component/Staff/StaffSelectedOrderPage";
+import staffmenuItems from "../../Components/Elements/Reusable/CheffMenuItems";
 const StaffOrders = () => {
   return (
     <div>
@@ -12,7 +13,7 @@ const StaffOrders = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <StaffNavbar />
-        <SidebarLayout theme="light" menuItems={staffmenu} active="My orders">
+        <SidebarLayout theme="light" menuItems={staffmenuItems} active="Myorders">
           <StaffSelectedOrders />
         </SidebarLayout>
       </motion.div>

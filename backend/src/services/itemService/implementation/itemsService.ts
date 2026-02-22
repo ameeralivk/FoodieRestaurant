@@ -28,47 +28,6 @@ export class ItemsService implements IItemsService {
     return this._itemsRepo.createItem(data);
   }
 
-  // async editItem(
-  //   id: string,
-  //   data: Partial<IItemInterface>,
-  //   images: string[]
-  // ): Promise<IItemInterface> {
-  //   const item = await this._itemsRepo.find(id);
-
-  //   if (!item) {
-  //     throw new AppError(MESSAGES.ITEM_NOT_FOUND, HttpStatus.NOT_FOUND);
-  //   }
-
-  //   /** 🔹 DELETE OLD IMAGES FROM S3 */
-  //   if (item.images?.length) {
-  //     const bucketName = process.env.S3_BUCKET_NAME!;
-  //     const region = process.env.AWS_REGION || "ap-south-1";
-
-  //     for (const oldImage of item.images) {
-  //       const key = oldImage.replace(
-  //         `https://${bucketName}.s3.${region}.amazonaws.com/`,
-  //         ""
-  //       );
-
-  //       if (key) {
-  //         await s3.send(
-  //           new DeleteObjectCommand({
-  //             Bucket: bucketName,
-  //             Key: key,
-  //           })
-  //         );
-  //       }
-  //     }
-  //   }
-
-  //   const updated = await this._itemsRepo.editItem(id, data, images);
-
-  //   if (!updated) {
-  //     throw new AppError(MESSAGES.ITEM_NOT_FOUND, 404);
-  //   }
-
-  //   return updated;
-  // }
 
   async editItem(
     id: string,

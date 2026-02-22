@@ -57,43 +57,6 @@ const OrderTracking: React.FC = () => {
   });
   const order = data?.result;
   console.log(order, "order is her");
-  //   useEffect(() => {
-  //     if (order) {
-  //       setLiveOrder(order);
-  //     }
-  //   }, [order]);
-
-  //   useEffect(() => {
-  //     if (!orderId || !userId || !restaurantId) return;
-
-  //     Socket.connect();
-
-  //     // ✅ Join properly (matches backend)
-  //     Socket.emit("join-restaurant", {
-  //       restaurantId,
-  //       role: "user",
-  //       userId,
-  //     });
-
-  //     // ✅ Listen for item update
-  //     Socket.on("order:itemUpdated", (data) => {
-  //       if (data.orderId === orderId) {
-  //         setLiveOrder(data.order);
-  //       }
-  //     });
-
-  //     // ✅ Listen for order completed
-  //     Socket.on("order:completed", (data) => {
-  //       if (data.orderId === orderId) {
-  //         setLiveOrder(data.order);
-  //       }
-  //     });
-
-  //     return () => {
-  //       Socket.off("order:itemUpdated");
-  //       Socket.off("order:completed");
-  //     };
-  //   }, [orderId, userId, restaurantId]);
   const [liveOrder, setLiveOrder] = useState(order);
   useEffect(() => {
     if (order) {
@@ -128,7 +91,6 @@ const OrderTracking: React.FC = () => {
     });
 
     Socket.on("order:completed", (data) => {
-      console.log("🔥 Received orderCompleted:", data);
       if (data.orderId === orderId) {
         setLiveOrder(data.order);
       }
@@ -140,26 +102,6 @@ const OrderTracking: React.FC = () => {
       Socket.off("order:completed");
     };
   }, [orderId, userId, restaurantId]);
-  // const orderStatuses = [
-  //   {
-  //     label: "Order Placed",
-  //     time: "",
-  //     icon: <Check className="w-4 h-4" />,
-  //     statusKey: "PLACED",
-  //   },
-  //   {
-  //     label: "Preparing",
-  //     time: "",
-  //     icon: <Package className="w-4 h-4" />,
-  //     statusKey: "PREPARING",
-  //   },
-  //   {
-  //     label: "Ready for Pickup",
-  //     time: "",
-  //     icon: <Bell className="w-4 h-4" />,
-  //     statusKey: "READY",
-  //   },
-  // ];
 
   const orderStatuses = [
     {
@@ -189,32 +131,6 @@ const OrderTracking: React.FC = () => {
   ];
 
   const total = order?.items.reduce((sum, item) => sum + item.price, 0);
-
-  // Countdown timer effect
-  //   useEffect(() => {
-  //     const timer = setInterval(() => {
-  //       setTimeRemaining((prev) => {
-  //         let { hours, minutes, seconds } = prev;
-
-  //         if (seconds > 0) seconds--;
-  //         else if (minutes > 0) {
-  //           minutes--;
-  //           seconds = 59;
-  //         } else if (hours > 0) {
-  //           hours--;
-  //           minutes = 59;
-  //           seconds = 59;
-  //         }
-
-  //         return { hours, minutes, seconds };
-  //       });
-  //     }, 1000);
-
-  //     return () => clearInterval(timer);
-  //   }, []);
-  //   const present = { PLACED: 33, PREPARING: 66, READY: 100 };
-  //   const progressPercentage =
-  //     present[order?.orderStatus as keyof typeof present] || 0;
 
   const itemWeight = {
     PLACED: 0,

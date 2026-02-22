@@ -1,9 +1,7 @@
 import React, { useState, createContext, useContext } from 'react';
 import { Clock, User, LogOut, ChefHat, CheckCircle2, Truck, UtensilsCrossed, AlertCircle, X, UserPlus, Package } from 'lucide-react';
 
-// ============================================================================
-// TYPES
-// ============================================================================
+
 
 type ItemStatus = 'pending' | 'assigned' | 'preparing' | 'ready';
 type OrderStatus = 'pending' | 'preparing' | 'ready' | 'serving' | 'completed';
@@ -57,9 +55,7 @@ interface AppContextType {
   setCurrentUser: (user: User) => void;
 }
 
-// ============================================================================
-// DUMMY DATA
-// ============================================================================
+
 
 const INITIAL_ORDERS: Order[] = [
   {
@@ -187,9 +183,7 @@ const INITIAL_ORDERS: Order[] = [
   }
 ];
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
+
 
 const calculateOrderStatus = (items: OrderItem[]): OrderStatus => {
   const allReady = items.every(item => item.status === 'ready');
@@ -212,9 +206,6 @@ const getItemProgress = (items: OrderItem[]) => {
   return { ready, preparing, assigned, pending, total, percentage };
 };
 
-// ============================================================================
-// CONTEXT
-// ============================================================================
 
 const AppContext = createContext<AppContextType | null>(null);
 
@@ -224,9 +215,7 @@ const useApp = () => {
   return context;
 };
 
-// ============================================================================
-// COMPONENTS
-// ============================================================================
+
 
 const ItemStatusBadge: React.FC<{ status: ItemStatus }> = ({ status }) => {
   const configs = {
@@ -270,9 +259,7 @@ const ItemStatusBadge: React.FC<{ status: ItemStatus }> = ({ status }) => {
   );
 };
 
-// ============================================================================
-// CHEF COMPONENTS
-// ============================================================================
+
 
 const ChefAssignModal: React.FC<{
   order: Order;
@@ -684,9 +671,7 @@ const ChefDashboard: React.FC = () => {
   );
 };
 
-// ============================================================================
-// STAFF COMPONENTS
-// ============================================================================
+
 
 const StaffOrderCard: React.FC<{
   order: Order;
@@ -894,9 +879,7 @@ const StaffDashboard: React.FC = () => {
   );
 };
 
-// ============================================================================
-// MAIN APP
-// ============================================================================
+
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User>({

@@ -1,13 +1,10 @@
 import React from "react";
-import { Clock, ChefHat, CheckCircle2 } from "lucide-react";
+import { Clock, ChefHat, CheckCircle2 ,Truck } from "lucide-react";
 import type {
   IOrderItem,
   IUserOrder,
   OrderItemStatus,
 } from "../../../types/order";
-// =======================
-// TYPES
-// =======================
 type ItemStatus = OrderItemStatus;
 
 interface OrderItem {
@@ -31,9 +28,6 @@ interface Props {
   onItemClick: (order: IUserOrder, item: IOrderItem) => void;
 }
 
-// =======================
-// HELPERS
-// =======================
 const getProgress = (items: IOrderItem[]) => {
   const ready = items.filter((item) => item.itemStatus === "READY").length;
   const preparing = items.filter(
@@ -78,6 +72,12 @@ const ItemStatusBadge: React.FC<{ status: ItemStatus }> = ({ status }) => {
       border: "border-emerald-300",
       icon: <CheckCircle2 className="w-3 h-3" />,
     },
+    SERVING: {
+      bg: "bg-blue-100",
+      text: "text-blue-700",
+      border: "border-blue-300",
+      icon: <Truck className="w-3 h-3" />, 
+    },
   };
 
   const config = configs[status];
@@ -92,9 +92,7 @@ const ItemStatusBadge: React.FC<{ status: ItemStatus }> = ({ status }) => {
   );
 };
 
-// =======================
-// COMPONENT
-// =======================
+
 const OrderCard: React.FC<Props> = ({ order, onItemClick }) => {
   const progress = getProgress(order.items);
 

@@ -33,27 +33,6 @@ const StaffDashboard: React.FC = () => {
     queryFn: () => getTotalOrders(restaurantId as string),
   });
 
-  // useEffect(() => {
-  //   if (!restaurantId || role !== "staff") return;
-
-  //   const handleOrderCompleted = (data: {
-  //     order: IUserOrder;
-  //     orderId: string;
-  //     message: string;
-  //   }) => {
-  //     console.log("✅ Order completed received on staff:", data.order);
-
-  //     // Play notification sound
-  //     playSound();
-
-  //   };
-
-  //   Socket.on("order:completed", handleOrderCompleted);
-
-  //   return () => {
-  //     Socket.off("order:completed", handleOrderCompleted);
-  //   };
-  // }, [restaurantId]);
   useEffect(() => {
     if (data?.data) {
       const ready = data.data.filter((o) =>
@@ -92,10 +71,6 @@ const StaffDashboard: React.FC = () => {
       Socket.off("order:completed", handleOrderCompleted);
     };
   }, [restaurantId, role, userId, currentPage, limit, queryClient]);
-
-  // const readyOrders = data?.data.filter((o) =>
-  //   o.items.every((i) => i.itemStatus == "READY"),
-  // );
 
   const handleAssignOrder = async (orderId: string) => {
     try {

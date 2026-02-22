@@ -22,14 +22,6 @@ export interface IOrderItem {
   updatedAt?:string;
   itemStatus: OrderItemStatus;
 }
-// export type OrderStatus =
-//     "ASSIGNED"
-//     "PREPARING"
-//   | "PLACED"
-//   | "IN_KITCHEN"
-//   | "READY"
-//   | "SERVED"
-//   | "FAILED";
 
 export type OrderStatus =
   | "ASSIGNED"

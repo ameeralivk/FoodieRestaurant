@@ -12,6 +12,7 @@ import { AppError } from "../../../utils/Error";
 import { MESSAGES } from "../../../constants/messages";
 import { getIO } from "../../../config/socket";
 import { generateOrderId } from "../../../helpers/generateOrderId";
+import { INotificationService } from "../../notificationService/interface/INotificationService";
 const stripe = new Stripe(process.env.STRIP_SECRET_KEY as string, {
   apiVersion: "2024-06-20" as unknown as Stripe.LatestApiVersion,
 });
@@ -27,6 +28,8 @@ export class PaymentService implements IPaymentService {
     private _orderRepository: IOrderRepo,
     @inject(TYPES.cartRepository)
     private _cartRepository: ICartRepository,
+    @inject(TYPES.NotificationService)
+    private _notificationService: INotificationService,
   ) {}
   async paymentCreate(
     amount: number,
@@ -149,32 +152,11 @@ export class PaymentService implements IPaymentService {
         if (res) {
           await this._cartRepository.deleteCart(cart._id.toString());
           const io = getIO();
-          // io.emit("order:new", {
-          //   orderId: res.orderId,
-          //   restaurantId: metadata.restaurentId,
-          //   tableId:res.tableId,
-          //   items: res.items,
-          //   total: res.totalAmount,
-          //   status: res.status,
-          //   createdAt: res.createdAt,
-          // });
           const restaurantId = metadata.restaurentId;
           console.log(restaurantId, "ameer restaurne id si here");
           if (!restaurantId) {
             throw new Error("Restaurant ID missing in metadata");
           }
-          console.log(restaurantId, "ameerali restaurne id si here");
-          // io.to(
-          //   restaurantId.toString(),
-          // ).emit("order:new", {
-          //   orderId: res.orderId,
-          //   restaurantId: metadata.restaurentId,
-          //   tableId: res.tableId,
-          //   items: res.items,
-          //   total: res.totalAmount,
-          //   status: res.orderStatus,
-          //   createdAt: res.createdAt,
-          // });
           io.to(`${restaurantId}-chef`).emit("order:new", {
             orderId: res.orderId,
             restaurantId: metadata.restaurentId,
@@ -184,6 +166,11 @@ export class PaymentService implements IPaymentService {
             status: res.orderStatus,
             createdAt: res.createdAt,
           });
+           await this._notificationService.createNotification(
+            restaurantId.toString(),
+            "User",
+            `New Order ${res.orderId} Recieved`,
+          );
         }
       }
     }

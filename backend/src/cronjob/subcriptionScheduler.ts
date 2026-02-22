@@ -1,31 +1,7 @@
-// import subscription from "../models/subscription";
 
-// export async function activateQueuedSubscriptions() {
-//   const now = new Date();
-
-//   const subscriptions = await subscription.find({
-//     status: "queued",
-//     startDate: { $lte: now },
-//   });
-
-//   for (const sub of subscriptions) {
-//     sub.status = "active";
-//     await sub.save();
-//   }
-// }
-
-// export function startSubscriptionScheduler() {
-//   setInterval(activateQueuedSubscriptions, 1000 * 60);
-// }
 
 import Subscription from "../models/subscription";
 
-/**
- * Automatically updates subscription status based on dates:
- * - pending → active (startDate <= now < endDate)
- * - queued → active (startDate <= now < endDate)
- * - active → expired (endDate < now)
- */
 export async function updateSubscriptionStatuses() {
   const now = new Date();
 

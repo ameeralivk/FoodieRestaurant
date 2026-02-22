@@ -1,4 +1,4 @@
-import { OrderService } from "../services/orderService/implimentation/orderService";
+
 
 export const TYPES = {
   PaymentRepository: Symbol("PaymentService"),
@@ -54,5 +54,8 @@ export const TYPES = {
   VarientRepository:Symbol("VarientRepository"),
   FeedbackController:Symbol("FeedbackController"),
   FeedbackService:Symbol("FeedbackService"),
-  FeedbackRepository:Symbol("FeedbackRepository")
+  FeedbackRepository:Symbol("FeedbackRepository"),
+  NotificationController:Symbol("NotificationController"),
+  NotificationService:Symbol("NotificationService"),
+  NotificationRepository:Symbol("NotificationRepository")
 };

@@ -67,7 +67,6 @@ const RestaurantApprovalModal: React.FC<RestaurantApprovalModalProps> = ({
     if (result.isConfirmed) {
       try {
         let res = await changeRestaurantStatus(data._id, !data.isBlocked);
-        console.log(res, "result is her here al");
         Swal.fire(
           "Approved!",
           `Restaurant has been ${data.isBlocked ? "UnBlock" : "Block"} .`,
