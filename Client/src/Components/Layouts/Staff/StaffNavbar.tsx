@@ -36,6 +36,8 @@ const StaffNavbar = () => {
   // });
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
+  const user = useSelector((state: RootState) => state.userAuth.user);
+  const role = user?.role;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // floating popup
@@ -44,12 +46,15 @@ const StaffNavbar = () => {
     (state: RootState) => state.userAuth.user?.restaurantId,
   );
   const [filter, setFilter] = useState<"unread" | "all">("unread");
-   const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   useEffect(() => {
     const fetchNotification = async () => {
       try {
-        const result = await getAllNotification(restaurantId as string);
+        const result = await getAllNotification(
+          restaurantId as string,
+          role === "staff" ? "staff" : "User",
+        );
 
         if (result?.data) {
           setNotifications(result.data); // ✅ THIS SETS STATE
@@ -68,13 +73,16 @@ const StaffNavbar = () => {
     if (!restaurantId) return;
     Socket.emit("join-restaurant", {
       restaurantId,
-      role: "chef",
+      role: role,
     });
-    const handleNewOrder = async(order: IUserOrder) => {
+    const handleNewOrder = async (order: IUserOrder) => {
       playSound();
 
       // add to dropdown list
-      const result = await getAllNotification(restaurantId as string);
+      const result = await getAllNotification(
+        restaurantId as string,
+        role === "staff" ? "staff" : "User",
+      );
 
       if (result?.data) {
         setNotifications(result.data);
@@ -95,18 +103,43 @@ const StaffNavbar = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const handleOrderCompleted = (order: IUserOrder) => {
+
+  //     playSound();
+
+  //     setPopup(order);
+
+  //     setTimeout(() => {
+  //       setPopup(null);
+  //     }, 4000);
+  //   };
+
+  //   Socket.on("order:completed", handleOrderCompleted);
+  //   return () => {
+  //     Socket.off("order:completed", handleOrderCompleted);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    const handleOrderCompleted = (order: IUserOrder) => {
+    if (!restaurantId || !role) return;
+
+    const handleOrderCompleted = async (order: IUserOrder) => {
       playSound();
+
+      const result = await getAllNotification(restaurantId, role);
+
+      if (result?.data) {
+        setNotifications(result.data);
+      }
 
       setPopup(order);
 
-      setTimeout(() => {
-        setPopup(null);
-      }, 4000);
+      setTimeout(() => setPopup(null), 4000);
     };
 
     Socket.on("order:completed", handleOrderCompleted);
+
     return () => {
       Socket.off("order:completed", handleOrderCompleted);
     };
@@ -143,7 +176,7 @@ const StaffNavbar = () => {
     };
     mark();
   };
-  const handlemarkAll = async (id?: string) => {
+  const handlemarkAll = async () => {
     const mark = async () => {
       try {
         const result = await markAsRead(restaurantId, "true");
@@ -159,7 +192,7 @@ const StaffNavbar = () => {
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="flex justify-between items-center h-16 px-6">
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -178,10 +211,10 @@ const StaffNavbar = () => {
                 <Bell />
 
                 {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                  {unreadCount}
-                </span>
-              )}
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
 
               {/* Dropdown */}

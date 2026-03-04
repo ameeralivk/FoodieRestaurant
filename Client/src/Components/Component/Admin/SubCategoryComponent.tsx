@@ -43,8 +43,6 @@ const SubCategoryComponent = () => {
 
   const {
     data: categoryData,
-    isLoading: isCategoryLoading,
-    isFetching: isCategoryFetching,
   } = useQuery<CategoryResponse, Error>({
     queryKey: ["categories", restaurentId],
     queryFn: () =>
@@ -53,8 +51,6 @@ const SubCategoryComponent = () => {
 
   const {
     data: subCategoryData,
-    isLoading: isSubCategoryLoading,
-    isFetching: isSubCategoryFetching,
   } = useQuery<SubCategoryResponse, Error>({
     queryKey: ["subCategories", restaurentId, currentPage, debouncedSearch],
     queryFn: () =>
@@ -116,8 +112,10 @@ const SubCategoryComponent = () => {
     if (!confirmed) return;
     const del = async () => {
       try {
+        setLoading(true)
         const res = await deleteSubCategory(row.id);
         if (res.success) {
+          setLoading(false)
           showSuccessToast(res.message);
           queryClient.invalidateQueries({
             queryKey: ["subCategories", restaurentId],
@@ -125,6 +123,7 @@ const SubCategoryComponent = () => {
           setModalOpen(false);
         }
       } catch (error) {
+        setLoading(false)
         return;
       }
     };

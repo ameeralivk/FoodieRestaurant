@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, User, CheckCircle2 } from "lucide-react";
+import { Clock, CheckCircle2 } from "lucide-react";
 import type { IUserOrder, OrderItemStatus } from "../../../types/order";
 export type ItemStatus = "preparing" | "ready" | "served";
 

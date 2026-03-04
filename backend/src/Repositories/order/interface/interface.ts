@@ -1,4 +1,4 @@
-import { IOrderItem, IUserOrderDocument, IVariant } from "../../../types/order";
+import { IUserOrderDocument} from "../../../types/order";
 import { ICart } from "../../../types/cart";
 
 

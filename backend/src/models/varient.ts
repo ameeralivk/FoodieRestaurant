@@ -1,6 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 import { IGroup } from '../types/varient';
-import { Types } from 'mongoose';
 const VariantSchema = new Schema({
   name: { type: String, required: true }
 });

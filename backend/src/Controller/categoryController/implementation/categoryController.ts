@@ -7,7 +7,6 @@ import { AppError } from "../../../utils/Error";
 import HttpStatus from "../../../constants/htttpStatusCode";
 import { createCategorySchema } from "../../../helpers/zodvalidation";
 import { MESSAGES } from "../../../constants/messages";
-import { success } from "zod";
 @injectable()
 export class CategoryController implements ICategoryController {
   constructor(
@@ -25,7 +24,7 @@ export class CategoryController implements ICategoryController {
         const errorMessages = parsed.error.issues.map((e) => e.message);
         throw new AppError(errorMessages.join(","), HttpStatus.NOT_FOUND);
       }
-      const category = await this._categoryService.addCategory(
+      await this._categoryService.addCategory(
         parsed.data,
         restaurantId as string
       );

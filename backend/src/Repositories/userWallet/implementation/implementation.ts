@@ -2,6 +2,7 @@ import { IUserWallet } from "../../../types/wallet";
 import { BaseRepository } from "../../IBaseRepository";
 import { UserWallet } from "../../../models/userWallet";
 import { IUserWalletRepository } from "../interface/IImplementation";
+import mongoose from "mongoose";
 
 export class UserWalletRepository
   extends BaseRepository<IUserWallet>
@@ -11,11 +12,11 @@ export class UserWalletRepository
     super(UserWallet);
   }
 
-   async creditWallet(
+  async creditWallet(
     userId: string,
     amount: number,
     description: string,
-    method: string
+    method: string,
   ): Promise<IUserWallet | null> {
     return this.findOneAndUpdateUpsert(
       { userId },
@@ -32,11 +33,44 @@ export class UserWalletRepository
         $inc: {
           balance: amount,
         },
-      }
+      },
     );
   }
 
   getWallet(userId: String): Promise<IUserWallet | null> {
-    return this.getByFilter({userId:userId})
+    return this.getByFilter({ userId: userId });
   }
+
+  async createWallet(userId: string): Promise<IUserWallet> {
+    return this.create({
+      userId:new mongoose.Types.ObjectId(userId),
+      balance: 0,
+      transaction: [],
+    });
+  }
+
+    async debitWallet(
+    userId: string,
+    amount: number,
+    description: string,
+    method: string
+  ): Promise<IUserWallet | null> {
+    return this.model.findOneAndUpdate(
+      { userId, balance: { $gte: amount } }, 
+      {
+        $push: {
+          transaction: {
+            amount,
+            description,
+            method,
+            type: "debit",
+            createdAt: new Date(),
+          },
+        },
+        $inc: { balance: -amount },
+      },
+      { new: true }
+    );
+  }
+
 }

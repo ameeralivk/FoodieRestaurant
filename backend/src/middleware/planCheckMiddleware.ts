@@ -35,6 +35,7 @@ export const checkActivePlan = async (
     req.activePlan = activePlan
     next();
   } catch (error) {
+    console.error(error)
     next(new AppError("Invalid or expired token", HttpStatus.UNAUTHORIZED));
   }
 };

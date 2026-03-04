@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+
 import { ICategory } from "../../../types/category";
 import { Types } from "mongoose";
 import { ICategoryAdd } from "../../../types/category";

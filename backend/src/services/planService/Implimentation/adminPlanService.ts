@@ -45,6 +45,7 @@ export class AdminPlanService implements IAdminPlanService {
       total: result.total,
     };
   } catch (error: any) {
+    console.error(error)
     return { success: false, data: [], total: 0 };
   }
   }

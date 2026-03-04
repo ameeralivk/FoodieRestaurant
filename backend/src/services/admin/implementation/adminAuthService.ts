@@ -16,10 +16,9 @@ import {
   generateToken,
   verifyRefreshToken,
 } from "../../../middleware/jwt";
-import { IAdmin, IRestaurantRegisterData } from "../../../types/admin";
+import { IRestaurantRegisterData } from "../../../types/admin";
 import IAdminAuthService from "../interface/IAdminAuthService";
 import { AdminDTO, adminDTO } from "../../../utils/dto/adminDto";
-import { AdminDocument } from "../../../models/admin";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../DI/types";
 import { IUserRepository } from "../../../Repositories/user/interface/IUserRepository";
@@ -72,7 +71,7 @@ export class AdminAuthService implements IAdminAuthService {
     const response = await axios.get(process.env.GOOGLE_USERINFO_URL!, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const { sub, name, email, picture } = response.data;
+    const { sub, email, picture } = response.data;
     let admin = await this._adminAuthRepository.findByEmail(email);
     if (admin?.isBlocked) {
       throw new AppError(MESSAGES.ADMIN_BLOCKED);
@@ -132,7 +131,7 @@ export class AdminAuthService implements IAdminAuthService {
       createdUser.admin._id as string,
       createdUser.admin?.role,
     );
-    const refreshToken = generateRefreshToken(
+    generateRefreshToken(
       createdUser.admin._id as string,
       createdUser.admin?.role,
     );
@@ -305,7 +304,7 @@ export class AdminAuthService implements IAdminAuthService {
 
       return { success: true, message: MESSAGES.PASS_CHANGE_SUCCESS };
     } catch (error) {
-      return { success: false, message: "Internal Server Error" };
+      return { success: false, message:error instanceof Error ? error.message : "Internal Server Error" };
     }
   }
 
@@ -318,7 +317,7 @@ export class AdminAuthService implements IAdminAuthService {
         throw new AppError(MESSAGES.ADMIN_NOT_FOUND);
       }
       const adminId = res?._id as string;
-      let result = await this._adminAuthRepository.registerRestaurent(
+       await this._adminAuthRepository.registerRestaurent(
         adminId,
         data,
       );
@@ -376,7 +375,7 @@ export class AdminAuthService implements IAdminAuthService {
         );
       }
     }
-    const updatedAdmin = await this._adminAuthRepository.updateById(adminId, {
+    await this._adminAuthRepository.updateById(adminId, {
       proofDocument: file,
       status: "resubmitted",
     });

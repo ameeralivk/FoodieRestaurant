@@ -5,7 +5,14 @@ export interface IUserWalletRepository {
     userId: string,
     amount: number,
     description: string,
-    method: string
-  ):Promise<IUserWallet|null>
-  getWallet(userId:String):Promise<IUserWallet|null>
+    method: string,
+  ): Promise<IUserWallet | null>;
+  getWallet(userId: String): Promise<IUserWallet | null>;
+  createWallet(userId: string): Promise<IUserWallet>;
+  debitWallet(
+    userId: string,
+    amount: number,
+    description: string,
+    method: string,
+  ): Promise<IUserWallet | null>;
 }

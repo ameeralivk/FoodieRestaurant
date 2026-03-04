@@ -11,6 +11,7 @@ export interface IStaffRepository {
   ): Promise<IStaff | null>;
   deleteStaff(staffId: string): Promise<IStaff | null>;
   changeStatus(staffId: string, status: boolean): Promise<IStaff | null>;
+   findByEmail(email: string): Promise<IStaff | null>;
   getAllByRestaurantId(
     restaurantId: string,
     page?: number,

@@ -1,27 +1,11 @@
 import React, { useState } from "react";
-import { Clock, ChefHat, CheckCircle2, X, AlertCircle } from "lucide-react";
+import { Clock, ChefHat, CheckCircle2, X } from "lucide-react";
 import type { IOrderItem, IUserOrder, OrderItemStatus } from "../../../types/order";
 
 // =======================
 // TYPES
 // =======================
 type ItemStatus = "PENDING" | "PREPARING" | "READY";
-
-interface OrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  status: ItemStatus;
-  preparedBy?: string;
-  station?: string; // e.g., Grill, Dessert, etc.
-}
-
-interface Order {
-  id: string;
-  tableNumber: number;
-  items: OrderItem[];
-  orderTime: string;
-}
 
 interface Props {
   order: IUserOrder;
@@ -38,20 +22,13 @@ const UpdateItemModal: React.FC<Props> = ({
   order,
   item,
   onClose,
-  tab,
   onUpdate,
 }) => {
   const [selectedStatus, setSelectedStatus] = useState<OrderItemStatus>(
     item.itemStatus,
   );
-  //   const [chefName, setChefName] = useState(item.preparedBy || '');
-  const [showError, setShowError] = useState(false);
 
   const handleUpdate = () => {
-    // if (selectedStatus === "PENDING" || selectedStatus === "READY") {
-    //   setShowError(true);
-    //   return;
-    // }
     console.log("Hellow");
     onUpdate(order.orderId, item.itemId, selectedStatus);
     onClose();

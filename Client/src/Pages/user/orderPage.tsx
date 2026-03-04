@@ -55,7 +55,7 @@ const OrderHistory: React.FC = () => {
 
   const handleOrderClick = (
     orderId: string,
-    status: "PLACED" | "IN_KITCHEN" | "READY" | "SERVED" | "FAILED"|"PREPARING",
+    status: "PLACED" | "IN_KITCHEN" | "READY" | "SERVED" | "FAILED"|"PREPARING"|"ASSIGNED"|"SERVING",
   ) => {
     if (status === "FAILED") {
       setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
@@ -104,7 +104,9 @@ const OrderHistory: React.FC = () => {
 
   const getStatusBadge = (
     status:
-        "PREPARING"
+        "ASSIGNED"
+      |  "SERVING"
+      | "PREPARING"
       | "PLACED"
       | "IN_KITCHEN"
       | "READY"

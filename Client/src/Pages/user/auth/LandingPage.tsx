@@ -329,7 +329,6 @@ const UserLandingPage: React.FC = () => {
                   .map((restaurant) => {
                     // Generate random data for demo (you can replace with actual data from API)
                     const rating = (Math.random() * 2 + 3.5).toFixed(1); // 3.5-5.5 rating
-                    const priceRange = Math.floor(Math.random() * 3 + 1); // 1-3 dollar signs
 
                     return (
                       <div

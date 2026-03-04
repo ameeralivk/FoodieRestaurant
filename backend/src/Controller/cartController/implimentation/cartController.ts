@@ -117,7 +117,7 @@ export class CartController implements ICartController {
 
   addInstruction = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { cartId, userId, cartItemId, instruction, variant } = req.body;
+      const { cartId, cartItemId, instruction, variant } = req.body;
       if (!cartId || !cartItemId) {
         return res.status(HttpStatus.BAD_REQUEST).json({
           success: false,

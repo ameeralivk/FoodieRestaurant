@@ -2,8 +2,7 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store/store";
-import React, { useEffect} from "react";
-import { checkAuth } from "../config/AuthSync";
+import React from "react";
 interface ProtectedRouteProps {
   children: React.ReactElement;
 }

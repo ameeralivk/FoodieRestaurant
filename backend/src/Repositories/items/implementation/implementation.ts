@@ -3,7 +3,7 @@ import { IItemsRepository } from "../interface/interface";
 import Items, { itemsDocument } from "../../../models/items";
 import { IItemInterface } from "../../../types/items";
 import { AppError } from "../../../utils/Error";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery } from "mongoose";
 export class ItemsRepository
   extends BaseRepository<itemsDocument>
   implements IItemsRepository

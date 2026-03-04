@@ -27,8 +27,8 @@ export class NotificationService implements INotificationService {
     return {success:false,message:"Notification Creation Failed"}
   }
 
-  async getAllNotification(recipientId: string): Promise<{ success: boolean; data:NotificationDocument[]|[]; }> {
-   let result =  await this._notificationRepo.getAllByRecipientId(recipientId)
+  async getAllNotification(recipientId: string,model?:string): Promise<{ success: boolean; data:NotificationDocument[]|[]; }> {
+   let result =  await this._notificationRepo.getAllByRecipientId(recipientId,model)
    if(result){
     return {success:true,data:result}
    }else{

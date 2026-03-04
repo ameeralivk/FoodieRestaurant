@@ -6,8 +6,6 @@ import { AppError } from "../../../utils/Error";
 import { Response, Request } from "express";
 import HttpStatus from "../../../constants/htttpStatusCode";
 import { MESSAGES } from "../../../constants/messages";
-import { success } from "zod";
-import { IVariant } from "../../../types/order";
 @injectable()
 export class OrderController implements IOrderController {
   constructor(

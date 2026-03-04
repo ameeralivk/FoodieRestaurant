@@ -14,7 +14,7 @@ export class StaffRepository
     return this.findByEmail(email);
   }
   async addStaff(
-    data: RequestIStaff
+    data: RequestIStaff,
   ): Promise<{ success: boolean; data: IStaff | null }> {
     let res = await this.create(data);
     return {
@@ -25,7 +25,7 @@ export class StaffRepository
 
   async editStaff(
     staffId: string,
-    updatedData: RequestEditIStaff
+    updatedData: RequestEditIStaff,
   ): Promise<IStaff | null> {
     return await this.findByIdAndUpdate(staffId, updatedData);
   }
@@ -42,9 +42,9 @@ export class StaffRepository
     restaurantId: string,
     page: number,
     limit: number,
-    search: string
+    search: string,
   ): Promise<{ data: IStaff[]; total: number }> {
-    const filter:any = {
+    const filter: any = {
       restaurantId,
       status: true,
     };
@@ -59,10 +59,15 @@ export class StaffRepository
   }
 
   findById(userId: string): Promise<IStaff | null> {
-    return this.model.findById(userId)
+    return this.model.findById(userId);
   }
 
   updatePassword(userId: string, newPassword: string): Promise<IStaff | null> {
-    return this.findByIdAndUpdate(userId,{password:newPassword})
+    
+    return this.findByIdAndUpdate(userId, { password: newPassword });
+  }
+
+  findByEmail(email: string): Promise<IStaff | null> {
+    return this.model.findOne({ email: email });
   }
 }

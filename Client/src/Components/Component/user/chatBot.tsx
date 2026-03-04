@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { sendToAi } from "../../../services/user";

@@ -5,7 +5,6 @@ import { TYPES } from "../../DI/types";
 import { CartController } from "../../Controller/cartController/implimentation/cartController";
 import { asyncHandler } from "../../middleware/asyncHandler";
 import { verifyAccessToken } from "../../middleware/jwt";
-import { authorizeRoles } from "../../middleware/authorizeRole";
 import { UserController } from "../../Controller/userController/implementation/userController";
 import { updateProfile } from "../../config/multerConfig";
 import { PaymentController } from "../../Controller/paymentController/Implimentation/paymentController";
@@ -79,6 +78,7 @@ Router.route("/orders/:orderId/cancell").post(
 
 //wallet
 Router.route("/wallet").get(asyncHandler(userWalletController.getWallet));
+Router.route("/wallet/pay").post(asyncHandler(userWalletController.payWithWallet))
 
 //user Varient
 Router.route("/varients")

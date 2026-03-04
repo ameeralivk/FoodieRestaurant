@@ -1,6 +1,6 @@
 import { IUserAuthController } from "../interface/IUserAuthController";
 import IUserAuthService from "../../../../../services/userAuthService/auth/interface/IUserAuthService";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import HttpStatus from "../../../../../constants/htttpStatusCode";
 import { AppError } from "../../../../../utils/Error";
 import { MESSAGES } from "../../../../../constants/messages";
@@ -43,7 +43,6 @@ export class UserAuthController implements IUserAuthController {
   verifyOtp = async (
     req: Request,
     res: Response,
-    next: NextFunction
   ): Promise<Response> => {
     try {
       const { email, otp } = req.body;
@@ -191,7 +190,6 @@ export class UserAuthController implements IUserAuthController {
   resendOtp = async (
     req: Request,
     res: Response,
-    next: NextFunction
   ): Promise<Response> => {
     try {
       const { email } = req.body;

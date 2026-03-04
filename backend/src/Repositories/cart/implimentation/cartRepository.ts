@@ -1,4 +1,4 @@
-import { extend } from "zod/v4/core/util.cjs";
+
 import { ICartRepository } from "../interface/ICartRepository";
 import { BaseRepository } from "../../IBaseRepository";
 import { CartDocument } from "../../../models/cart";
@@ -6,8 +6,6 @@ import Cart from "../../../models/cart";
 import { Types } from "mongoose";
 import { ICart, ICartItem } from "../../../types/cart";
 import mongoose, { FilterQuery } from "mongoose";
-import { itemsDocument } from "../../../models/items";
-import varient from "../../../models/varient";
 export class CartRepository
   extends BaseRepository<ICart>
   implements ICartRepository
@@ -72,6 +70,9 @@ export class CartRepository
 
   async deleteCart(cartId: string): Promise<ICart | null> {
     return this.findByIdAndDel(cartId);
+  }
+    async deleteByUserId(userId: string): Promise<ICart | null> {
+    return this.model.findOneAndDelete({ userId:new mongoose.Types.ObjectId(userId) });
   }
 
   findCartById(cartId: string, restaurantId: string): Promise<ICart | null> {

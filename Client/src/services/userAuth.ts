@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 export const handleUserLogin = async (
   email: string,
   password: string,
-  dispatch: any
+  dispatch: AppDispatch
 ) => {
   try {
     const data = { email, password };
@@ -66,7 +66,7 @@ export const handleUserRegister = async (
   password: string
 ) => {
   try {
-    let data = { name, email, password };
+    const data = { name, email, password };
     const response = await api.post("/user/auth/register", data, {
       withCredentials: true,
     });
@@ -91,7 +91,7 @@ export const handleUserRegister = async (
 
 export const userVerifyOtp = async (otp: string, email: string) => {
   try {
-    let data = { otp: otp, email: email };
+    const data = { otp: otp, email: email };
     const response = await api.post("/user/auth/verify-otp", data, {
       withCredentials: true,
     });
@@ -110,7 +110,7 @@ export const userVerifyOtp = async (otp: string, email: string) => {
 
 export const userResendOtp = async (email: string) => {
   try {
-    let data = { email };
+    const data = { email };
     const response = await api.post("/user/auth/resent-otp", data, {
       withCredentials: true,
     });
@@ -160,6 +160,7 @@ export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
           showErrorToast("Google authentication failed!");
         }
       } catch (err) {
+        console.error(err)
         showErrorToast("Google login failed!");
       }
     },

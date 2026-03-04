@@ -81,13 +81,9 @@ const StaffManagementPage = () => {
     setModalMode("view");
     setModalOpen(true);
   }
-  function handleEdit(row: string) {
-    setCurrentRow(row);
-    setModalMode("edit");
-    setModalOpen(true);
-  }
 
-  const { data, isLoading, isFetching } = useQuery<StaffListResponse, Error>({
+
+  const { data} = useQuery<StaffListResponse, Error>({
     queryKey: ["activePlan", restaurentId, currentPage, limit, searchTerm],
     queryFn: () =>
       getAllStaff(restaurentId as string, currentPage, limit, searchTerm),

@@ -4,7 +4,6 @@ import {
   Upload,
   LogOut,
   Lock,
-  User,
   Mail,
   Phone,
   Edit2,
@@ -81,6 +80,7 @@ export default function UserProfile() {
 
   async function verifyOtpApi(otp: string) {
     try {
+      setIsLoading(true)
       const result = await verifyOtp(formData.email as string, otp);
       if (result.success) {
         dispatch(
@@ -90,6 +90,7 @@ export default function UserProfile() {
             email: formData.email,
           }),
         );
+        setIsLoading(false)
         showSuccessToast(result.message);
       }
     } catch (error) {
@@ -253,7 +254,8 @@ export default function UserProfile() {
           showSuccessToast(result.message);
         }
       } catch (error) {
-        return;
+        console.error(error);
+        return { success: false };
       }
     };
     Upload();

@@ -1,8 +1,5 @@
 import {
   AssignedItemsResponse,
-  IOrderItem,
-  IUserOrder,
-  IVariant,
 } from "../../../types/order";
 import { IUserOrderDocument } from "../../../types/order";
 

@@ -13,7 +13,7 @@ export const getAllPlan = async (
   page?: number,
   limit?: number
 ): Promise<GetAllPlanResponse> => {
-  let res = await apiRequest<GetAllPlanResponse>(
+  const res = await apiRequest<GetAllPlanResponse>(
     "GET",
     `/superadmin/plan?page=${page}&limit=${limit}`
   );
@@ -24,7 +24,7 @@ export const editPlan = async (
   id: string,
   data: SubscriptionPlan
 ): Promise<{ success: boolean; message: string }> => {
-  let res = await apiRequest<{ success: boolean; message: string }>(
+  const res = await apiRequest<{ success: boolean; message: string }>(
     "PUT",
     `/superadmin/plan/${id}`,
     data
@@ -35,7 +35,7 @@ export const editPlan = async (
 export const deletePlan = async (
   id: string
 ): Promise<{ success: boolean; message: string }> => {
-  let res = await apiRequest<{ success: boolean; message: string }>(
+  const res = await apiRequest<{ success: boolean; message: string }>(
     "DELETE",
     `/superadmin/plan/${id}`
   );

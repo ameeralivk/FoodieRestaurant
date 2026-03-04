@@ -12,20 +12,6 @@ import Socket from "../../socket";
 import type { IGetOrderResponse } from "../../types/order";
 import { useParams } from "react-router-dom";
 import { getOrder } from "../../services/order";
-import CountdownTimer from "../../Components/Component/user/OrderTrackPage/CountdownTimer";
-interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  status: "ready" | "preparing";
-}
-
-interface OrderStatus {
-  label: string;
-  time: string;
-  completed: boolean;
-  icon: React.ReactNode;
-}
 
 const OrderTracking: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -36,22 +22,10 @@ const OrderTracking: React.FC = () => {
   const tableNo = useSelector(
     (state: RootState) => state.userAuth.user?.tableNo,
   );
-  const [timeRemaining, setTimeRemaining] = useState({
-    hours: 0,
-    minutes: 10,
-    seconds: 0,
-  });
 
-  const estimatedTime = "10:20 AM";
   const totalTime = "15 minutes";
 
-  const orderItems: OrderItem[] = [
-    { id: "1", name: "Classic Burger", price: 12.0, status: "ready" },
-    { id: "2", name: "Fries", price: 4.5, status: "ready" },
-    { id: "3", name: "Coke", price: 2.5, status: "preparing" },
-  ];
-
-  const { data, isLoading } = useQuery<IGetOrderResponse>({
+  const { data} = useQuery<IGetOrderResponse>({
     queryKey: ["orders", restaurantId, userId, 1, 10],
     queryFn: () => getOrder(orderId as string),
   });
@@ -130,7 +104,6 @@ const OrderTracking: React.FC = () => {
     },
   ];
 
-  const total = order?.items.reduce((sum, item) => sum + item.price, 0);
 
   const itemWeight = {
     PLACED: 0,

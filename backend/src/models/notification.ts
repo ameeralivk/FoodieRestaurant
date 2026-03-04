@@ -17,7 +17,7 @@ const notificationSchema = new Schema<NotificationDocument>(
     recipientModel: {
       type: String,
       required: true,
-      enum: ["User", "Restaurant"], // your two models
+      enum: ["User", "staff"], // your two models
     },
 
     message: {

@@ -50,7 +50,7 @@ const Navbar = ({
   useEffect(() => {
     const fetchNotification = async () => {
       try {
-        const result = await getAllNotification(user?._id as string);
+        const result = await getAllNotification(user?._id as string, "User");
 
         if (result?.data) {
           setNotifications(result.data); // ✅ THIS SETS STATE
@@ -82,9 +82,9 @@ const Navbar = ({
       "order:completed",
     ];
 
-    const handleNotification = async(data: any) => {
+    const handleNotification = async () => {
       playSound();
-      const result = await getAllNotification(user?._id as string);
+      const result = await getAllNotification(user?._id as string, "User");
 
       if (result?.data) {
         setNotifications(result.data);
@@ -104,9 +104,6 @@ const Navbar = ({
     };
   }, []);
 
-  const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n._id !== id));
-  };
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const handleLogout = async () => {
@@ -139,7 +136,7 @@ const Navbar = ({
     };
     mark();
   };
-  const handlemarkAll = async (id?: string) => {
+  const handlemarkAll = async () => {
     const mark = async () => {
       try {
         const result = await markAsRead(user?._id, "true");
@@ -156,10 +153,9 @@ const Navbar = ({
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
       <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className=" flex justify-between h-20 gap-12">
           <ToastContainer />
-          {/* Left side: Back button + Logo */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center">
             {showBackButton && (
               <button
                 onClick={() => navigate(-1)}
@@ -182,20 +178,20 @@ const Navbar = ({
                 </svg>
               </button>
             )}
-
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() => navigate("/")}
-            >
-              <div className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20">
-                <ChefHat className="w-6 h-6" />
-              </div>
-              <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">
-                {restaurantName || "Foodie"}
-              </h1>
+          </div>
+          <div
+            className="flex items-center w-full gap-3 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            <div className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20">
+              <ChefHat className="w-6 h-6" />
             </div>
+            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">
+              {restaurantName || "Foodie"}
+            </h1>
           </div>
 
+          {/* Left side: Back button + Logo */}
           {/* Right side: Profile & Logout */}
           <div className="flex items-center gap-4">
             <button

@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IAdmin } from "../types/admin";
-import { boolean, string } from "zod";
+import {  string } from "zod";
 const adminSchema = new Schema<IAdmin>(
   {
     role: { type: String, required: true },

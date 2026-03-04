@@ -7,7 +7,6 @@ import { CartVariant, ICart, ICartItem } from "../../../types/cart";
 import { AppError } from "../../../utils/Error";
 import unwrapVariant from "../../../helpers/unwrapter";
 import { MESSAGES } from "../../../constants/messages";
-import varient from "../../../models/varient";
 
 @injectable()
 export class CartService implements ICartService {

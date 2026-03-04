@@ -18,9 +18,11 @@ export class NotificationController implements INotificationController {
     res: Response,
   ): Promise<Response> => {
     try {
-      const { recipientId } = req.params;
+      const { recipientId ,model } = req.params;
+      console.log(recipientId,model,'===========================================================================')
       let result = await this._notificationService.getAllNotification(
         recipientId as string,
+        model as string
       );
       if (result.success) {
         return res

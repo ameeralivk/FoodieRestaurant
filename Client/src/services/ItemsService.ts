@@ -1,5 +1,5 @@
 import { apiRequest } from "../api/apiRequest";
-import type { addItemInterface, IItemResponse } from "../types/Items";
+import type { IItemResponse } from "../types/Items";
 
 export const getAllItems = async (
   restaurantId: string,

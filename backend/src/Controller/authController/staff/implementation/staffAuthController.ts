@@ -3,21 +3,24 @@ import { IStaffAuthService } from "../../../../services/staffAuthService/interfa
 import { IStaffAuthController } from "../interface/IStaffAuthController";
 import { TYPES } from "../../../../DI/types";
 import HttpStatus from "../../../../constants/htttpStatusCode";
-import { Request,Response } from "express";
-
-
+import { Request, Response } from "express";
+import { MESSAGES } from "../../../../constants/messages";
+import { AppError } from "../../../../utils/Error";
 
 const refreshTokenMaxAge =
   Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
 @injectable()
-export class StaffAuthController implements IStaffAuthController{
-    constructor(@inject(TYPES.staffAuthService) private _staffAuthService:IStaffAuthService){}
+export class StaffAuthController implements IStaffAuthController {
+  constructor(
+    @inject(TYPES.staffAuthService)
+    private _staffAuthService: IStaffAuthService,
+  ) {}
 
-   login = async(req: Request, res: Response): Promise<Response> => {
-  try {
-    const { email, password } = req.body;
-    const result = await this._staffAuthService.login(email, password); 
-     res.cookie("access_token", result.token.token, {
+  login = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { email, password } = req.body;
+      const result = await this._staffAuthService.login(email, password);
+      res.cookie("access_token", result.token.token, {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
@@ -29,17 +32,68 @@ export class StaffAuthController implements IStaffAuthController{
         sameSite: "strict",
         maxAge: refreshTokenMaxAge,
       });
-    return res.status(HttpStatus.OK).json({
-      success: true,
-      message: result.message,
-      data:result.data
-    });
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: result.message,
+        data: result.data,
+      });
+    } catch (error: any) {
+      return res.status(error.statusCode || HttpStatus.BAD_REQUEST).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
 
-  } catch (error: any) {
-    return res.status(error.statusCode || HttpStatus.BAD_REQUEST).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+  forgetPassword = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: "Email is required" });
+      }
+      let response = await this._staffAuthService.createLink(email);
+      if (response.success) {
+        return res
+          .status(HttpStatus.CREATED)
+          .json({ succes: true, message: MESSAGES.LINK_SENT_SUCCESS });
+      } else {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ succes: false, message: MESSAGES.LINK_SENT_FAILED });
+      }
+    } catch (error: any) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: error.message || "Something went Wrong",
+      });
+    }
+  };
+
+  updatePassword = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const token = req.query.token as string;
+      const { newPassword, email } = req.body;
+      if (!token) throw new AppError("Token is Missing");
+      if (!newPassword)
+        return res.status(400).json({ message: "New password is required" });
+      let response = await this._staffAuthService.updatePassword(
+        token,
+        newPassword,
+        email,
+      );
+      if (response.success) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, message: MESSAGES.PASS_CHANGE_SUCCESS });
+      } else {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ success: false, message: response.message });
+      }
+    } catch (error: any) {
+      throw new AppError(error);
+    }
+  };
 }

@@ -206,7 +206,7 @@
 
 import React, { useState } from "react";
 import { X, UserPlus, ChefHat, CheckCircle2 } from "lucide-react";
-import type { AssignedItem, AssignItem } from "../../../types/order";
+import type { AssignItem } from "../../../types/order";
 import type { IVarientItemType } from "../../../types/varient";
 
 export type ItemStatus = "ASSIGNED" | "PREPARING" | "READY" | "PENDING";

@@ -1,4 +1,4 @@
-import { Lock, Unlock, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 
 interface TableRowProps {
   children: React.ReactNode;

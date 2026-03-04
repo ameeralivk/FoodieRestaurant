@@ -1,5 +1,5 @@
 import { BaseRepository } from "../../IBaseRepository";
-import { IGroup, IVariant, IVarientReq } from "../../../types/varient";
+import { IGroup, IVariant } from "../../../types/varient";
 import { IVarientRepository } from "../interface/IVarientRepository";
 import { Types } from "mongoose";
 import VarientSchema from "../../../models/varient";

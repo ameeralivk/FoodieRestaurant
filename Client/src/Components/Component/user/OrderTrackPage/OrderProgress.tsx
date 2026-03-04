@@ -5,7 +5,7 @@ interface Props {
   totalTime: string;
 }
 
-const OrderProgress: React.FC<Props> = ({ progressPercentage, totalTime }) => {
+const OrderProgress: React.FC<Props> = ({ progressPercentage}) => {
   return (
     <div className="mb-8">
       <h3 className="text-sm font-semibold text-gray-900 mb-2">

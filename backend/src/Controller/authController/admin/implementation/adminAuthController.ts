@@ -268,7 +268,7 @@ export class AdminAuthController implements IAdminAuthController {
       // Construct public URLs directly
       const restaurantPhoto = getS3PublicUrl(restaurantPhotoKey);
       const proofDocument = getS3PublicUrl(proofDocumentKey);
-      const response = await this._adminauthService.registerRestaurant({
+      await this._adminauthService.registerRestaurant({
         email,
         restaurantName,
         ownerName,

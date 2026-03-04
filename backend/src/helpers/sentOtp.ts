@@ -68,7 +68,7 @@ export const sentOtp = async (email: string, otp: string): Promise<otpResponse> 
     await transporter.sendMail(mailOptions);
     return {success:true,message:"Otp sented successfully"}
   } catch (error) {
-  return { success: false, message: "Failed to send OTP" };
+  return { success: false, message:error instanceof Error ? error.message : "Failed to send OTP"};
   }
 };
 
@@ -191,7 +191,96 @@ export const sendResetPasswordEmail = async (email: string, token: string,role:"
 
     return { success: true, message: "Password reset link sent successfully" };
   } catch (error) {
-    return { success: false, message: "Failed to send password reset email" };
+    return { success: false, message:error instanceof Error ? error.message : "Failed to send password reset email" };
+  }
+};
+
+
+export const sendResetStaffPasswordEmail = async (
+  email: string,
+  token: string,
+  role: "admin" | "user" | "staff"
+) => {
+  try {
+
+    let resetPath = "";
+
+    // role-based reset URL
+    switch (role) {
+      case "admin":
+        resetPath = "/admin/reset-password";
+        break;
+      case "staff":
+        resetPath = "/staff/reset-password";
+        break;
+      case "user":
+        resetPath = "/reset-password";
+        break;
+      default:
+        resetPath = "/reset-password";
+    }
+
+    // const resetLink = `${process.env.FRONTEND_URL}${resetPath}?email=${encodeURIComponent(email)}&token=${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/staff/reset-password?email=${encodeURIComponent(email)}&token=${token}&role=staff`;
+    const mailOptions = {
+      from: `"FoodieRestaurant" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Staff Password Reset Request",
+      html: `
+      <div style="
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        padding: 30px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        max-width: 480px;
+        margin: auto;
+      ">
+        <div style="text-align: center;">
+          <h1 style="color: #e63946;">🍴 FoodieRestaurant Staff Portal</h1>
+
+          <p style="color: #555;">
+            You requested to reset your staff account password.
+          </p>
+
+          <a href="${resetLink}" style="
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #e63946;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+          ">
+            Reset Password
+          </a>
+
+          <p style="color: #777; font-size: 14px;">
+            This link expires in <b>2 minutes</b>.
+          </p>
+
+        </div>
+      </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return {
+      success: true,
+      message: "Password reset link sent successfully"
+    };
+
+  } catch (error) {
+
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to send password reset email"
+    };
+
   }
 };
 

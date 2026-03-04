@@ -136,7 +136,7 @@ export class UserAuthService implements IUserAuthService {
     await redisClient.del(redisOtpKey);
     await redisClient.del(redisDataKey);
     const accesstoken = generateToken(createdUser.user._id as string, "user");
-    const refreshToken = generateRefreshToken(
+    generateRefreshToken(
       createdUser.user._id as string,
       "user"
     );
@@ -191,8 +191,8 @@ export class UserAuthService implements IUserAuthService {
       await redisClient.del(`resetPassword:${email}`);
 
       return { success: true, message: MESSAGES.PASS_CHANGE_SUCCESS };
-    } catch (error) {
-      return { success: false, message: "Internal Server Error" };
+    } catch (error:any) {
+      return { success: false, message: error.message ? error.message :  "Internal Server Error" };
     }
   }
 }

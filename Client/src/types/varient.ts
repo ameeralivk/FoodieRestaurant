@@ -10,7 +10,7 @@ export interface IVarientItemType {
   _id:string
   category: string;
   option: string;
-  price:Number
+  price:number
 }
 
 export interface IVariant {

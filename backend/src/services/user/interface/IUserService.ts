@@ -1,5 +1,5 @@
 import { IUser, UpdateProfileResult } from "../../../types/usert";
-import { IMappedUserData, IUserResponseDto } from "../../../utils/dto/userDto";
+import { IMappedUserData} from "../../../utils/dto/userDto";
 
 
 export interface IUserService{

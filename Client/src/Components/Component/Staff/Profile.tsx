@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   User,
   Mail,
   Shield,
   Calendar,
-  CheckCircle,
-  XCircle,
   Lock,
 } from "lucide-react";
 // 1. Import your Modal component here

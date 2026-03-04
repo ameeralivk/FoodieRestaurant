@@ -1,10 +1,9 @@
 import React from "react";
-import { Check, Circle, Package, Truck } from "lucide-react";
 import Navbar from "../../Components/Layouts/userLayouts/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { generateInvoicePDF } from "../../Components/Helpers/user/invoiceDownloarder";
 import { AddFeedback } from "../../services/feedback";
-import { getAllOrders, getOrder } from "../../services/order";
+import {  getOrder } from "../../services/order";
 import BottomNavBar from "../../Components/user/DownBar";
 import type { IGetOrderResponse } from "../../types/order";
 import FeedbackModal from "../../Components/modals/user/feedbackmodal";
@@ -12,7 +11,6 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import type { RootState } from "../../redux/store/store";
 import { useState } from "react";
-import { showErrorToast } from "../../Components/Elements/ErrorToast";
 import { showSuccessToast } from "../../Components/Elements/SuccessToast";
 import { ToastContainer } from "react-toastify";
 
@@ -27,20 +25,11 @@ const OrderDetail: React.FC = () => {
   const [feedbacks, setFeedbacks] = useState<
     Record<string, { rating: number; comment: string }>
   >({});
-  const [openItemId, setOpenItemId] = useState<string | null>(null);
-  const { data, isLoading } = useQuery<IGetOrderResponse>({
+  const { data } = useQuery<IGetOrderResponse>({
     queryKey: ["orders", restaurantId, userId, orderId],
     queryFn: () => getOrder(orderId as string),
   });
   const order = data?.result;
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   const handleSubmitAllFeedback = async () => {
     if (!order) return;

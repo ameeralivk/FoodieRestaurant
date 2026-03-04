@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, HydratedDocument } from "mongoose";
+import mongoose, { Schema,  HydratedDocument } from "mongoose";
 import { ICart } from "../types/cart";
 
 export type CartDocument = HydratedDocument<ICart>;

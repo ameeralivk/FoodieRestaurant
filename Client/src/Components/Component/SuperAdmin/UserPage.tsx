@@ -67,9 +67,11 @@ const UserPage = () => {
     if (!confirmed) return;
     const changeStatus = async () => {
       try {
+        setLoading(true)
         const res = await changeUserStatus(row.id, value);
         if (res.success) {
           showSuccessToast(res.message);
+          setLoading(false)
           queryClient.invalidateQueries({
             queryKey: ["activeUser"],
           });

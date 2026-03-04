@@ -17,7 +17,7 @@ import type {
 } from "../../../types/order";
 import { ToastContainer } from "react-toastify";
 import type { IVarientItemType } from "../../../types/varient";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Socket from "../../../socket";
 import ChefOrderStats from "../../Elements/Staff/chefOrderState";
 import { useQueryClient } from "@tanstack/react-query";
@@ -58,14 +58,14 @@ const MyItemsSection: React.FC = () => {
   const restaurantId = useSelector(
     (state: RootState) => state.userAuth.user?.restaurantId,
   );
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const limit = 10;
   const [ordersData, setOrdersData] = useState<{
     success: boolean;
     data: IUserOrder[];
   } | null>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading,setLoading] = useState(false);
   const queryClient = useQueryClient();
 
   //   const { data } = useQuery<{ success: boolean; data: MyItem[] }>(
@@ -132,7 +132,7 @@ const MyItemsSection: React.FC = () => {
       newStatus,
       varient?._id.toString(),
     );
-    console.log(result, "resule");
+  
     if (result.success) {
       showSuccessToast("order updated Successfully");
       refetch();
@@ -172,6 +172,7 @@ const MyItemsSection: React.FC = () => {
     <div className="max-w-9xl mx-auto px-6 pb-8">
       <ChefOrderStats stats={stats} />
       <h2 className="text-xl font-bold mb-4">My Items ({Items.length})</h2>
+      {loading && <h1>Loading........</h1>}
       <ToastContainer />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Items.map(({ orderId, item, tableNumber, orderStatus }) => (
@@ -194,12 +195,6 @@ const MyItemsSection: React.FC = () => {
             <div className="font-bold text-lg">{item.itemName}</div>
 
             <div className="text-sm">Qty: {item.quantity}</div>
-
-            {/* {item.station && (
-              <div className="text-xs text-gray-500 mt-2">
-                Station: {item.station}
-              </div>
-            )} */}
 
             <div className="text-xs font-bold mt-2 text-emerald-600">
               Status: {item.itemStatus}

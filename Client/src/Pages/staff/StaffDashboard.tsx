@@ -3,10 +3,7 @@ import { motion } from "framer-motion";
 import staffmenu from "../../Components/Elements/Reusable/StaffMenuItems";
 import StaffNavbar from "../../Components/Layouts/Staff/StaffNavbar";
 import StaffAvaileble from "../../Components/Component/Staff/StaffAvailableOrders.";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../redux/store/store";
 const Dashboard = () => {
-  const role = useSelector((state: RootState) => state.userAuth.user?.role);
   return (
     <div>
       <motion.div

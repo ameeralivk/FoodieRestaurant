@@ -1,6 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
 import type { CartItem } from "../types/cart";
-import type { IGetOrderResponse, IPaginatedOrdersResponse, IUserOrder } from "../types/order";
+import type { IGetOrderResponse, IPaginatedOrdersResponse} from "../types/order";
 export const orderPayment = async (
   amount: number,
   restaurantId: string,

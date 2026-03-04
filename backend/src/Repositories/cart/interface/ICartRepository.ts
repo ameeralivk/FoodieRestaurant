@@ -1,5 +1,5 @@
 
-import { itemsDocument } from "../../../models/items"
+
 import { ICart, ICartItem } from "../../../types/cart"
 export interface ICartRepository{
     findByUserAndRestaurant( userId: string,restaurantId: string): Promise<ICart | null>
@@ -17,5 +17,6 @@ export interface ICartRepository{
     findAndUpdate(cartId:string,cart:ICart):Promise<ICart|null>
     getByCartId(cartId:string):Promise<ICart|null>
     updateInstruction(cartId:string,cartItemsId:string,instraction:string,variant?:{category:string,option:string,price:number}):Promise<ICart|null>
+    deleteByUserId(userId: string): Promise<ICart | null>
 
 }

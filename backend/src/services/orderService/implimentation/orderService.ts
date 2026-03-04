@@ -7,11 +7,8 @@ import { getIO } from "../../../config/socket";
 import {
   AssignedItemsResponse,
   AssignedItem,
-  IVariant,
 } from "../../../types/order";
 import {
-  IOrderItem,
-  IUserOrder,
   IUserOrderDocument,
 } from "../../../types/order";
 import { MESSAGES } from "../../../constants/messages";
@@ -234,6 +231,11 @@ export class OrderService implements IOrderService {
           });
 
           await this._notificationService.createNotification(
+            order.restaurantId.toString(),
+            "staff",
+            `Order ${orderId} is READY`,
+          );
+            await this._notificationService.createNotification(
             order.userId.toString(),
             "User",
             `Order ${orderId} is READY`,

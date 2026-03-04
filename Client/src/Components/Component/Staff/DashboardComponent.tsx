@@ -18,22 +18,6 @@ import { ToastContainer } from "react-toastify";
 
 type ItemStatus = "PENDING" | "PREPARING" | "READY"|"ASSIGNED"|"SERVING";
 
-interface OrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  status: ItemStatus;
-  preparedBy?: string;
-  station?: string; // e.g., "Grill", "Fryer", "Wok", "Dessert"
-}
-
-interface Order {
-  id: string;
-  tableNumber: number;
-  items: OrderItem[];
-  orderTime: string;
-}
-
 const ChefPage: React.FC = () => {
   const queryClient = useQueryClient();
   const role = useSelector((state: RootState) => state.userAuth.user?.role);
@@ -51,7 +35,7 @@ const ChefPage: React.FC = () => {
     { id: string; message: string }[]
   >([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const restaurantId = useSelector(
     (state: RootState) => state.userAuth.user?.restaurantId,
   );

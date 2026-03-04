@@ -1,4 +1,4 @@
-import { ChartNoAxesColumn, TableOfContents } from "lucide-react";
+import { TableOfContents } from "lucide-react";
 import SearchBar from "../../Elements/Reusable/reusableSearchBar";
 import { ToastContainer } from "react-toastify";
 import ReusableModal from "../../modals/SuperAdmin/GeneralModal";
@@ -7,23 +7,14 @@ import { useState } from "react";
 import ReusableTable from "../../Elements/Reusable/reusableTable";
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import {
-  addItems,
-  changeItemStatus,
-  deleteItem,
-  editItem,
-  getAllItems,
-} from "../../../services/ItemsService";
 import type { RootState } from "../../../redux/store/store";
-import type { IItem, IItemResponse } from "../../../types/Items";
+import type { IItem} from "../../../types/Items";
 import type { CategoryResponse } from "../../../types/category";
 import { getAllCategory } from "../../../services/category";
 import { showSuccessToast } from "../../Elements/SuccessToast";
 import { useEffect } from "react";
-import { getAllSubCategory } from "../../../services/subCategory";
 import { showConfirm } from "../../Elements/ConfirmationSwall";
 import { useQueryClient } from "@tanstack/react-query";
-import type { SubCategoryResponse } from "../../../types/subCategory";
 import { validateItem } from "../../../Validation/validateItems";
 import {
   AddVarient,
@@ -37,15 +28,15 @@ const VarientComponent = () => {
   const [modalErrors, setModalErrors] = useState<{ [key: string]: string }>({});
   const [modalMode, setModalMode] = useState<"add" | "edit" | "view">("add");
   const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(3);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [searchTerm, setSearchQuery] = useState("");
   const restaurentId = useSelector((state: RootState) => state.auth.admin?._id);
-  const [subCategory, setSubCategory] = useState<string[]>([]);
+  // const [subCategory, setSubCategory] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [subCategoryId, setSubCategoryId] = useState<string>("");
-  const [categoryId, setCategoryId] = useState("");
+  // const [subCategoryId, setSubCategoryId] = useState<string>("");
+  // const [categoryId, setCategoryId] = useState("");
+  const [loading,setLoading] = useState(false)
   const limit = 10;
   const queryClient = useQueryClient();
   const columns = [
@@ -60,33 +51,27 @@ const VarientComponent = () => {
 
   const {
     data: VarientList,
-    isLoading: isItemCaLoading,
-    isFetching: isItemFetching,
   } = useQuery<IGetVariantsResponse, Error>({
     queryKey: ["VarientList", restaurentId, currentPage, debouncedSearch],
     queryFn: () => getAllVarient(currentPage, limit, debouncedSearch),
   });
 
-  const {
-    data: SubCategory,
-    isLoading: isSubCategoryLoading,
-    isFetching: isSubCategoryFetching,
-  } = useQuery<SubCategoryResponse, Error>({
-    queryKey: ["SubCategory", restaurentId, currentPage, debouncedSearch],
-    queryFn: () =>
-      getAllSubCategory(
-        restaurentId as string,
-        currentPage,
-        limit,
-        debouncedSearch,
-      ),
-    enabled: modalOpen && !!restaurentId,
-  });
+  // const {
+  //   data: SubCategory,
+  // } = useQuery<SubCategoryResponse, Error>({
+  //   queryKey: ["SubCategory", restaurentId, currentPage, debouncedSearch],
+  //   queryFn: () =>
+  //     getAllSubCategory(
+  //       restaurentId as string,
+  //       currentPage,
+  //       limit,
+  //       debouncedSearch,
+  //     ),
+  //   enabled: modalOpen && !!restaurentId,
+  // });
 
   const {
-    data: categoryData,
-    isLoading: isCategoryLoading,
-    isFetching: isCategoryFetching,
+  
   } = useQuery<CategoryResponse, Error>({
     queryKey: ["categories", restaurentId],
     queryFn: () =>
@@ -111,27 +96,21 @@ const VarientComponent = () => {
     }
   }, [VarientList]);
 
-  useEffect(() => {
-    if (modalMode === "edit" && currentRow && SubCategory?.data) {
-      const names =
-        SubCategory?.data
-          ?.filter((sub) => sub.categoryName === currentRow?.categoryId?.name)
-          .map((sub) => sub.name) ?? [];
+  // useEffect(() => {
+  //   if (modalMode === "edit" && currentRow && SubCategory?.data) {
+  //     const names =
+  //       SubCategory?.data
+  //         ?.filter((sub) => sub.categoryName === currentRow?.categoryId?.name)
+  //         .map((sub) => sub.name) ?? [];
 
-      setSubCategory(names);
-    }
-  }, [modalMode, currentRow, SubCategory]);
+  //     // setSubCategory(names);
+  //   }
+  // }, [modalMode, currentRow, SubCategory]);
 
-  const categoryList = categoryData?.data.map((cat) => cat.name);
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
   const handleSubmit = (row: any) => {
-    // const { isValid, errors } = validateItem(row);
-    // if (!isValid) {
-    //   setModalErrors(errors);
-    //   return;
-    // }
     if (modalMode == "add") {
       const varientAdd = async () => {
         try {
@@ -155,6 +134,7 @@ const VarientComponent = () => {
             setModalErrors({});
           }
         } catch (error) {
+          setLoading(false)
           return;
         }
       };
@@ -199,34 +179,31 @@ const VarientComponent = () => {
     setModalOpen(true);
     setModalMode("edit");
   };
-  const updateItemStatus = async (row: any, value: any) => {
-    const confirmed = await showConfirm(
-      "Change this status?",
-      `Are you Wand to Change the Status?`,
-      "Change",
-      "Cancel",
-    );
-    if (!confirmed) return;
-    const newValue = value;
-    const changeStatus = async () => {
-      try {
-        const res = await changeItemStatus(row._id, newValue);
-        if (res.success) {
-          showSuccessToast(res.message);
-          // queryClient.invalidateQueries({
-          //   queryKey: ["activeTable", restaurentId],
-          // });
-          queryClient.invalidateQueries({
-            queryKey: ["ItemsList", restaurentId],
-          });
-          setModalOpen(false);
-        }
-      } catch (error) {
-        return;
-      }
-    };
-    changeStatus();
-  };
+  // const updateItemStatus = async (row: any, value: any) => {
+  //   const confirmed = await showConfirm(
+  //     "Change this status?",
+  //     `Are you Wand to Change the Status?`,
+  //     "Change",
+  //     "Cancel",
+  //   );
+  //   if (!confirmed) return;
+  //   const newValue = value;
+  //   const changeStatus = async () => {
+  //     try {
+  //       const res = await changeItemStatus(row._id, newValue);
+  //       if (res.success) {
+  //         showSuccessToast(res.message);
+  //         queryClient.invalidateQueries({
+  //           queryKey: ["ItemsList", restaurentId],
+  //         });
+  //         setModalOpen(false);
+  //       }
+  //     } catch (error) {
+  //       return;
+  //     }
+  //   };
+  //   changeStatus();
+  // };
 
   const handleFieldChange = (name: string, value: any) => {
     const updatedRow = {
@@ -240,21 +217,21 @@ const VarientComponent = () => {
     setModalErrors(errors);
 
     // existing category logic
-    if (name === "categoryName") {
-      const cat = categoryData?.data?.find((c) => c.name === value);
-      setCategoryId(cat?.id as string);
+    // if (name === "categoryName") {
+    //   // const cat = categoryData?.data?.find((c) => c.name === value);
+    //   // setCategoryId(cat?.id as string);
 
-      const names =
-        SubCategory?.data
-          ?.filter((sub) => sub.categoryName === value)
-          .map((sub) => sub.name) ?? [];
+    //   const names =
+    //     SubCategory?.data
+    //       ?.filter((sub) => sub.categoryName === value)
+    //       .map((sub) => sub.name) ?? [];
 
-      setSubCategory(names);
-    }
+    //   // setSubCategory(names);
+    // }
 
     if (name === "SubcategoryName") {
-      const sub = SubCategory?.data?.find((s) => s.name === value);
-      setSubCategoryId(sub?.id as string);
+      // const sub = SubCategory?.data?.find((s) => s.name === value);
+      // setSubCategoryId(sub?.id as string);
     }
   };
 

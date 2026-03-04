@@ -4,7 +4,6 @@ import type { RestaurantApprovalModalProps } from "../../../types/SuperAdmin";
 import Swal from "sweetalert2";
 import {
   approveRestaurant,
-  rejectRestaurant,
 } from "../../../services/superAdmin";
 import { useState } from "react";
 import handleDownload from "../../../utils/superAdmin/download";
@@ -66,7 +65,7 @@ const RestaurantApprovalModal: React.FC<RestaurantApprovalModalProps> = ({
     });
     if (result.isConfirmed) {
       try {
-        let res = await changeRestaurantStatus(data._id, !data.isBlocked);
+        await changeRestaurantStatus(data._id, !data.isBlocked);
         Swal.fire(
           "Approved!",
           `Restaurant has been ${data.isBlocked ? "UnBlock" : "Block"} .`,
@@ -103,6 +102,7 @@ const RestaurantApprovalModal: React.FC<RestaurantApprovalModalProps> = ({
         onApprove();
         onClose();
       } catch (err) {
+        setRejectLoading(false)
         console.error(err);
         Swal.fire("Error!", "Failed to approve the restaurant.", "error");
       }

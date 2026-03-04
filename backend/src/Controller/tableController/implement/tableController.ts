@@ -14,7 +14,7 @@ export class TableController implements ITableController {
 
    addTable = async(req: Request, res: Response): Promise<Response>=> {
     try {
-      const table = await this._tableService.createTable(req.body);
+      await this._tableService.createTable(req.body);
       return res.status(HttpStatus.CREATED).json({
         success: true,
         message: MESSAGES.TABLE_CREATED_SUCCESS,

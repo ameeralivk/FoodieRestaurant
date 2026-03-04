@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { X, MapPin, Phone, Mail, Clock, User, XCircle } from "lucide-react";
 
 interface Coordinates {

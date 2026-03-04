@@ -1,5 +1,4 @@
 import { NotificationDocument } from "../../../models/notification"
-import { INotificationInterface } from "../../../types/notification"
 
 export interface INotificationService {
   createNotification(
@@ -7,6 +6,6 @@ export interface INotificationService {
     recipientModel: "User" | "staff",
     message: string,
   ):Promise<{success:boolean,message:string}>
-  getAllNotification(recipientId: string):Promise<{success:boolean,data:NotificationDocument[]|[]}>
+  getAllNotification(recipientId: string,model?:string):Promise<{success:boolean,data:NotificationDocument[]|[]}>
   markAsRead(notificationId:string,isAll:string):Promise<{success:boolean,message:string}>
 }

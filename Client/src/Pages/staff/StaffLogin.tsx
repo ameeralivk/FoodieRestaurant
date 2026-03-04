@@ -13,7 +13,6 @@ const StaffLogin: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
-
   const handleSubmit = () => {
     setError("");
 
@@ -29,13 +28,13 @@ const StaffLogin: React.FC = () => {
           const data = {
             _id: result.data._id,
             email: result.data.email,
-            name:result.data.staffName,
+            name: result.data.staffName,
             status: result.data.status.toString(),
             role: result.data.role,
             restaurantId: result.data.restaurantId,
           };
           dispatch(userLoginAction({ user: data }));
-          navigate("/staff/dashboard");
+          navigate(`/${data.role}/analytics`);
           showSuccessToast(result.message);
         }
       } catch (error) {
@@ -73,24 +72,6 @@ const StaffLogin: React.FC = () => {
             />
           </div>
 
-          {/* <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-              placeholder="••••••••"
-            />
-          </div> */}
-
           <div>
             <label
               htmlFor="password"
@@ -119,6 +100,15 @@ const StaffLogin: React.FC = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => navigate("/staff/forgot-password")}
+                  className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  Forgot Password?
+                </button>
+              </div>
             </div>
           </div>
 

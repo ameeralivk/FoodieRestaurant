@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IWalletTransaction } from "../types/wallet";
 import { IUserWallet } from "../types/wallet";
 

@@ -12,6 +12,7 @@ import { AfterLoading, loadingToast } from "../Components/Elements/Loading";
 import { useNavigate } from "react-router-dom";
 import type { RegisterFormData } from "../types/AdminTypes";
 import type { ForgetPasswordFormData } from "../types/AdminTypes";
+import { getErrorMessage } from "../Components/Helpers/getErrorMessage";
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 interface registerFormData {
   restaurantName: string;
@@ -25,7 +26,7 @@ export const register = async (formData: registerFormData) => {
       formData,
       {
         withCredentials: true,
-      }
+      },
     );
     return response.data;
   } catch (error: unknown) {
@@ -33,7 +34,7 @@ export const register = async (formData: registerFormData) => {
       console.error("SignUp Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -42,7 +43,7 @@ export const register = async (formData: registerFormData) => {
 
 export const verifyOtp = async (otp: string, email: string) => {
   try {
-    let data = { otp: otp, email: email };
+    const data = { otp: otp, email: email };
     const response = await api.post("/admin/auth/verify-otp", data, {
       withCredentials: true,
     });
@@ -52,7 +53,7 @@ export const verifyOtp = async (otp: string, email: string) => {
       console.error("SignUp Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -61,7 +62,7 @@ export const verifyOtp = async (otp: string, email: string) => {
 
 export const resendOtp = async (email: string) => {
   try {
-    let data = { email };
+    const data = { email };
     const response = await api.post("/admin/auth/resent-otp", data, {
       withCredentials: true,
     });
@@ -71,7 +72,7 @@ export const resendOtp = async (email: string) => {
       console.error("SignUp Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -88,7 +89,6 @@ export const useGoogleLoginHandler = (dispatch: AppDispatch) => {
         });
         if (res.data.success) {
           const saveddata: AdminType = {
-            
             _id: res.data.data._id,
             restaurantName: res.data.data.restaurantName,
             email: res.data.data.email,
@@ -101,7 +101,7 @@ export const useGoogleLoginHandler = (dispatch: AppDispatch) => {
           dispatch(
             loginAction({
               admin: saveddata,
-            })
+            }),
           );
           dispatch(setAuth({ isAuthenticated: true }));
           showSuccessToast("Google login successful!");
@@ -110,8 +110,9 @@ export const useGoogleLoginHandler = (dispatch: AppDispatch) => {
         } else {
           showErrorToast("Google authentication failed!");
         }
-      } catch (err:any) {
-        showErrorToast(err?.response?.data?.message||"Google Authentication Failed");
+      } catch (err: unknown) {
+        // showErrorToast(err?.response?.data?.message||"Google Authentication Failed");
+        showErrorToast(getErrorMessage(err));
       }
     },
     onError: () => showErrorToast("Google authentication failed"),
@@ -144,7 +145,7 @@ export const handleLogin = async (email: string, password: string) => {
 };
 
 export const handleForgetPasswordSubmit = async (
-  formData: ForgetPasswordFormData
+  formData: ForgetPasswordFormData,
 ) => {
   const loadingId = loadingToast();
 
@@ -157,7 +158,7 @@ export const handleForgetPasswordSubmit = async (
     if (response.data.success || response.data.succes) {
       await AfterLoading(
         "Sending reset link...",
-        response.data.message || "Password reset link sent successfully!"
+        response.data.message || "Password reset link sent successfully!",
       );
       toast.dismiss(loadingId);
     } else {
@@ -174,8 +175,8 @@ export const handleForgetPasswordSubmit = async (
       render: axios.isAxiosError(error)
         ? error.response?.data?.message || "Something went wrong!"
         : error instanceof Error
-        ? error.message
-        : "An unknown error occurred",
+          ? error.message
+          : "An unknown error occurred",
       type: "error",
       isLoading: false,
       autoClose: 3000,
@@ -183,15 +184,49 @@ export const handleForgetPasswordSubmit = async (
   }
 };
 
+// export const handleresetPasswordForm = async (
+//   resetPassword: resetPassword,
+//   role: "admin" | "user"
+// ) => {
+//   try {
+//     const url =
+//       role === "admin"
+//         ? `/admin/auth/forget-password?token=${resetPassword.token}`
+//         : `/user/auth/forget-password?token=${resetPassword.token}`;
+
+//     const response = await api.patch(url, {
+//       email: resetPassword.email,
+//       newPassword: resetPassword.newPassword,
+//     });
+
+//     if (response.data.success || response.data.succes) {
+//       return { success: true, message: response.data.message };
+//     }
+//   } catch (error: any) {
+//     const message = axios.isAxiosError(error)
+//       ? error.response?.data?.message || "Something went wrong!"
+//       : error instanceof Error
+//       ? error.message
+//       : "An unknown error occurred";
+
+//     showErrorToast(message);
+//   }
+// };
+
 export const handleresetPasswordForm = async (
   resetPassword: resetPassword,
-  role: "admin" | "user"
+  role: "admin" | "user" | "staff",
 ) => {
   try {
-    const url =
-      role === "admin"
-        ? `/admin/auth/forget-password?token=${resetPassword.token}`
-        : `/user/auth/forget-password?token=${resetPassword.token}`;
+    let url = "";
+
+    if (role === "admin") {
+      url = `/admin/auth/forget-password?token=${resetPassword.token}`;
+    } else if (role === "user") {
+      url = `/user/auth/forget-password?token=${resetPassword.token}`;
+    } else if (role === "staff") {
+      url = `/staff/auth/forgot-password?token=${resetPassword.token}`;
+    }
 
     const response = await api.patch(url, {
       email: resetPassword.email,
@@ -199,16 +234,24 @@ export const handleresetPasswordForm = async (
     });
 
     if (response.data.success || response.data.succes) {
-      return { success: true, message: response.data.message };
+      return {
+        success: true,
+        message: response.data.message,
+      };
     }
   } catch (error: any) {
     const message = axios.isAxiosError(error)
       ? error.response?.data?.message || "Something went wrong!"
       : error instanceof Error
-      ? error.message
-      : "An unknown error occurred";
+        ? error.message
+        : "An unknown error occurred";
 
     showErrorToast(message);
+
+    return {
+      success: false,
+      message,
+    };
   }
 };
 
@@ -234,7 +277,7 @@ export const registerRestaurant = async (formData: RegisterFormData) => {
     showErrorToast(
       axios.isAxiosError(error)
         ? error.response?.data?.message || "Something went wrong!"
-        : error.message
+        : error.message,
     );
     throw error;
   }
@@ -255,7 +298,7 @@ export const getStatus = async (adminId: string) => {
       console.error("SignUp Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -275,7 +318,7 @@ export const updateDocument = async (adminId: string, file: File) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
 
     return response.data;
@@ -284,7 +327,7 @@ export const updateDocument = async (adminId: string, file: File) => {
       console.error("Update Document Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -296,7 +339,7 @@ export const logoutRequest = async () => {
     const response = await api.post(
       "/admin/auth/logout",
       {},
-      { withCredentials: true }
+      { withCredentials: true },
     );
     if (response.data?.success) {
       return response.data;

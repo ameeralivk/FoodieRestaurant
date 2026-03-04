@@ -1,198 +1,238 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, QrCode, Eye } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import type { RootState } from "../../../redux/store/store";
+import type { IUserOrder } from "../../../types/order";
+import { getTotalOrders } from "../../../services/staffService";
+import { getRating, type ItemRating } from "../../../services/feedback";
 
-interface Order {
-  id: string;
-  table: string;
-  items: number;
-  total: number;
-  status: 'pending' | 'preparing' | 'completed' | 'cancelled';
-  time: string;
-}
+// Sub-components
+import DashboardHeader from "./Dashboard/DashboardHeader";
+import StatsGrid from "./Dashboard/StatsGrid";
+import ChartsSection from "./Dashboard/ChartsSection";
+import RecentOrdersTable from "./Dashboard/RecentOrdersTable";
+import OrderDetailModal from "./Dashboard/OrderDetailModal";
+import { LoadingState, ErrorState } from "./Dashboard/LoadingErrorStates";
 
-interface Stats {
-  totalOrders: number;
-  revenue: number;
-  activeCustomers: number;
-  avgOrderValue: number;
-}
+// Types & Constants
+import {
+  type TimeFilter,
+  type DashboardStats,
+  STATUS_COLORS,
+  STATUS_LABELS,
+  ORDERS_PER_PAGE,
+  filterByTime,
+} from "./Dashboard/DashboardTypes";
 
+// ─── Main Component ─────────────────────────────────────
 const DashboardPage: React.FC = () => {
-  const [stats] = useState<Stats>({
-    totalOrders: 248,
-    revenue: 12450,
-    activeCustomers: 45,
-    avgOrderValue: 50.20
-  });
+  const [filter, setFilter] = useState<TimeFilter>("all");
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState<IUserOrder | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const [recentOrders] = useState<Order[]>([
-    { id: 'ORD-001', table: 'Table 5', items: 3, total: 45.99, status: 'preparing', time: '2 min ago' },
-    { id: 'ORD-002', table: 'Table 12', items: 5, total: 78.50, status: 'pending', time: '5 min ago' },
-    { id: 'ORD-003', table: 'Table 3', items: 2, total: 32.00, status: 'completed', time: '8 min ago' },
-    { id: 'ORD-004', table: 'Table 8', items: 4, total: 65.25, status: 'preparing', time: '10 min ago' },
-    { id: 'ORD-005', table: 'Table 15', items: 6, total: 92.80, status: 'pending', time: '12 min ago' },
-  ]);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'preparing': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'completed': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'cancelled': return 'bg-red-500/20 text-red-400 border-red-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
-
-  const StatCard: React.FC<{ icon: React.ReactNode; title: string; value: string; trend?: string }> = ({ icon, title, value, trend }) => (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
-      <div className="flex items-center justify-between mb-4">
-        <div className="p-3 bg-gray-800 rounded-lg">
-          {icon}
-        </div>
-        {trend && (
-          <div className="flex items-center text-green-400 text-sm">
-            <TrendingUp className="w-4 h-4 mr-1" />
-            {trend}
-          </div>
-        )}
-      </div>
-      <h3 className="text-gray-400 text-sm mb-1">{title}</h3>
-      <p className="text-white text-2xl font-bold">{value}</p>
-    </div>
+  const RestaurantId = useSelector(
+    (state: RootState) => state.auth.admin?._id as string
   );
 
+  // Fetch all orders for this restaurant
+  const {
+    data: ordersRes,
+    isLoading: ordersLoading,
+    error: ordersError,
+  } = useQuery<{ success: boolean; data: IUserOrder[] }>({
+    queryKey: ["dashboard-orders", RestaurantId],
+    queryFn: () => getTotalOrders(RestaurantId),
+    enabled: !!RestaurantId,
+    refetchInterval: 30000, // Refresh every 30s
+  });
+
+  // Fetch ratings/reviews
+  const {
+    data: ratingsRes,
+    isLoading: ratingsLoading,
+    error: ratingsError,
+  } = useQuery({
+    queryKey: ["dashboard-ratings", RestaurantId],
+    queryFn: () => getRating(RestaurantId),
+    enabled: !!RestaurantId,
+  });
+
+  const allOrders = ordersRes?.data ?? [];
+  const ratings: ItemRating[] = ratingsRes?.data ?? [];
+
+  // ─── Derived data ───────────────────────────────────
+  const filteredOrders = useMemo(() => filterByTime(allOrders, filter), [allOrders, filter]);
+
+  const stats: DashboardStats = useMemo(() => {
+    const totalOrders = filteredOrders.length;
+    const placed = filteredOrders.filter((o) => o.orderStatus === "PLACED").length;
+    const inKitchen = filteredOrders.filter((o) => o.orderStatus === "IN_KITCHEN").length;
+    const ready = filteredOrders.filter((o) => o.orderStatus === "READY").length;
+    const served = filteredOrders.filter((o) => o.orderStatus === "SERVED").length;
+    const assigned = filteredOrders.filter((o) => o.orderStatus === "ASSIGNED").length;
+    const serving = filteredOrders.filter((o) => o.orderStatus === "SERVING").length;
+    const cancelled = filteredOrders.filter((o) => (o.orderStatus as string) === "CANCELLED").length;
+    const totalRevenue = filteredOrders
+      .filter((o) => (o.orderStatus as string) !== "CANCELLED")
+      .reduce((sum, o) => sum + o.totalAmount, 0);
+    const totalReviews = ratings.reduce((sum, r) => sum + r.totalReviews, 0);
+    const avgRating =
+      ratings.length > 0
+        ? ratings.reduce((sum, r) => sum + r.avgRating * r.totalReviews, 0) /
+        (totalReviews || 1)
+        : 0;
+
+    return {
+      totalOrders,
+      placed,
+      inKitchen,
+      ready,
+      served,
+      assigned,
+      serving,
+      cancelled,
+      totalRevenue,
+      totalReviews,
+      avgRating,
+    };
+  }, [filteredOrders, ratings]);
+
+  // Orders by Status pie chart data
+  const statusChartData = useMemo(() => {
+    const statusMap: Record<string, number> = {};
+    filteredOrders.forEach((o) => {
+      const s = o.orderStatus as string;
+      statusMap[s] = (statusMap[s] || 0) + 1;
+    });
+    return Object.entries(statusMap).map(([status, count]) => ({
+      name: STATUS_LABELS[status] || status,
+      value: count,
+      color: STATUS_COLORS[status] || "#9ca3af",
+    }));
+  }, [filteredOrders]);
+
+  // Revenue over time (daily aggregation)
+  const revenueChartData = useMemo(() => {
+    const dayMap: Record<string, number> = {};
+    filteredOrders
+      .filter((o) => (o.orderStatus as string) !== "CANCELLED")
+      .forEach((o) => {
+        const date = new Date(o.createdAt).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+        });
+        dayMap[date] = (dayMap[date] || 0) + o.totalAmount;
+      });
+    return Object.entries(dayMap)
+      .map(([date, revenue]) => ({ date, revenue: Math.round(revenue) }))
+      .slice(-14); // Last 14 data points
+  }, [filteredOrders]);
+
+  // Orders Trend (daily count)
+  const ordersTrendData = useMemo(() => {
+    const dayMap: Record<string, number> = {};
+    filteredOrders.forEach((o) => {
+      const date = new Date(o.createdAt).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
+      dayMap[date] = (dayMap[date] || 0) + 1;
+    });
+    return Object.entries(dayMap)
+      .map(([date, orders]) => ({ date, orders }))
+      .slice(-14);
+  }, [filteredOrders]);
+
+  // Rating distribution (1-5 stars)
+  const ratingDistribution = useMemo(() => {
+    const dist = [0, 0, 0, 0, 0]; // index 0 = 1 star, 4 = 5 star
+    ratings.forEach((r) => {
+      const bucket = Math.max(0, Math.min(4, Math.round(r.avgRating) - 1));
+      dist[bucket] += r.totalReviews;
+    });
+    return dist.map((count, i) => ({
+      stars: `${i + 1} ★`,
+      count,
+    }));
+  }, [ratings]);
+
+  // Sorted + searched orders for table (paginated)
+  const sortedOrders = useMemo(() => {
+    let orders = [...filteredOrders];
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      orders = orders.filter(
+        (o) =>
+          (o.orderId || o._id).toLowerCase().includes(q) ||
+          o.tableId.toLowerCase().includes(q)
+      );
+    }
+    return orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [filteredOrders, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / ORDERS_PER_PAGE));
+  const paginatedOrders = sortedOrders.slice(
+    (ordersPage - 1) * ORDERS_PER_PAGE,
+    ordersPage * ORDERS_PER_PAGE
+  );
+
+  // Reset page when filter or search changes
+  const handleFilterChange = (f: TimeFilter) => {
+    setFilter(f);
+    setOrdersPage(1);
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    setOrdersPage(1);
+  };
+
+  // ─── Loading / Error ────────────────────────────────
+  const isLoading = ordersLoading || ratingsLoading;
+  const errorMsg = ordersError
+    ? (ordersError as Error).message
+    : ratingsError
+      ? (ratingsError as Error).message
+      : "";
+
+  if (isLoading) return <LoadingState />;
+  if (errorMsg) return <ErrorState message={errorMsg} />;
+
+  // ─── Render ─────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Restaurant Dashboard</h1>
-            <p className="text-gray-400">Monitor your QR code restaurant operations</p>
-          </div>
-          <button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 px-4 py-2 rounded-lg transition-colors">
-            <QrCode className="w-5 h-5" />
-            View QR Codes
-          </button>
-        </div>
+    <div className="min-h-screen bg-black text-white p-4 md:p-6 lg:p-8">
+      <div className="max-w-[1400px] mx-auto">
+        <DashboardHeader filter={filter} onFilterChange={handleFilterChange} />
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            icon={<ShoppingCart className="w-6 h-6 text-blue-400" />}
-            title="Total Orders Today"
-            value={stats.totalOrders.toString()}
-            trend="+12%"
+        <StatsGrid stats={stats} />
+
+        <ChartsSection
+          statusChartData={statusChartData}
+          revenueChartData={revenueChartData}
+          ordersTrendData={ordersTrendData}
+          ratingDistribution={ratingDistribution}
+          stats={stats}
+          totalRatingsCount={ratings.length}
+        />
+
+        <RecentOrdersTable
+          paginatedOrders={paginatedOrders}
+          sortedOrdersLength={sortedOrders.length}
+          searchQuery={searchQuery}
+          onSearch={handleSearch}
+          onSelectOrder={setSelectedOrder}
+          ordersPage={ordersPage}
+          setOrdersPage={setOrdersPage}
+          totalPages={totalPages}
+        />
+
+        {selectedOrder && (
+          <OrderDetailModal
+            order={selectedOrder}
+            onClose={() => setSelectedOrder(null)}
           />
-          <StatCard
-            icon={<DollarSign className="w-6 h-6 text-green-400" />}
-            title="Revenue"
-            value={`$${stats.revenue.toLocaleString()}`}
-            trend="+8%"
-          />
-          <StatCard
-            icon={<Users className="w-6 h-6 text-purple-400" />}
-            title="Active Customers"
-            value={stats.activeCustomers.toString()}
-          />
-          <StatCard
-            icon={<TrendingUp className="w-6 h-6 text-orange-400" />}
-            title="Avg Order Value"
-            value={`$${stats.avgOrderValue}`}
-            trend="+5%"
-          />
-        </div>
-
-        {/* Recent Orders */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-          <div className="p-6 border-b border-gray-800">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Recent Orders</h2>
-              <button className="text-sm text-gray-400 hover:text-white transition-colors">
-                View All
-              </button>
-            </div>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left p-4 text-gray-400 font-medium">Order ID</th>
-                  <th className="text-left p-4 text-gray-400 font-medium">Table</th>
-                  <th className="text-left p-4 text-gray-400 font-medium">Items</th>
-                  <th className="text-left p-4 text-gray-400 font-medium">Total</th>
-                  <th className="text-left p-4 text-gray-400 font-medium">Status</th>
-                  <th className="text-left p-4 text-gray-400 font-medium">Time</th>
-                  <th className="text-left p-4 text-gray-400 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
-                    <td className="p-4 font-medium">{order.id}</td>
-                    <td className="p-4 text-gray-300">{order.table}</td>
-                    <td className="p-4 text-gray-300">{order.items} items</td>
-                    <td className="p-4 font-medium">${order.total}</td>
-                    <td className="p-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                        {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
-                        {order.status === 'completed' && <CheckCircle className="w-3 h-3 mr-1" />}
-                        {order.status === 'cancelled' && <XCircle className="w-3 h-3 mr-1" />}
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="p-4 text-gray-400 text-sm">{order.time}</td>
-                    <td className="p-4">
-                      <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
-                        <Eye className="w-4 h-4 text-gray-400" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors cursor-pointer">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-500/20 rounded-lg">
-                <QrCode className="w-6 h-6 text-blue-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">Generate QR Code</h3>
-                <p className="text-sm text-gray-400">Create new table QR codes</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors cursor-pointer">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-500/20 rounded-lg">
-                <ShoppingCart className="w-6 h-6 text-green-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">Manage Menu</h3>
-                <p className="text-sm text-gray-400">Update items and prices</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors cursor-pointer">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-500/20 rounded-lg">
-                <Users className="w-6 h-6 text-purple-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">Staff Management</h3>
-                <p className="text-sm text-gray-400">View and manage staff</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

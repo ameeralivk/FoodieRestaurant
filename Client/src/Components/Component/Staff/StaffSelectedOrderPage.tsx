@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import StaffOrderCard from "../../Elements/Staff/StaffOrderCard";
-import type { Order, Staff } from "../../Elements/Staff/StaffOrderCard";
 import { useQuery } from "@tanstack/react-query";
 import type { IUserOrder } from "../../../types/order";
 import { useSelector } from "react-redux";
@@ -21,7 +20,7 @@ import StaffOrderStats from "../../Elements/Staff/StaffOrderState";
 const StaffSelectedOrders: React.FC = () => {
   const queryClient = useQueryClient();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const restaurantId = useSelector(
     (state: RootState) => state.userAuth.user?.restaurantId,
   );

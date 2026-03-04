@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext } from 'react';
-import { Clock, User, LogOut, ChefHat, CheckCircle2, Truck, UtensilsCrossed, AlertCircle, X, UserPlus, Package } from 'lucide-react';
+import { Clock, User, ChefHat, CheckCircle2, AlertCircle, X, UserPlus, Package } from 'lucide-react';
 
 
 
@@ -195,16 +195,16 @@ const calculateOrderStatus = (items: OrderItem[]): OrderStatus => {
   return 'pending';
 };
 
-const getItemProgress = (items: OrderItem[]) => {
-  const ready = items.filter(i => i.status === 'ready').length;
-  const preparing = items.filter(i => i.status === 'preparing').length;
-  const assigned = items.filter(i => i.status === 'assigned').length;
-  const pending = items.filter(i => i.status === 'pending').length;
-  const total = items.length;
-  const percentage = Math.round((ready / total) * 100);
+// const getItemProgress = (items: OrderItem[]) => {
+//   const ready = items.filter(i => i.status === 'ready').length;
+//   const preparing = items.filter(i => i.status === 'preparing').length;
+//   const assigned = items.filter(i => i.status === 'assigned').length;
+//   const pending = items.filter(i => i.status === 'pending').length;
+//   const total = items.length;
+//   const percentage = Math.round((ready / total) * 100);
   
-  return { ready, preparing, assigned, pending, total, percentage };
-};
+//   return { ready, preparing, assigned, pending, total, percentage };
+// };
 
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -680,7 +680,6 @@ const StaffOrderCard: React.FC<{
   onServing?: () => void;
   onCompleted?: () => void;
 }> = ({ order, currentStaff, onAssign, onServing, onCompleted }) => {
-  const progress = getItemProgress(order.items);
   const isAssignedToMe = order.assignedStaff?.id === currentStaff.id;
 
   return (

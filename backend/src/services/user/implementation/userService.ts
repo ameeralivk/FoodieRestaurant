@@ -126,7 +126,7 @@ export class UserService implements IUserService {
 
     const { userId, name, phone } = JSON.parse(storedData);
 
-    const updatedUser = await this._userRepo.updateUser(userId, {
+    await this._userRepo.updateUser(userId, {
       name,
       phone,
       email,

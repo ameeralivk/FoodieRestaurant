@@ -1,7 +1,5 @@
 import {
   EditIStaff,
-  IStaff,
-  RequestEditIStaff,
   RequestIStaff,
   StaffResponseDTO,
 } from "../../../types/staff";

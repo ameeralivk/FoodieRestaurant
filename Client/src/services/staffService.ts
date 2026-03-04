@@ -7,7 +7,6 @@ import type {
   StaffListResponse,
   StaffResponseDTO,
 } from "../types/staffTypes";
-import type { IVarientItemType } from "../types/varient";
 
 export const addStaff = async (
   staffData: IStaffAdd,
@@ -50,7 +49,6 @@ export const changeStaffStatus = async (
 
 export const getTotalOrders = async (
   restaurantId: string,
-  status?: string,
 ): Promise<{ success: boolean; data: IUserOrder[] }> => {
   return apiRequest("GET", `/staff/getOrders/${restaurantId}`);
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChefHat, Menu, X, LogOut } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logoutAction, setAuth } from "../../redux/slice/adminSlice";
 import { showConfirm } from "../Elements/ConfirmationSwall";
 import Swal from "sweetalert2";

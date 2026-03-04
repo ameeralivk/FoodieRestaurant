@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUserOrderDocument } from "../types/order";
 import { Types } from "mongoose";
-import { string } from "zod";
 const OrderItemSchema = new Schema(
   {
     itemId: {

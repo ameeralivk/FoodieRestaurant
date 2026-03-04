@@ -18,10 +18,7 @@ export class AdminAuthRepository
     googleID?: string;
     imageUrl?: string;
   }): Promise<{ admin: AdminDocument }> {
-    const redisDataKey = `adminData:${adminData.email}`;
-    // const cachedData = await redisClient.get(redisDataKey);
-
-    // const data = JSON.parse(cachedData ? cachedData : "");
+   
     try {
       const admin = await this.model.create({
         role: adminData.role,

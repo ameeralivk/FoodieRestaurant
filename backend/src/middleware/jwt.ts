@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import logger from "../config/logger";
-import { Http } from "winston/lib/winston/transports";
 import HttpStatus from "../constants/htttpStatusCode";
 import { MESSAGES } from "../constants/messages";
 const generateToken = (

@@ -10,7 +10,7 @@ const router = express.Router()
 const notificationController =  container.get<NotificationController>(TYPES.NotificationController)
 
 
-router.route("/getNotification/:recipientId").get(asyncHandler(notificationController.getAllNotification))
+router.route("/getNotification/:recipientId/:model").get(asyncHandler(notificationController.getAllNotification))
 router.route("/:notificationId").patch(asyncHandler(notificationController.markAsRead))
 
 

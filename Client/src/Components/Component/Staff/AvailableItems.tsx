@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Package, UserPlus } from "lucide-react";
 import ChefAssignModal from "../../modals/Cheff/CheffAssignModal";
 import { useQuery } from "@tanstack/react-query";
@@ -13,16 +13,9 @@ import {
   getTotalOrders,
 } from "../../../services/staffService";
 import { showSuccessToast } from "../../Elements/SuccessToast";
-import type { IVariant, IVarientItemType } from "../../../types/varient";
+import type {  IVarientItemType } from "../../../types/varient";
 import { ToastContainer } from "react-toastify";
 import { useRef } from "react";
-type UserRole = "chef" | "staff";
-interface User {
-  id: string;
-  name: string;
-  role: UserRole;
-  station?: string;
-}
 
 const AvailableItemsSection = () => {
   // 🔹 Dummy Data
@@ -36,7 +29,7 @@ const AvailableItemsSection = () => {
   const restaurantId = useSelector(
     (state: RootState) => state.userAuth.user?.restaurantId,
   );
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const limit = 1000;
 
    useEffect(() => {
@@ -151,13 +144,6 @@ const AvailableItemsSection = () => {
 
   console.log(items, "items");
   const [selectedItem, setSelectedItem] = useState<any>(null);
-
-  const currentUser: User = {
-    id: "chef1",
-    name: "Chef Ameer",
-    role: "chef",
-    station: "Main Course",
-  };
 
   const assignItemToChef = async (
     orderId: string,

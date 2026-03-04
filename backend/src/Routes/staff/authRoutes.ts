@@ -8,6 +8,7 @@ const staffAuthController = container.get<StaffAuthController>(TYPES.staffAuthCo
 const Router = express.Router()
 
 Router.route("/login").post(asyncHandler(staffAuthController.login))
-
+Router.route("/forgot-password").post(asyncHandler(staffAuthController.forgetPassword))
+      .patch(asyncHandler(staffAuthController.updatePassword))
 
 export default Router

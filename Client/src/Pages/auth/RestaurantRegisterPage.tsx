@@ -8,10 +8,9 @@ import { toast, ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import OTPVerificationModal from "../../Components/modals/AdminOtpModal";
 import WarningSwal from "../../Components/Helpers/WarningSwal";
-import { register, useGoogleLoginHandler } from "../../services/Auth";
+import { register } from "../../services/Auth";
 import { loadingToast, AfterLoading } from "../../Components/Elements/Loading";
 import { showErrorToast } from "../../Components/Elements/ErrorToast";
-import { GoogleLoginButton } from "../../Components/Elements/googleLoginButton";
 import { createOtpHandlers } from "../../Components/Helpers/Admin/handleOtpHandlers";
 import { useDispatch } from "react-redux";
 const AdminRegisterPage = () => {
@@ -96,7 +95,6 @@ const AdminRegisterPage = () => {
       }
     }
   };
-  const googleLogin = useGoogleLoginHandler(dispatch);
   return (
     <>
       {modalOpen && (

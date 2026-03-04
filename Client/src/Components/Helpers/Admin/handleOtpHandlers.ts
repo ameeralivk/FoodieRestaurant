@@ -13,15 +13,15 @@ export const createOtpHandlers = (dispatch: any, email: string) => {
       const res = await verifyOtp(otp, email);
       showSuccessToast(res.message);
 
-      const data: AdminType = {
-        _id: res.data.admin._id,
-        restaurantName: res.data.admin.restaurantName,
-        email: res.data.admin.email,
-        role: res.data.admin.role,
-        googleId: "",
-        imageUrl: "",
-        status: res.data.admin.status,
-      };
+      // const data: AdminType = {
+      //   _id: res.data.admin._id,
+      //   restaurantName: res.data.admin.restaurantName,
+      //   email: res.data.admin.email,
+      //   role: res.data.admin.role,
+      //   googleId: "",
+      //   imageUrl: "",
+      //   status: res.data.admin.status,
+      // };
       // dispatch(loginAction({ admin: data, token: res.accesstoken }));
       setTimeout(() => {
         navigate("/admin/login");

@@ -7,21 +7,7 @@ import type {
 } from "../../../types/order";
 type ItemStatus = OrderItemStatus;
 
-interface OrderItem {
-  id: string;
-  name: string;
-  quantity: number;
-  status: ItemStatus;
-  preparedBy?: string;
-  station?: string;
-}
 
-interface Order {
-  orderId: string;
-  tableId: string;
-  items: OrderItem[];
-  createdAt: string;
-}
 
 interface Props {
   order: IUserOrder;

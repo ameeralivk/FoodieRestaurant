@@ -41,7 +41,7 @@ const CategoryComponent = () => {
     { header: "Description", accessor: "description" },
   ];
   const queryClient = useQueryClient();
-  const { data, isLoading, isFetching } = useQuery<CategoryResponse, Error>({
+  const { data } = useQuery<CategoryResponse, Error>({
     queryKey: [
       "activeCategory",
       restaurentId,
@@ -54,7 +54,7 @@ const CategoryComponent = () => {
         restaurentId as string,
         currentPage,
         limit,
-        debouncedSearch
+        debouncedSearch,
       ),
     staleTime: 5000,
   });
@@ -90,7 +90,7 @@ const CategoryComponent = () => {
       "Delete this Category?",
       `Are you sure you want to delete ${row.name}?`,
       "Delete",
-      "Cancel"
+      "Cancel",
     );
     if (!confirmed) return;
     const del = async () => {
@@ -137,7 +137,7 @@ const CategoryComponent = () => {
           const res = await addCategory(
             row.name,
             row.description,
-            restaurentId
+            restaurentId,
           );
           if (res.success) {
             showSuccessToast(res.message);
@@ -156,18 +156,21 @@ const CategoryComponent = () => {
     } else {
       const editcategory = async () => {
         try {
+          setLoading(true)
           const res = await editCategory(restaurentId, currentRow.id, data);
           if (res.success) {
             showSuccessToast(res.message);
             queryClient.invalidateQueries({
               queryKey: ["activeCategory", restaurentId],
             });
+            setLoading(false)
             setModalOpen(false);
             setModalErrors({});
             setCurrentRow({});
           }
         } catch (error) {
-          return;
+          console.error(error);
+          return { success: false };
         }
       };
       editcategory();
@@ -270,15 +273,15 @@ const CategoryComponent = () => {
             modalMode === "add"
               ? "Add Category"
               : modalMode === "edit"
-              ? "Edit Category"
-              : "View Category"
+                ? "Edit Category"
+                : "View Category"
           }
           submitText={
             modalMode === "add"
               ? "Create Category"
               : modalMode === "edit"
-              ? "Save Changes"
-              : ""
+                ? "Save Changes"
+                : ""
           }
           cancelText="Close"
           mode={modalMode}

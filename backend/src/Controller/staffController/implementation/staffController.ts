@@ -28,7 +28,7 @@ export class StaffController implements IStaffController {
   editStaff = async (req: Request, res: Response): Promise<Response> => {
     try {
       const staffId = req.params.staffId;
-      const updatedStaff = await this._staffService.editStaff({
+      await this._staffService.editStaff({
         staffId,
         ...req.body,
       });

@@ -44,7 +44,7 @@ export class SubCategoryController implements ISubCategoryController {
 
   editSubCategory = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const data = await this._subCategoryService.editSubCategory(
+      await this._subCategoryService.editSubCategory(
         req.params.categoryId as string,
         req.body
       );

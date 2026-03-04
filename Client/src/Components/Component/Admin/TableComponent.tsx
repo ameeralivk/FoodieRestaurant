@@ -6,8 +6,6 @@ import ReusableModal from "../../modals/SuperAdmin/GeneralModal";
 import ReusableTable from "../../Elements/Reusable/reusableTable";
 import type {
   GetTablesResponse,
-  ITable,
-  ITableForm,
 } from "../../../types/tableTypes";
 import { useEffect } from "react";
 import { showConfirm } from "../../Elements/ConfirmationSwall";
@@ -34,13 +32,12 @@ const TableComponent = () => {
   const [modalErrors, setModalErrors] = useState<{ [key: string]: string }>({});
   const [currentRow, setCurrentRow] = useState<any>(null);
   const [modalMode, setModalMode] = useState<"add" | "edit" | "view">("add");
-  const [formData, setFormData] = useState<ITableForm | null>(null);
   const [searchTerm, setSearchQuery] = useState("");
   const restaurentId = useSelector((state: RootState) => state.auth.admin?._id);
   const limit = 10;
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetching } = useQuery<GetTablesResponse, Error>({
+  const { data} = useQuery<GetTablesResponse, Error>({
     queryKey: [
       "activeTable",
       restaurentId,
@@ -191,16 +188,17 @@ const TableComponent = () => {
       setModalErrors(validate);
       return;
     }
-    setFormData(data);
     if (modalMode == "add") {
       const addtable = async () => {
         try {
+          setLoading(true)
           const res = await addTable(data);
           if (res.success) {
             showSuccessToast(res.message);
             queryClient.invalidateQueries({
               queryKey: ["activeTable", restaurentId],
             });
+            setLoading(false)
             setModalOpen(false);
             setCurrentRow({});
             setModalErrors({});

@@ -1,4 +1,4 @@
-import { ChartNoAxesColumn, UtensilsCrossed } from "lucide-react";
+import { UtensilsCrossed } from "lucide-react";
 import SearchBar from "../../Elements/Reusable/reusableSearchBar";
 import { ToastContainer } from "react-toastify";
 import ReusableModal from "../../modals/SuperAdmin/GeneralModal";
@@ -27,10 +27,8 @@ import type { SubCategoryResponse } from "../../../types/subCategory";
 import { getAllVarient } from "../../../services/varient";
 import type { IGetVariantsResponse } from "../../../types/varient";
 import {
-  validateImages,
   validateItem,
 } from "../../../Validation/validateItems";
-import { showErrorToast } from "../../Elements/ErrorToast";
 const ItemComponent = () => {
   const [currentRow, setCurrentRow] = useState<any>(null);
   const [modalErrors, setModalErrors] = useState<{ [key: string]: string }>({});
@@ -76,18 +74,13 @@ const ItemComponent = () => {
 
   const {
     data: VarientList,
-    isLoading: isVarientCaLoading,
-    isFetching: isVarientFetching,
   } = useQuery<IGetVariantsResponse, Error>({
     queryKey: ["VarientList", restaurentId, currentPage, debouncedSearch],
     queryFn: () => getAllVarient(currentPage, limit, debouncedSearch),
   });
-  console.log(VarientList, "list is ehre amere");
 
   const {
     data: ItemsList,
-    isLoading: isItemCaLoading,
-    isFetching: isItemFetching,
   } = useQuery<IItemResponse, Error>({
     queryKey: ["ItemsList", restaurentId, currentPage, debouncedSearch],
     queryFn: () =>
@@ -96,8 +89,6 @@ const ItemComponent = () => {
 
   const {
     data: SubCategory,
-    isLoading: isSubCategoryLoading,
-    isFetching: isSubCategoryFetching,
   } = useQuery<SubCategoryResponse, Error>({
     queryKey: ["SubCategory", restaurentId, currentPage, debouncedSearch],
     queryFn: () =>
@@ -118,8 +109,6 @@ const ItemComponent = () => {
 
   const {
     data: categoryData,
-    isLoading: isCategoryLoading,
-    isFetching: isCategoryFetching,
   } = useQuery<CategoryResponse, Error>({
     queryKey: ["categories", restaurentId],
     queryFn: () =>
@@ -193,9 +182,11 @@ const ItemComponent = () => {
     if (modalMode == "add") {
       const itemsAdd = async () => {
         try {
+          setLoading(true)
           const res = await addItems(formData);
           if (res.success) {
             showSuccessToast(res.message);
+            setLoading(false)
             queryClient.invalidateQueries({
               queryKey: ["ItemsList", restaurentId],
             });
@@ -211,8 +202,10 @@ const ItemComponent = () => {
     } else {
       const EditItem = async () => {
         try {
+          setLoading(true)
           const res = await editItem(currentRow._id, formData);
           if (res.success) {
+            setLoading(false)
             showSuccessToast(res.message);
             queryClient.invalidateQueries({
               queryKey: ["ItemsList", restaurentId],

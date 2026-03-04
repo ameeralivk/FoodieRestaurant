@@ -5,7 +5,6 @@ import { TYPES } from "../../../DI/types";
 import { Request, Response } from "express";
 import HttpStatus from "../../../constants/htttpStatusCode";
 import { AppError } from "../../../utils/Error";
-import Items from "../../../models/items";
 import { MESSAGES } from "../../../constants/messages";
 @injectable()
 export class ItemController implements IItemController {
