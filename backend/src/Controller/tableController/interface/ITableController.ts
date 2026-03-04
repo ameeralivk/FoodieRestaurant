@@ -4,4 +4,5 @@ export interface ITableController {
   editTable(req: Request, res: Response): Promise<Response>;
   getAllTables(req: Request, res: Response): Promise<Response>;
   deleteTable(req:Request,res:Response):Promise<Response>
+  checkTable(req:Request,res:Response):Promise<Response>
 }

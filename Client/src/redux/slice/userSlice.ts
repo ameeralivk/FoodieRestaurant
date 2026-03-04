@@ -29,6 +29,11 @@ const userAuthSlice = createSlice({
         state.user.status = action.payload;
       }
     },
+    setRestaurantName: (state, action: PayloadAction<string>) => {
+      if (state.user) {
+        state.user.restaurantName = action.payload;
+      }
+    },
     updateUser: (state, action: PayloadAction<Partial<userType>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
@@ -39,21 +44,20 @@ const userAuthSlice = createSlice({
         state.user.restaurantId = action.payload;
       }
     },
-     setTableNo: (state, action: PayloadAction<string>) => {
+    setTableNo: (state, action: PayloadAction<string>) => {
       if (state.user) {
         state.user.tableNo = action.payload;
       }
     },
     updateUserField: (
       state,
-      action: PayloadAction<{ key: keyof userType; value: any }>
+      action: PayloadAction<{ key: keyof userType; value: any }>,
     ) => {
       if (state.user) {
         state.user[action.payload.key] = action.payload.value;
       }
     },
   },
-  
 });
 
 export const {
@@ -63,7 +67,8 @@ export const {
   updateUser,
   setRestaurantId,
   setTableNo,
-  updateUserField
+  updateUserField,
+  setRestaurantName,
 } = userAuthSlice.actions;
 
 export default userAuthSlice.reducer;

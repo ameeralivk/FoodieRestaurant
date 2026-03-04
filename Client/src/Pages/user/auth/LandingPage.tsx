@@ -39,12 +39,18 @@ const UserLandingPage: React.FC = () => {
   const [openNow, setOpenNow] = useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [sortBy, setSortBy] = useState<"distance" | "name">("distance");
+  const [selectedRestaurantIsOpen, setSelectedRestaurantIsOpen] = useState<
+    boolean | null
+  >(null);
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<
+    string | null
+  >(null);
+  const [selectedRestaurantName, setSelectedRestaurantName] = useState<
     string | null
   >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -456,7 +462,18 @@ const UserLandingPage: React.FC = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
+                              setSelectedRestaurantName(
+                                restaurant.restaurantName,
+                              );
                               setSelectedRestaurantId(restaurant._id);
+                              const isOpen =
+                                restaurant.openingTime && restaurant.closingTime
+                                  ? isOpenNow(
+                                      restaurant.openingTime,
+                                      restaurant.closingTime,
+                                    )
+                                  : false;
+                              setSelectedRestaurantIsOpen(isOpen);
                               setIsTableModalOpen(true);
                             }}
                             className="w-full bg-gray-50 text-gray-900 font-bold py-3.5 px-4 rounded-xl hover:bg-orange-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-orange-500/20"
@@ -499,6 +516,8 @@ const UserLandingPage: React.FC = () => {
           isOpen={isTableModalOpen}
           onClose={() => setIsTableModalOpen(false)}
           restaurantId={selectedRestaurantId}
+          restaurantName={selectedRestaurantName}
+          isRestaurantOpen={selectedRestaurantIsOpen}
         />
       </main>
     </div>

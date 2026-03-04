@@ -2,7 +2,7 @@ import { BaseRepository } from "../../IBaseRepository";
 import { ITableRepository } from "../interface/ITableRepository";
 import Table from "../../../models/table";
 import { ITable, PaginatedTableResult } from "../../../types/table";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { FilterQuery } from "mongoose";
 export class TableRepository extends BaseRepository<ITable> implements ITableRepository{
     constructor(){
@@ -58,6 +58,11 @@ export class TableRepository extends BaseRepository<ITable> implements ITableRep
 
   async deleteTable(tableId: string): Promise<ITable | null> {
     return this.findByIdAndDel(tableId);
+  }
+  
+
+   async checkTable(restaurantId: string, tableId: string): Promise<ITable | null> {
+     return this.model.findOne({restaurantId:new Types.ObjectId(restaurantId),tableNo:tableId})
   }
 
 }

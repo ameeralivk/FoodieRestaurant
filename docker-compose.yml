@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev  # Use dev Dockerfile for nodemon + ts-node
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app        # Mount local backend code
+      - /app/node_modules     # Ignore container node_modules to prevent conflicts
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile.dev  # Use dev Dockerfile for Vite
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Client:/app           # Mount local frontend code
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  mongo:
+    image: mongo
+    container_name: foodie_mongo
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:7
+    container_name: foodie_redis
+    ports:
+      - "6379:6379"

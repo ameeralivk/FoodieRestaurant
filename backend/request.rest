@@ -159,7 +159,15 @@
 # GET  http://localhost:3000/api/staff/getstaff/698dbb06bcc74a177f8719f0
 
 
-GET  http://localhost:3000/api/notification/getNotification/697ca414cfad78f5aa83d4a6
+# GET  http://localhost:3000/api/notification/getNotification/697ca414cfad78f5aa83d4a6
+
+POST http://localhost:3000/api/user/check-table
+Content-Type: application/json
+
+{
+  "restaurantId": "692ea36738a54f8d01ed6747",
+  "tableNo": 1
+}
 
 
 

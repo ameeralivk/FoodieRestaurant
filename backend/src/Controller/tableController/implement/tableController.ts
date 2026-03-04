@@ -9,10 +9,10 @@ import { MESSAGES } from "../../../constants/messages";
 @injectable()
 export class TableController implements ITableController {
   constructor(
-    @inject(TYPES.tableService) private _tableService: ITableService
+    @inject(TYPES.tableService) private _tableService: ITableService,
   ) {}
 
-   addTable = async(req: Request, res: Response): Promise<Response>=> {
+  addTable = async (req: Request, res: Response): Promise<Response> => {
     try {
       await this._tableService.createTable(req.body);
       return res.status(HttpStatus.CREATED).json({
@@ -25,14 +25,14 @@ export class TableController implements ITableController {
         message: error.message,
       });
     }
-  }
+  };
 
-   editTable = async (req: Request, res: Response): Promise<Response> => {
+  editTable = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { tableId } = req.params
+      const { tableId } = req.params;
       const updatedTable = await this._tableService.editTable(
         tableId as string,
-        req.body
+        req.body,
       );
 
       if (!updatedTable) {
@@ -41,18 +41,17 @@ export class TableController implements ITableController {
 
       return res.status(HttpStatus.OK).json({
         success: true,
-        message:MESSAGES.TABLE_UPDATED_SUCCESS ,
+        message: MESSAGES.TABLE_UPDATED_SUCCESS,
       });
     } catch (error: any) {
-        return res.status(HttpStatus.BAD_REQUEST).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         success: false,
         message: error.message,
       });
     }
   };
 
-
-   getAllTables = async (req: Request, res: Response): Promise<Response> => {
+  getAllTables = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { restaurantId } = req.params;
       const page = Number(req.query.page) || 1;
@@ -63,7 +62,7 @@ export class TableController implements ITableController {
         restaurantId as string,
         search,
         page,
-        limit
+        limit,
       );
 
       return res.status(200).json({
@@ -79,10 +78,9 @@ export class TableController implements ITableController {
     }
   };
 
-
-   updateAvailability = async (
+  updateAvailability = async (
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response> => {
     try {
       const { tableId } = req.params;
@@ -90,7 +88,7 @@ export class TableController implements ITableController {
 
       const table = await this._tableService.updateTableAvailability(
         tableId as string,
-        isAvailable
+        isAvailable,
       );
 
       if (!table) {
@@ -99,15 +97,14 @@ export class TableController implements ITableController {
 
       return res.status(200).json({
         success: true,
-        message:MESSAGES.TABLE_STATUS_UPDATED ,
+        message: MESSAGES.TABLE_STATUS_UPDATED,
       });
     } catch (error: any) {
       throw new AppError(error.message);
     }
   };
 
-  
-   deleteTable = async (req: Request, res: Response): Promise<Response> => {
+  deleteTable = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { tableId } = req.params;
 
@@ -126,4 +123,31 @@ export class TableController implements ITableController {
     }
   };
 
+  checkTable = async (req: Request, res: Response): Promise<Response> => {
+    const { restaurantId, tableNo } = req.body;
+
+    if (!restaurantId || !tableNo) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "restaurantId and tableNo are required",
+        });
+    }
+
+    try {
+      const table = await this._tableService.checkTable(restaurantId, tableNo);
+
+      if (!table) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Table not found" });
+      }
+
+      // ✅ table exists
+      return res.status(200).json({ success: true, message:"Table Exist" });
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
 }

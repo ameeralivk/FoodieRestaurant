@@ -4,14 +4,15 @@ export interface FormData {
 }
 
 export interface userType {
-  name?:string,
-  phone?:string,
-  tableNo?:string,
+  name?: string;
+  phone?: string;
+  tableNo?: string;
   _id: string;
   role: string;
   email: string;
   restaurantId?: string;
   googleId?: string;
+  restaurantName?:string;
   imageUrl?: string;
   status: string;
 }

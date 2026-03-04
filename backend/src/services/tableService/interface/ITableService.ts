@@ -9,4 +9,5 @@ export interface ITableService {
     getAllTables( restaurantId: string,search: string | undefined,page: number,limit: number):Promise<PaginatedTableResult<ITable>>
     updateTableAvailability(tableId: string,isAvailable: boolean): Promise<ITable | null> 
     deleteTable(tableId: string):Promise<ITable | null>
+    checkTable(restaurantId:string,tableId:string):Promise<ITable|null>
 }

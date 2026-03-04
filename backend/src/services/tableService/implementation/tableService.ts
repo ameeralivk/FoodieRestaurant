@@ -85,4 +85,8 @@ export class TableService implements ITableService {
     return this._tableRepo.deleteTable(tableId);
   }
 
+  checkTable(restaurantId: string, tableId: string): Promise<ITable | null> {
+    return this._tableRepo.checkTable(restaurantId,tableId)
+  }
+
 }

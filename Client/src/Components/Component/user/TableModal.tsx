@@ -1,24 +1,42 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { showErrorToast } from "../../Elements/ErrorToast";
-
+import { setRestaurantName } from "../../../redux/slice/userSlice";
+import { useDispatch } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import { checkTable } from "../../../services/user";
 interface TableNumberModalProps {
   isOpen: boolean;
   onClose: () => void;
   restaurantId: string | null;
+  restaurantName: string | null;
+  isRestaurantOpen?: boolean | null;
 }
 
 const TableNumberModal: React.FC<TableNumberModalProps> = ({
   isOpen,
   onClose,
   restaurantId,
+  restaurantName,
+  isRestaurantOpen,
 }) => {
   const [tableNumber, setTableNumber] = useState("");
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   if (!isOpen) return null;
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    const tableExist = await checkTable(restaurantId as string, tableNumber);
+    if (!tableExist) {
+      showErrorToast("Table not exist");
+    }
+    if (!isRestaurantOpen) {
+      showErrorToast("Restaurant is not open");
+      return;
+    }
+    if (restaurantName) {
+      dispatch(setRestaurantName(restaurantName));
+    }
     if (!tableNumber) {
       showErrorToast("Please enter TableNo");
       return;
@@ -30,6 +48,7 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
+      <ToastContainer />
       {/* Faded background */}
       <div className="absolute inset-0 backdrop-blur-sm bg-white/30"></div>
 

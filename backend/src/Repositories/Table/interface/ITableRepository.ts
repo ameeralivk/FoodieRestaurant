@@ -18,4 +18,5 @@ export interface ITableRepository {
   ): Promise<PaginatedTableResult<ITable>>;
   updateAvailability(tableId: string,isAvailable: boolean): Promise<ITable | null>;
   deleteTable(tableId: string): Promise<ITable | null>
+  checkTable(restaurantId:string,tableId:string):Promise<ITable|null>
 }

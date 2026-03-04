@@ -7,6 +7,7 @@
     "lint:fix": "eslint . --ext .ts,.js --fix",
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/server.ts",
+    "start": "node dist/server.js",
     "stripe": "stripe listen --forward-to localhost:3000/payment/webhook",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -24,6 +24,9 @@ const UserRestaurantPage: React.FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
+  const restaurantName = useSelector(
+    (state: RootState) => state.userAuth.user?.restaurantName,
+  );
   const { restaurantId } = useParams<{ restaurantId: string }>();
   const [searchParams] = useSearchParams();
   const table = searchParams.get("table");
@@ -133,10 +136,10 @@ const UserRestaurantPage: React.FC = () => {
       </div>
       <ToastContainer />
 
-      <Navbar restaurantName="Foodie Restaurant" />
+      <Navbar restaurantName={restaurantName} />
 
       {/* Hero Header */}
-      <RestaurantHero name="Foodie Restaurant" />
+      <RestaurantHero name={restaurantName||"Foodie Restaurant"} />
 
       {/* Sticky Search & Filter Bar */}
 

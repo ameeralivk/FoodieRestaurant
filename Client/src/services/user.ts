@@ -33,3 +33,7 @@ export const getItem = async (id: string): Promise<GetMenuItemsResponse> => {
 export const sendToAi = async (prompt: string): Promise<{ reply: string }> => {
   return apiRequest("POST", `/user/ai`, { prompt });
 };
+
+export const checkTable = async(restaurantId:string,tableNo:string):Promise<{success:boolean,message:string}>=>{
+  return apiRequest("POST",`/user/check-table`,{restaurantId, tableNo})
+}

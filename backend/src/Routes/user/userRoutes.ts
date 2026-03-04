@@ -12,8 +12,10 @@ import { OrderController } from "../../Controller/orderController/implimentation
 import { UserWalletController } from "../../Controller/userWalletController/implimentation/userWalletController";
 import { VarientController } from "../../Controller/varientController/implementation/varientController";
 import { FeedbackController } from "../../Controller/feedbackController/implementation/feedbackController";
+import { TableController } from "../../Controller/tableController/implement/tableController";
 const aiController = container.get<AiController>(TYPES.aiController);
 const cartController = container.get<CartController>(TYPES.cartController);
+const tableController = container.get<TableController>(TYPES.tableController);
 const userController = container.get<UserController>(TYPES.userController);
 const paymentController = container.get<PaymentController>(
   TYPES.PaymentController,
@@ -78,7 +80,9 @@ Router.route("/orders/:orderId/cancell").post(
 
 //wallet
 Router.route("/wallet").get(asyncHandler(userWalletController.getWallet));
-Router.route("/wallet/pay").post(asyncHandler(userWalletController.payWithWallet))
+Router.route("/wallet/pay").post(
+  asyncHandler(userWalletController.payWithWallet),
+);
 
 //user Varient
 Router.route("/varients")
@@ -93,6 +97,9 @@ Router.route("/feedback").post(asyncHandler(feedbackController.addFeedback));
 Router.route("/feedback/items/:restaurantId").get(
   asyncHandler(feedbackController.getItemsRating),
 );
+
+//table check
+Router.route("/check-table").post(asyncHandler(tableController.checkTable))
 
 //instraction
 Router.route("/instruction").patch(asyncHandler(cartController.addInstruction));
