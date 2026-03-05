@@ -7,8 +7,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy environment variables
-COPY .env ./
+# Set environment variable via build args (no local .env needed)
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Copy all frontend code
 COPY . .
@@ -29,4 +30,4 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 # Start nginx
-CMD ["npm", "run", "dev"]
+CMD ["nginx", "-g", "daemon off;"]
