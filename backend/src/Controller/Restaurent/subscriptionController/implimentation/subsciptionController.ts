@@ -12,7 +12,7 @@ export class SubcriptionController implements ISubcriptionController {
   ) {}
 
   getPlan = async (req: Request, res: Response): Promise<Response> => {
-    const restaurantId = req.params.restaurantId;
+    const restaurantId = req.params.restaurantId as string;
     if (!restaurantId) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         success: false,

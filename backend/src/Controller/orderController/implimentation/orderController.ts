@@ -35,7 +35,7 @@ export class OrderController implements IOrderController {
 
   getOrder = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { orderId } = req.params;
+      const  orderId  = req.params.orderId as string;
       if (!orderId) {
         throw new AppError("Order NotFound");
       }

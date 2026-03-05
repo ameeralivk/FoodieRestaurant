@@ -305,7 +305,7 @@ export class AdminAuthController implements IAdminAuthController {
 
   updateDoc = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const adminId = req.params.id;
+      const adminId = req.params.id as string;
 
       if (!adminId) {
         throw new AppError("Admin ID is required", HttpStatus.BAD_REQUEST);
