@@ -1,12 +1,12 @@
 import { Document } from "mongoose";
-
+import { Types } from "mongoose";
 export type Role = "admin" | "superAdmin";
 export interface Location {
   type: "Point";
   coordinates: [number, number]; // [longitude, latitude]
 }
 export interface IAdmin extends Document {
-  _id: Object;
+   _id: Types.ObjectId;
   role: string;
   ownerName: string;
   contactNumber: Number;

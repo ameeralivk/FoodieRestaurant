@@ -131,11 +131,11 @@ export class AdminAuthService implements IAdminAuthService {
     await redisClient.del(redisOtpKey);
     await redisClient.del(redisDataKey);
     const accesstoken = generateToken(
-      createdUser.admin._id as string,
+      createdUser.admin._id,
       createdUser.admin?.role,
     );
     generateRefreshToken(
-      createdUser.admin._id as string,
+      createdUser.admin._id,
       createdUser.admin?.role,
     );
     return {
@@ -277,8 +277,8 @@ export class AdminAuthService implements IAdminAuthService {
       throw new AppError("Invalid password", HttpStatus.UNAUTHORIZED);
     }
 
-    const token = generateToken(admin._id as string, admin.role);
-    const refreshToken = generateRefreshToken(admin._id as string, admin.role);
+    const token = generateToken(admin._id, admin.role);
+    const refreshToken = generateRefreshToken(admin._id, admin.role);
     const mapedAdmin = adminDTO(admin);
     return { mapedAdmin, token, refreshToken };
   }
@@ -322,7 +322,7 @@ export class AdminAuthService implements IAdminAuthService {
       if (!res) {
         throw new AppError(MESSAGES.ADMIN_NOT_FOUND);
       }
-      const adminId = res?._id as string;
+      const adminId = res?._id.toHexString();
       await this._adminAuthRepository.registerRestaurent(adminId, data);
 
       return { success: true, message: MESSAGES.RESTAURANT_REGISTER_COMPLETE };
