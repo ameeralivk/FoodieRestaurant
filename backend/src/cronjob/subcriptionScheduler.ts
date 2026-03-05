@@ -8,7 +8,7 @@ export async function updateSubscriptionStatuses() {
   // Activate subscriptions that are pending or queued and startDate has passed
   await Subscription.updateMany(
     {
-      status: { $in: ["pending", "queued"] },
+      status: { $in: ["pending", "queued"] }, 
       startDate: { $lte: now },
       renewalDate: { $gte: now },
     },
@@ -31,10 +31,6 @@ export async function updateSubscriptionStatuses() {
       startDate: { $gt: now },
     },
     { $set: { status: "pending" } },
-  );
-
-  console.log(
-    `[Subscription Scheduler] Status updated at ${now.toISOString()}`,
   );
 }
 
