@@ -23,6 +23,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../DI/types";
 import { IUserRepository } from "../../../Repositories/user/interface/IUserRepository";
 import { IStaffRepository } from "../../../Repositories/staff/interface/IStaffRepository";
+import { AdminDocument } from "../../../models/admin";
 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10);
 
 @injectable()
@@ -33,7 +34,7 @@ export class AdminAuthService implements IAdminAuthService {
     @inject(TYPES.userRepository)
     private _userRepo: IUserRepository,
     @inject(TYPES.staffRepository)
-    private _staffRepository:IStaffRepository
+    private _staffRepository: IStaffRepository,
   ) {}
 
   async register(
@@ -85,13 +86,15 @@ export class AdminAuthService implements IAdminAuthService {
         imageUrl: picture,
       });
 
-      admin = result.admin;
+      admin = result.admin as AdminDocument;
     }
-    const accesstoken = generateToken(admin?._id as string, admin?.role);
-    const refreshToken = generateRefreshToken(
-      admin?._id as string,
-      admin?.role,
-    );
+    // const accesstoken = generateToken(admin?._id as string, admin?.role);
+    // const refreshToken = generateRefreshToken(
+    //   admin?._id as string,
+    //   admin?.role,
+    // );
+    const accesstoken = generateToken(admin._id.toString(), admin.role);
+    const refreshToken = generateRefreshToken(admin._id.toString(), admin.role);
     const mapedAdmin = adminDTO(admin);
     return { mapedAdmin, accesstoken, refreshToken };
   };
@@ -152,7 +155,6 @@ export class AdminAuthService implements IAdminAuthService {
 
     return { success: true, message: MESSAGES.OTP_RESENT_SUCCESS };
   };
-
 
   async refreshToken(refreshToken: string) {
     if (!refreshToken) {
@@ -304,7 +306,11 @@ export class AdminAuthService implements IAdminAuthService {
 
       return { success: true, message: MESSAGES.PASS_CHANGE_SUCCESS };
     } catch (error) {
-      return { success: false, message:error instanceof Error ? error.message : "Internal Server Error" };
+      return {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Internal Server Error",
+      };
     }
   }
 
@@ -317,10 +323,7 @@ export class AdminAuthService implements IAdminAuthService {
         throw new AppError(MESSAGES.ADMIN_NOT_FOUND);
       }
       const adminId = res?._id as string;
-       await this._adminAuthRepository.registerRestaurent(
-        adminId,
-        data,
-      );
+      await this._adminAuthRepository.registerRestaurent(adminId, data);
 
       return { success: true, message: MESSAGES.RESTAURANT_REGISTER_COMPLETE };
     } catch (error: any) {

@@ -36,7 +36,7 @@ export class AdminAuthRepository
       throw error;
     }
   }
-  async findByEmail(email: string) {
+  async findByEmail(email: string):Promise<AdminDocument | null>{
     return await this.getByFilter({ email: email, isDeleted: false});
   }
   async findById(id: string) {

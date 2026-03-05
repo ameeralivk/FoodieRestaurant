@@ -6,6 +6,7 @@ export interface Location {
   coordinates: [number, number]; // [longitude, latitude]
 }
 export interface IAdmin extends Document {
+  _id: Object;
   role: string;
   ownerName: string;
   contactNumber: Number;
