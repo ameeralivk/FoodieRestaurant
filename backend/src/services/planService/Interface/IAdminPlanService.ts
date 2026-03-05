@@ -1,4 +1,5 @@
 import { ISubscriptionPlan } from "../../../types/plan";
+import { ISubscriptionPlanDTO } from "../../../utils/dto/subscriptionPlanDto";
 
 export interface IAdminPlanService {
   addPlan(
@@ -7,7 +8,7 @@ export interface IAdminPlanService {
   getAllPlan(
     page?: number,
     limit?: number
-  ): Promise<{ success: boolean; data: ISubscriptionPlan[];total: number;}>;
+  ): Promise<{ success: boolean; data: ISubscriptionPlanDTO[];total: number;}>;
   editPlan(
     id: string,
     newData: ISubscriptionPlan

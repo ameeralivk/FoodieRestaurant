@@ -2,7 +2,7 @@ import { IAdminPlanService } from "../Interface/IAdminPlanService";
 import { ISubscriptionPlan } from "../../../types/plan";
 import { IAdminPlanRepository } from "../../../Repositories/planRepositories/interface/IAdminPlanRepositories";
 import { MESSAGES } from "../../../constants/messages";
-import { subscriptionPlanDTO } from "../../../utils/dto/subscriptionPlanDto";
+import { ISubscriptionPlanDTO, subscriptionPlanDTO } from "../../../utils/dto/subscriptionPlanDto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../DI/types";
 @injectable()
@@ -31,7 +31,7 @@ export class AdminPlanService implements IAdminPlanService {
     limit: number
   ): Promise<{
     success: boolean;
-    data: ISubscriptionPlan[];
+    data: ISubscriptionPlanDTO[];
     total:number;
   }> {
    try {

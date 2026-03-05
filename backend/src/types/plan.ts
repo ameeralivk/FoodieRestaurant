@@ -1,7 +1,7 @@
 import { Document } from "mongoose";
-
+import { Types } from "mongoose";
 export interface ISubscription extends Document {
-  _id:string;
+  _id: Types.ObjectId;
   planName: string;
   price: number;
   duration: string|number;
@@ -15,6 +15,7 @@ export interface ISubscription extends Document {
 
 
 export interface ISubscriptionPlan {
+  _id?:Types.ObjectId;
   planName: string;
   price: number;       
   duration: string|number;    

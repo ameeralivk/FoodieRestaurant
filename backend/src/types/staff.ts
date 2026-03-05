@@ -1,7 +1,8 @@
 
 import { Document } from "mongoose";
+import { Types } from "mongoose";
 export interface IStaff extends Document {
-  _id:string;
+  _id: Types.ObjectId;
   restaurantId:string;
   staffName: string;
   email: string;

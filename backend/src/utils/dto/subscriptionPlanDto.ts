@@ -1,7 +1,8 @@
+import { ISubscriptionPlan } from "../../types/plan";
 import { ISubscriptiontype } from "../../types/subscription";
 import { PlanDto } from "../../types/subscription";
 export interface ISubscriptionPlanDTO {
-  _id:string;
+  _id?:string;
   planName: string;
   price: number;
   duration: string|number;
@@ -11,9 +12,9 @@ export interface ISubscriptionPlanDTO {
 }
 
 
-export function subscriptionPlanDTO(plan:ISubscriptionPlanDTO): ISubscriptionPlanDTO{
+export function subscriptionPlanDTO(plan:ISubscriptionPlan): ISubscriptionPlanDTO{
   return {
-    _id:plan._id,
+    _id:plan._id?.toString(),
     planName: plan.planName,
     price: plan.price,
     duration: plan.duration,

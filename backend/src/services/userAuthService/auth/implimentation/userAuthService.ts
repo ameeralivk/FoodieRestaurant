@@ -74,8 +74,8 @@ export class UserAuthService implements IUserAuthService {
 
       user = result.user;
     }
-    const accesstoken = generateToken(user?._id as string, "user");
-    const refreshToken = generateRefreshToken(user?._id as string, "user");
+    const accesstoken = generateToken(user?._id, "user");
+    const refreshToken = generateRefreshToken(user?._id, "user");
 
     return { user, accesstoken, refreshToken };
   };
@@ -94,8 +94,8 @@ export class UserAuthService implements IUserAuthService {
       throw new AppError("Invalid password", HttpStatus.UNAUTHORIZED);
     }
 
-    const token = generateToken(user._id as string, "user");
-    const refreshToken = generateRefreshToken(user._id as string, "user");
+    const token = generateToken(user._id, "user");
+    const refreshToken = generateRefreshToken(user._id, "user");
 
     return { user, token, refreshToken };
   }
@@ -135,9 +135,9 @@ export class UserAuthService implements IUserAuthService {
     const mapedUser = mapUserToDto(createdUser.user);
     await redisClient.del(redisOtpKey);
     await redisClient.del(redisDataKey);
-    const accesstoken = generateToken(createdUser.user._id as string, "user");
+    const accesstoken = generateToken(createdUser.user._id, "user");
     generateRefreshToken(
-      createdUser.user._id as string,
+      createdUser.user._id,
       "user"
     );
     return {

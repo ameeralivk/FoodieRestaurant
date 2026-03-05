@@ -41,8 +41,8 @@ export class StaffAuthService implements IStaffAuthService {
     if (!isPasswordValid) {
       throw new AppError(MESSAGES.PASS_NOT_MATCH);
     }
-    const token = generateToken(staff._id as string, staff.role);
-    const refreshToken = generateRefreshToken(staff._id as string, staff.role);
+    const token = generateToken(staff._id, staff.role);
+    const refreshToken = generateRefreshToken(staff._id, staff.role);
     return {
       success: true,
       message: MESSAGES.LOGIN_SUCCESS,
@@ -77,7 +77,7 @@ export class StaffAuthService implements IStaffAuthService {
       if(!ExistStaff){
         throw new AppError(MESSAGES.STAFF_NOT_FOUND)
       }
-      const staff = await this._staffRepo.updatePassword(ExistStaff._id, hashedPassword);
+      const staff = await this._staffRepo.updatePassword(ExistStaff._id.toString(), hashedPassword);
       if (!staff) {
         return { success: false, message: MESSAGES.USER_NOT_FOUND };
       }
