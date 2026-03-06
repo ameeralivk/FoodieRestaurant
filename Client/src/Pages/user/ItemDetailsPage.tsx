@@ -294,7 +294,7 @@ Example format:
 
           {/* Description */}
           <div className="mb-8">
-            <h3 className="text-gray-900 font-bold mb-2">Description</h3>
+            <h3 className="text-gray-900 font-bold mb-2">Descriptions</h3>
             {aiDescription ? (
               <p className="text-gray-600 text-sm leading-relaxed">
                 {aiDescription}
