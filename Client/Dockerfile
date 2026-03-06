@@ -3,31 +3,36 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copy package.json & install dependencies
+# Copy package.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Set environment variable via build args (no local .env needed)
-ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
+# Build args for Vite env variables
+ARG VITE_BACKEND_BASE_URL
+ARG VITE_BACKEND_REFRESH_URL
+ARG VITE_GOOGLE_CLIENT_ID
+ARG VITE_STRIPE_PUBLISHABLE_KEY
 
-# Copy all frontend code
+ENV VITE_BACKEND_BASE_URL=$VITE_BACKEND_BASE_URL
+ENV VITE_BACKEND_REFRESH_URL=$VITE_BACKEND_REFRESH_URL
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
+
+# Copy project files
 COPY . .
 
-# Build the frontend
+# Build project
 RUN npm run build
 
 # ---------- Production Stage ----------
 FROM nginx:alpine
 
-# Copy the built files from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config for SPA routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose nginx port
 EXPOSE 80
 
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
