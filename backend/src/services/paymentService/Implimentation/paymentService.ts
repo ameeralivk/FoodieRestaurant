@@ -1,4 +1,5 @@
 import { IPaymentService } from "../Interface/IPaymentService";
+import dotenv from "dotenv"
 import Stripe from "stripe";
 import { inject, injectable } from "inversify";
 import { IPaymentRepository } from "../../../Repositories/payment/Interface/interface";
@@ -13,6 +14,7 @@ import { MESSAGES } from "../../../constants/messages";
 import { getIO } from "../../../config/socket";
 import { generateOrderId } from "../../../helpers/generateOrderId";
 import { INotificationService } from "../../notificationService/interface/INotificationService";
+dotenv.config()
 const stripe = new Stripe(process.env.STRIP_SECRET_KEY as string, {
   apiVersion: "2024-06-20" as unknown as Stripe.LatestApiVersion,
 });

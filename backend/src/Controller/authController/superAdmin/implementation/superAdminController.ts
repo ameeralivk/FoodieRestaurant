@@ -4,11 +4,12 @@ import { Request, Response } from "express";
 import { TYPES } from "../../../../DI/types";
 import { inject, injectable } from "inversify";
 import { AppError } from "../../../../utils/Error";
+import { error } from "console";
 @injectable()
 export class SuperAdminController implements ISuperAdminController {
   constructor(
     @inject(TYPES.SuperAdminService)
-    private _superAdminService: ISuperAdminService
+    private _superAdminService: ISuperAdminService,
   ) {}
 
   getAllRestaurent = async (req: Request, res: Response): Promise<Response> => {
@@ -30,7 +31,7 @@ export class SuperAdminController implements ISuperAdminController {
         approval,
         page,
         limit,
-        filter
+        filter,
       );
       return res.status(200).json({
         success: true,
@@ -48,12 +49,12 @@ export class SuperAdminController implements ISuperAdminController {
 
   approveRestaurant = async (
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<Response> => {
     try {
       const { id } = req.params;
       const updatedRestaurant = await this._superAdminService.approveRestaurant(
-        id as string
+        id as string,
       );
       return res.status(200).json({
         success: true,
@@ -61,10 +62,7 @@ export class SuperAdminController implements ISuperAdminController {
         data: updatedRestaurant,
       });
     } catch (err: any) {
-      return res.status(400).json({
-        success: false,
-        message: err.message || "Failed to approve restaurant",
-      });
+      throw new AppError(err.message);
     }
   };
 
@@ -74,7 +72,7 @@ export class SuperAdminController implements ISuperAdminController {
       const { reason } = req.body;
       const updatedRestaurant = await this._superAdminService.rejectRestaurant(
         id as string,
-        reason as string
+        reason as string,
       );
       return res.status(200).json({
         success: true,
@@ -82,24 +80,21 @@ export class SuperAdminController implements ISuperAdminController {
         data: updatedRestaurant,
       });
     } catch (err: any) {
-      return res.status(400).json({
-        success: false,
-        message: err.message || "Failed to approve restaurant",
-      });
+      throw new AppError(err.message);
     }
   };
 
-  changeStatus = async(req: Request, res: Response): Promise<Response> => {
+  changeStatus = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { restaurantId, status } = req.params;
 
       const updatedRestaurant =
         await this._superAdminService.changeRestaurantStatus(
           restaurantId as string,
-          status as string
+          status as string,
         );
 
-     return res.status(200).json({
+      return res.status(200).json({
         success: true,
         message:
           status === "block"
@@ -107,8 +102,8 @@ export class SuperAdminController implements ISuperAdminController {
             : "Restaurant unblocked successfully",
         data: updatedRestaurant,
       });
-    } catch (error:any) {
-      throw new AppError(error.message)
+    } catch (error: any) {
+      throw new AppError(error.message);
     }
-  }
+  };
 }

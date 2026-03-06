@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
+import morgan from "morgan"
 import http from "http"
 import connectDB from "./config/db";
 import { initSocket } from "./config/socket";
@@ -41,6 +42,7 @@ app.post(
   (req, res) => paymentController.webhook(req, res)
 );
 app.use(express.json());
+app.use(morgan("dev"))
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin/auth", authRouter);
 app.use("/api/user/auth", userAuthRouter);
@@ -51,7 +53,7 @@ app.use("/api/notification",notificationRoutes)
 app.use("/api/admin", AdminRouter);
 app.use("/api/user",userRouter)
 app.use(errorHandler);
-const port = process.env.PORT;
+const port = process.env.PORT; 
 server.listen(port, () => {
   console.log(`server created at ${port}`);
   startSubscriptionScheduler();

@@ -431,7 +431,7 @@ export default function CheckoutPage() {
             onClick={() => setPaymentMethod("wallet")}
           >
             <div className="w-10 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold text-gray-500">
-              WAfdsafdsafdas
+              Wallet
             </div>
             <div className="flex-1">
               <p className="font-semibold text-gray-900">Use Wallet Balance</p>

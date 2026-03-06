@@ -6,7 +6,7 @@ import HttpStatus from "../constants/htttpStatusCode";
 import { MESSAGES } from "../constants/messages";
 const generateToken = (
   id: string | mongoose.Types.ObjectId | undefined,
-  role: string | undefined
+  role: string | undefined,
 ): string => {
   logger.info(`id: ${id}, role: ${role}`);
 
@@ -17,14 +17,14 @@ const generateToken = (
 
 const generateRefreshToken = (
   id: string | mongoose.Types.ObjectId | undefined,
-  role: string | undefined
+  role: string | undefined,
 ): string => {
   return jwt.sign(
     { id: id, role: role },
     process.env.REFRESH_JWT_SECRET as string,
     {
       expiresIn: "2d",
-    }
+    },
   );
 };
 
@@ -32,7 +32,7 @@ const verifyRefreshToken = (refreshToken: string): JwtPayload | null => {
   try {
     const decoded = jwt.verify(
       refreshToken,
-      process.env.REFRESH_JWT_SECRET as string
+      process.env.REFRESH_JWT_SECRET as string,
     ) as JwtPayload;
 
     return decoded;
@@ -53,7 +53,7 @@ interface DecodedUser {
 export const verifyAccessToken = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   try {
     const token = req.cookies.access_token;
@@ -66,7 +66,13 @@ export const verifyAccessToken = (
     (req as any).user = decoded;
     const user = ((req as any).user = decoded);
     const role = user.role;
-    if (role === "admin" || role === "superadmin"|| role === "user" || role === "staff" || role === "chef") {
+    if (
+      role === "admin" ||
+      role === "superadmin" ||
+      role === "user" ||
+      role === "staff" ||
+      role === "chef"
+    ) {
       next();
     } else {
       res
@@ -74,7 +80,6 @@ export const verifyAccessToken = (
         .json({ message: MESSAGES.ADMIN_UNAUTHERIZED_ERROR });
     }
   } catch (error: any) {
-    console.error("Token verification failed:", error.message);
     res
       .status(HttpStatus.UNAUTHORIZED)
       .json({ message: "Invalid or expired token" });

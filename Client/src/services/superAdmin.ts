@@ -7,7 +7,7 @@ export const getAllRestaurent = async (
   approval: boolean,
   page: number,
   limit: number,
-  searchTerm: string
+  searchTerm: string,
 ) => {
   try {
     const response = await api.get("/superadmin/getallrestaurent", {
@@ -36,11 +36,11 @@ export const getAllRestaurent = async (
 export const approveRestaurant = async (restaurantId: string) => {
   try {
     const response = await api.patch(
-      `/superadmin/approve/${restaurantId}`,
+      `/superadmin/restaurent/approve/${restaurantId}`,
       null,
       {
         withCredentials: true,
-      }
+      },
     );
 
     if (response.data.success) {
@@ -54,7 +54,7 @@ export const approveRestaurant = async (restaurantId: string) => {
     if (error instanceof AxiosError) {
       showErrorToast(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     } else if (error instanceof Error) {
       showErrorToast(error.message);
@@ -67,7 +67,7 @@ export const approveRestaurant = async (restaurantId: string) => {
 
 export const rejectRestaurant = async (
   restaurantId: string,
-  rejectionReason: string
+  rejectionReason: string,
 ) => {
   try {
     const response = await api.patch(
@@ -75,7 +75,7 @@ export const rejectRestaurant = async (
       { reason: rejectionReason },
       {
         withCredentials: true,
-      }
+      },
     );
 
     if (response.data.success) {
@@ -89,7 +89,7 @@ export const rejectRestaurant = async (
     if (error instanceof AxiosError) {
       showErrorToast(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     } else if (error instanceof Error) {
       showErrorToast(error.message);

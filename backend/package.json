@@ -6,7 +6,7 @@
     "lint": "eslint . --ext .ts,.js",
     "lint:fix": "eslint . --ext .ts,.js --fix",
     "build": "tsc",
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev": "tsx --watch src/server.ts",
     "start": "node dist/server.js",
     "stripe": "stripe listen --forward-to localhost:3000/payment/webhook",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -29,6 +29,7 @@
     "inversify": "^7.10.6",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.3",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "multer-s3": "^3.0.1",
     "nodemailer": "^7.0.10",
@@ -38,6 +39,7 @@
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.3",
     "stripe": "^20.0.0",
+    "tsx": "^4.21.0",
     "winston": "^3.18.3",
     "winston-daily-rotate-file": "^5.0.0",
     "zod": "^4.1.12"
@@ -50,6 +52,7 @@
     "@types/express": "^5.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^24.10.0",
