@@ -161,12 +161,22 @@
 
 # GET  http://localhost:3000/api/notification/getNotification/697ca414cfad78f5aa83d4a6
 
-POST http://localhost:3000/api/user/check-table
+# POST http://localhost:3000/api/user/check-table
+# Content-Type: application/json
+
+# {
+#   "restaurantId": "692ea36738a54f8d01ed6747",
+#   "tableNo": 1
+# }
+
+### Staff Login - Test POST
+POST http://13.201.130.103/api/admin/auth/login
 Content-Type: application/json
+Accept: application/json
 
 {
-  "restaurantId": "692ea36738a54f8d01ed6747",
-  "tableNo": 1
+    "email": "staff@example.com",
+    "password": "yourpassword"
 }
 
 
