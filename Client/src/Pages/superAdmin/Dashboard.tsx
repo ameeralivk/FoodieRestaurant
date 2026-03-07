@@ -186,7 +186,7 @@ const DashboardPage: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="text-4xl font-extrabold bg-gradient-to-r from-white via-neutral-200 to-neutral-500 bg-clip-text text-transparent tracking-tight"
               >
-                Dashboard Overview
+                Dashboard Overviews
               </motion.h1>
               <p className="text-neutral-500 mt-2 font-medium">
                 Real-time platform insights calculated from existing API data.
