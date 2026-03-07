@@ -5,6 +5,7 @@ export interface IItem {
   stock: number;
   points: number;
   description?: string;
+  SubcategoryName?:string;
   isStock: boolean;
   isActive: boolean;
   isDeleted: boolean;
@@ -60,8 +61,8 @@ export interface VariantValue {
 
 export interface Variant {
   category?: string;
-  option?:string;
-  price?:number;
+  option?: string;
+  price?: number;
   values?: VariantValue[];
 }
 

@@ -50,14 +50,12 @@ const DashboardPage: React.FC = () => {
     queryKey: ["superAdminUsersCount"],
     queryFn: () => getUsers(1, 1, ""),
   });
- 
 
   // 4. Fetch All Plans
   const { data: plansResp, isLoading: loadingPlans } = useQuery({
     queryKey: ["superAdminPlans"],
     queryFn: () => getAllPlan(1, 100),
   });
-
 
   // Data processing based on existing API structures
   const approvedList = approvedResp?.data || [];

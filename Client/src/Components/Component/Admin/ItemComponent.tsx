@@ -26,9 +26,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { SubCategoryResponse } from "../../../types/subCategory";
 import { getAllVarient } from "../../../services/varient";
 import type { IGetVariantsResponse } from "../../../types/varient";
-import {
-  validateItem,
-} from "../../../Validation/validateItems";
+import { validateItem } from "../../../Validation/validateItems";
+import { showErrorToast } from "../../Elements/ErrorToast";
 const ItemComponent = () => {
   const [currentRow, setCurrentRow] = useState<any>(null);
   const [modalErrors, setModalErrors] = useState<{ [key: string]: string }>({});
@@ -72,24 +71,18 @@ const ItemComponent = () => {
     },
   ];
 
-  const {
-    data: VarientList,
-  } = useQuery<IGetVariantsResponse, Error>({
+  const { data: VarientList } = useQuery<IGetVariantsResponse, Error>({
     queryKey: ["VarientList", restaurentId, currentPage, debouncedSearch],
     queryFn: () => getAllVarient(currentPage, limit, debouncedSearch),
   });
 
-  const {
-    data: ItemsList,
-  } = useQuery<IItemResponse, Error>({
+  const { data: ItemsList } = useQuery<IItemResponse, Error>({
     queryKey: ["ItemsList", restaurentId, currentPage, debouncedSearch],
     queryFn: () =>
       getAllItems(restaurentId as string, currentPage, limit, debouncedSearch),
   });
 
-  const {
-    data: SubCategory,
-  } = useQuery<SubCategoryResponse, Error>({
+  const { data: SubCategory } = useQuery<SubCategoryResponse, Error>({
     queryKey: ["SubCategory", restaurentId, currentPage, debouncedSearch],
     queryFn: () =>
       getAllSubCategory(
@@ -107,9 +100,7 @@ const ItemComponent = () => {
       return acc;
     }, {}) || {};
 
-  const {
-    data: categoryData,
-  } = useQuery<CategoryResponse, Error>({
+  const { data: categoryData } = useQuery<CategoryResponse, Error>({
     queryKey: ["categories", restaurentId],
     queryFn: () =>
       getAllCategory(restaurentId as string, currentPage, limit, ""),
@@ -148,9 +139,13 @@ const ItemComponent = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
-  const handleSubmit = (row: any) => {
+  const handleSubmit = async (row: any) => {
     const { isValid, errors } = validateItem(row);
+
     if (!isValid) {
+      if (errors.subCategory && Object.keys(errors).length == 1) {
+         showErrorToast(errors.subCategory)
+      }
       setModalErrors(errors);
       return;
     }
@@ -175,18 +170,14 @@ const ItemComponent = () => {
       formData.append("images", file);
     });
 
-    for (let [key, val] of formData.entries()) {
-      console.log(key, val);
-    }
-
     if (modalMode == "add") {
       const itemsAdd = async () => {
         try {
-          setLoading(true)
+          setLoading(true);
           const res = await addItems(formData);
           if (res.success) {
             showSuccessToast(res.message);
-            setLoading(false)
+            setLoading(false);
             queryClient.invalidateQueries({
               queryKey: ["ItemsList", restaurentId],
             });
@@ -202,10 +193,10 @@ const ItemComponent = () => {
     } else {
       const EditItem = async () => {
         try {
-          setLoading(true)
+          setLoading(true);
           const res = await editItem(currentRow._id, formData);
           if (res.success) {
-            setLoading(false)
+            setLoading(false);
             showSuccessToast(res.message);
             queryClient.invalidateQueries({
               queryKey: ["ItemsList", restaurentId],
@@ -262,12 +253,9 @@ const ItemComponent = () => {
       ...currentRow,
       [name]: value,
     };
-    console.log(updatedRow, "rowlsleodlsod");
     setCurrentRow(updatedRow);
-
     const { errors } = validateItem(updatedRow);
     setModalErrors(errors);
-
     // existing category logic
     if (name === "categoryName") {
       const cat = categoryData?.data?.find((c) => c.name === value);
@@ -458,7 +446,7 @@ const ItemComponent = () => {
               placeholder: "preparationTime : Optional",
               value: currentRow?.preparationTime || "",
             },
-             {
+            {
               name: "maxQuantityPerOrder",
               label: "maxQuantityPerOrder *",
               type: "number",

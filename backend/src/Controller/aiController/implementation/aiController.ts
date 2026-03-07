@@ -11,7 +11,6 @@ export class AiController implements IAiController {
   sendResponse = async(req: Request, res: Response): Promise<Response>=> {
     try {
       const { prompt } = req.body;
-
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
       }

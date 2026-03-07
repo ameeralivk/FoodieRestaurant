@@ -3,7 +3,6 @@ import type { IItem } from "../types/Items";
 
 export const validateItem = (data: IItem) => {
   const errors: Record<string, string> = {};
-
   // Item Name
   if (!data.name || data.name.trim() === "") {
     errors.name = "Item name is required";

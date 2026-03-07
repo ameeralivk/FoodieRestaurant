@@ -69,6 +69,16 @@ const StaffNavbar = () => {
     }
   }, [restaurantId]);
 
+
+  useEffect(() => {
+    if (!restaurantId || !role) return;
+
+    Socket.emit("join-restaurant", {
+      restaurantId,
+      role,
+    });
+  }, [restaurantId, role]);
+
   useEffect(() => {
     if (!restaurantId) return;
     Socket.emit("join-restaurant", {
