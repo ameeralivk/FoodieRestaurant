@@ -38,7 +38,7 @@
 
 // export default Appp;
 
-import React, { Suspense } from "react";
+import React, { Suspense} from "react";
 import { Routes, Route } from "react-router-dom";
 import AppLoader from "./Components/Elements/AppLoader";
 
