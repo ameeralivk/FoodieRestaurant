@@ -1,13 +1,20 @@
-
 import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
 
 let io: Server;
 
 export const initSocket = (httpServer: HttpServer) => {
-  io = new Server(httpServer, {
+  // io = new Server(httpServer, {
+  //   cors: {
+  //     origin: process.env.FRONTEND_BASE_URL,
+  //     credentials: true,
+  //   },
+  // });
+
+   io = new Server(httpServer, {
     cors: {
-      origin: process.env.FRONTEND_BASE_URL,
+      origin: ["https://moobiworld.shop", "https://www.moobiworld.shop"],
+      methods: ["GET", "POST"],
       credentials: true,
     },
   });
@@ -24,7 +31,7 @@ export const initSocket = (httpServer: HttpServer) => {
       }: {
         restaurantId: string;
         role: string;
-         userId?: string;
+        userId?: string;
       }) => {
         // Common room (optional)
         socket.join(restaurantId);
