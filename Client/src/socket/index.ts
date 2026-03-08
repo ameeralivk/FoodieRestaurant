@@ -1,11 +1,11 @@
 import { io } from "socket.io-client";
 
-const Socket = io("wss://moobiworld.shop/socket.io", {
+const Socket = io("wss://moobiworld.shop", {
   transports: ["websocket"],
   autoConnect: true,
 });
 
-export default Socket
+export default Socket;
 
 // import { io } from "socket.io-client";
 
