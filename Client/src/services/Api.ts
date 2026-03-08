@@ -3,7 +3,7 @@ import { store } from "../redux/store/store";
 import { logoutAction, setAuth } from "../redux/slice/adminSlice";
 
 // const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-// const REFRESH_URL = import.meta.env.VITE_BACKEND_REFRESH_URL;
+const REFRESH_URL = import.meta.env.VITE_BACKEND_REFRESH_URL;
 
 const api = axios.create({
   baseURL: "/api",
@@ -17,7 +17,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await axios.get("https://moobiworld.shop", { withCredentials: true });
+        await axios.get(REFRESH_URL, { withCredentials: true });
         return axios(originalRequest);
       } catch (err) {
         store.dispatch(logoutAction());
