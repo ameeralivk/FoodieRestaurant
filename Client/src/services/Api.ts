@@ -6,7 +6,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 const REFRESH_URL = import.meta.env.VITE_BACKEND_REFRESH_URL;
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "/api",
   withCredentials: true,
 });
 
