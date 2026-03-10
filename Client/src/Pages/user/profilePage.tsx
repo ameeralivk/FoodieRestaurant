@@ -78,6 +78,7 @@ export default function UserProfile() {
   });
   const [showOtpModal, setShowOtpModal] = useState(false);
 
+  
   async function verifyOtpApi(otp: string) {
     try {
       setIsLoading(true)
