@@ -71,3 +71,10 @@ export const getActivePlanByRestaurant = async (
 ): Promise<CheckPlanResponse> => {
   return apiRequest("GET", `/admin/getplan/${restaurantId}`);
 };
+
+export const upgradeSubscription = async (
+  restaurantId: string,
+  newPlanId: string
+): Promise<{ success: boolean; message: string; url?: string }> => {
+  return apiRequest("POST", "/admin/subscription/upgrade", { restaurantId, newPlanId });
+};

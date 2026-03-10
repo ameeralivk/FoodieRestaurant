@@ -11,7 +11,6 @@ import {
   type Restaurant,
 } from "../../../Components/modals/user/UserRestauarentDetailModal";
 import { getAllRestaurent } from "../../../services/superAdmin";
-import TableNumberModal from "../../../Components/Component/user/TableModal";
 import UserPagination from "../../../Components/Component/user/userPagination";
 import RestaurantFilters from "../../../Components/Component/user/restaraurentFilter";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +18,10 @@ import jsQR from "jsqr";
 import { getUserLocation } from "../../../Components/Helpers/user/Location";
 import isOpenNow from "../../../Components/Helpers/user/restuarentAvailability";
 import { ToastContainer } from "react-toastify";
+import { getActivePlanByRestaurant } from "../../../services/planService";
+import { getAllItems } from "../../../services/ItemsService";
+import { useDispatch } from "react-redux";
+import { setRestaurantName } from "../../../redux/slice/userSlice";
 const UserLandingPage: React.FC = () => {
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -39,50 +42,106 @@ const UserLandingPage: React.FC = () => {
   const [openNow, setOpenNow] = useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [sortBy, setSortBy] = useState<"distance" | "name">("distance");
-  const [selectedRestaurantIsOpen, setSelectedRestaurantIsOpen] = useState<
-    boolean | null
-  >(null);
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-  const [selectedRestaurantId, setSelectedRestaurantId] = useState<
-    string | null
-  >(null);
-  const [selectedRestaurantName, setSelectedRestaurantName] = useState<
-    string | null
-  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] =
     useState<Restaurant | null>(null);
   const [total, setTotal] = useState(10);
   const limit = 10;
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (!userLocation) return;
 
+    // const fetchData = async () => {
+    //   setLoading(true);
+    //   try {
+    //     const response = await getAllRestaurent(false, page, limit, searchTerm);
+    //     if (response && response.success) {
+    //       await new Promise((res) => setTimeout(res, 300));
+
+    //       const updatedRestaurants = response.data.map((restaurant: any) => {
+    //         if (!restaurant.location?.coordinates) return restaurant;
+    //         const [lng, lat] = restaurant.location.coordinates;
+    //         const distance = getDistanceInKm(
+    //           userLocation.latitude,
+    //           userLocation.longitude,
+    //           lat,
+    //           lng,
+    //         );
+    //         return { ...restaurant, distance: `${distance.toFixed(1)} km` };
+    //       });
+
+    //       setRestaurants(updatedRestaurants);
+    //       setTotal(response.pagination.totalPages);
+    //     }
+    //   } catch (err) {
+    //     console.error(err);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
     const fetchData = async () => {
       setLoading(true);
+
       try {
         const response = await getAllRestaurent(false, page, limit, searchTerm);
+
         if (response && response.success) {
           await new Promise((res) => setTimeout(res, 300));
 
-          const updatedRestaurants = response.data.map((restaurant: any) => {
-            if (!restaurant.location?.coordinates) return restaurant;
-            const [lng, lat] = restaurant.location.coordinates;
-            const distance = getDistanceInKm(
-              userLocation.latitude,
-              userLocation.longitude,
-              lat,
-              lng,
-            );
-            return { ...restaurant, distance: `${distance.toFixed(1)} km` };
-          });
+          // check subscription for each restaurant
+          const restaurantsWithPlan = await Promise.all(
+            response.data.map(async (restaurant: any) => {
+              try {
+                const planResponse = await getActivePlanByRestaurant(
+                  restaurant._id,
+                );
 
-          setRestaurants(updatedRestaurants);
+                if (!planResponse?.data?.success) {
+                  return null; // remove restaurant
+                }
+
+                const itemsResponse = await getAllItems(
+                  restaurant._id,
+                  1,
+                  10,
+                  "",
+                );
+                if (!itemsResponse?.data || itemsResponse.data.length === 0) {
+                  return null;
+                }
+
+                if (!restaurant.location?.coordinates) return restaurant;
+
+                const [lng, lat] = restaurant.location.coordinates;
+
+                const distance = getDistanceInKm(
+                  userLocation.latitude,
+                  userLocation.longitude,
+                  lat,
+                  lng,
+                );
+
+                return {
+                  ...restaurant,
+                  distance: `${distance.toFixed(1)} km`,
+                };
+              } catch {
+                return null;
+              }
+            }),
+          );
+
+          // remove restaurants without active plan
+          const filteredRestaurants = restaurantsWithPlan.filter(Boolean);
+
+          setRestaurants(filteredRestaurants);
           setTotal(response.pagination.totalPages);
         }
       } catch (err) {
@@ -110,6 +169,7 @@ const UserLandingPage: React.FC = () => {
     setSelectedRestaurant(restaurant);
     setIsModalOpen(true);
   };
+
 
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -462,19 +522,8 @@ const UserLandingPage: React.FC = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedRestaurantName(
-                                restaurant.restaurantName,
-                              );
-                              setSelectedRestaurantId(restaurant._id);
-                              const isOpen =
-                                restaurant.openingTime && restaurant.closingTime
-                                  ? isOpenNow(
-                                      restaurant.openingTime,
-                                      restaurant.closingTime,
-                                    )
-                                  : false;
-                              setSelectedRestaurantIsOpen(isOpen);
-                              setIsTableModalOpen(true);
+                              dispatch(setRestaurantName(restaurant.restaurantName))
+                              navigate(`/user/restaurant/${restaurant._id}`);
                             }}
                             className="w-full bg-gray-50 text-gray-900 font-bold py-3.5 px-4 rounded-xl hover:bg-orange-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-orange-500/20"
                           >
@@ -512,13 +561,6 @@ const UserLandingPage: React.FC = () => {
             />
           </div>
         )}
-        <TableNumberModal
-          isOpen={isTableModalOpen}
-          onClose={() => setIsTableModalOpen(false)}
-          restaurantId={selectedRestaurantId}
-          restaurantName={selectedRestaurantName}
-          isRestaurantOpen={selectedRestaurantIsOpen}
-        />
       </main>
     </div>
   );

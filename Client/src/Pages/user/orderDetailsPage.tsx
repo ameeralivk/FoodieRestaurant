@@ -3,7 +3,7 @@ import Navbar from "../../Components/Layouts/userLayouts/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { generateInvoicePDF } from "../../Components/Helpers/user/invoiceDownloarder";
 import { AddFeedback } from "../../services/feedback";
-import {  getOrder } from "../../services/order";
+import { getOrder } from "../../services/order";
 import BottomNavBar from "../../Components/user/DownBar";
 import type { IGetOrderResponse } from "../../types/order";
 import FeedbackModal from "../../Components/modals/user/feedbackmodal";
@@ -258,12 +258,14 @@ const OrderDetail: React.FC = () => {
           >
             Download Invoice
           </button>
-          <button
+          {order?.orderStatus == "SERVED" && 
+           <button
             onClick={() => setFeedbackOpen(true)}
             className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-bold hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Add Feedback
           </button>
+          }
         </div>
       </div>
       {restaurantId && (

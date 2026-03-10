@@ -75,4 +75,14 @@ export class PaymentController implements IPaymentController {
       res.status(400).send(`Webhook Error: ${err.message}`);
     }
   };
+
+  upgrade = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { restaurantId, newPlanId } = req.body;
+      const result = await this._paymentService.upgradeSubscription(restaurantId, newPlanId);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
 }

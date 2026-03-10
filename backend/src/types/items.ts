@@ -16,7 +16,7 @@ export interface IItemInterface {
   price: number;
   restaurantId: Types.ObjectId;
   categoryId: Types.ObjectId;
-  stock?: number |null;
+  stock?: number | null;
   description?: string;
   isDeleted: boolean;
   preparationTime?: number;
@@ -24,7 +24,13 @@ export interface IItemInterface {
   subCategoryId?: Types.ObjectId;
   category: Types.ObjectId;
   isStock: boolean;
-  maxQuantityPerOrder?:number;
+  nutrition: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+  maxQuantityPerOrder?: number;
   variant?: VariantPricing;
   points: number;
   createdAt?: Date;

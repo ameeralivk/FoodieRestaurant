@@ -24,6 +24,7 @@ export class ItemsRepository
   }
 
   async createItem(data: IItemInterface): Promise<IItemInterface> {
+    console.log(data,'data is here service')
     return this.create({...data,preparationTime:data.preparationTime});
   }
 

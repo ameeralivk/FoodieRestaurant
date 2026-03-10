@@ -34,9 +34,14 @@ const StaffDashboard: React.FC = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const ready = data.data.filter((o) =>
-        o.items.every(() => o.orderStatus === "READY"),
-      );
+      const today = new Date().toDateString();
+      const ready = data.data.filter((o) => {
+        const orderDate = new Date(o.createdAt).toDateString();
+
+        return (
+          orderDate === today && o.items.every(() => o.orderStatus === "READY")
+        );
+      });
 
       setReadyOrders(ready);
     }
@@ -88,7 +93,6 @@ const StaffDashboard: React.FC = () => {
 
   return (
     <div className="p-6">
-
       <ToastContainer />
       <h1 className="text-2xl font-bold mb-4">Staff Dashboard</h1>
 

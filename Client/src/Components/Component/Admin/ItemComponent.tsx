@@ -27,7 +27,7 @@ import type { SubCategoryResponse } from "../../../types/subCategory";
 import { getAllVarient } from "../../../services/varient";
 import type { IGetVariantsResponse } from "../../../types/varient";
 import { validateItem } from "../../../Validation/validateItems";
-import { showErrorToast } from "../../Elements/ErrorToast";
+import { fetchItemDetailsFromAi } from "../../Helpers/user/aiHelper";
 const ItemComponent = () => {
   const [currentRow, setCurrentRow] = useState<any>(null);
   const [modalErrors, setModalErrors] = useState<{ [key: string]: string }>({});
@@ -139,79 +139,169 @@ const ItemComponent = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
-  const handleSubmit = async (row: any) => {
-    const { isValid, errors } = validateItem(row);
+  // const handleSubmit = async (row: any) => {
+  //   const { isValid, errors } = validateItem(row);
 
+  //   if (!isValid) {
+  //     if (errors.subCategory && Object.keys(errors).length == 1) {
+  //        showErrorToast(errors.subCategory)
+  //     }
+  //     setModalErrors(errors);
+  //     return;
+  //   }
+  //   const formData = new FormData();
+  //   formData.append("name", row.name);
+  //   formData.append("price", row.price);
+  //   formData.append("stock", row.stock);
+  //   formData.append("maxQuantityPerOrder", row.maxQuantityPerOrder);
+  //   formData.append("preparationTime", row.preparationTime);
+  //   formData.append("categoryId", categoryId || currentRow?.categoryId?._id);
+  //   if (subCategory.length) {
+  //     formData.append(
+  //       "subCategoryId",
+  //       subCategoryId || currentRow?.subCategoryId?._id,
+  //     );
+  //   }
+  //   formData.append("restaurantId", restaurentId as string);
+  //   if (row.variantPricing) {
+  //     formData.append("variantPricing", JSON.stringify(row.variantPricing));
+  //   }
+  //   row.images?.forEach((file: File) => {
+  //     formData.append("images", file);
+  //   });
+
+  //   if (modalMode == "add") {
+  //     const itemsAdd = async () => {
+  //       try {
+  //         setLoading(true);
+  //         const res = await addItems(formData);
+  //         if (res.success) {
+  //           showSuccessToast(res.message);
+  //           setLoading(false);
+  //           queryClient.invalidateQueries({
+  //             queryKey: ["ItemsList", restaurentId],
+  //           });
+  //           setModalOpen(false);
+  //           setCurrentRow({});
+  //           setModalErrors({});
+  //         }
+  //       } catch (error) {
+  //         return;
+  //       }
+  //     };
+  //     itemsAdd();
+  //   } else {
+  //     const EditItem = async () => {
+  //       try {
+  //         setLoading(true);
+  //         const res = await editItem(currentRow._id, formData);
+  //         if (res.success) {
+  //           setLoading(false);
+  //           showSuccessToast(res.message);
+  //           queryClient.invalidateQueries({
+  //             queryKey: ["ItemsList", restaurentId],
+  //           });
+  //           setModalOpen(false);
+  //           setCurrentRow({});
+  //           setModalErrors({});
+  //         }
+  //       } catch (error) {
+  //         return;
+  //       }
+  //     };
+  //     EditItem();
+  //   }
+  // };
+
+  const handleSubmit = async (row: any) => {
+    // 1. Validate first
+    const { isValid, errors } = validateItem(row);
     if (!isValid) {
-      if (errors.subCategory && Object.keys(errors).length == 1) {
-         showErrorToast(errors.subCategory)
-      }
       setModalErrors(errors);
       return;
     }
-    const formData = new FormData();
-    formData.append("name", row.name);
-    formData.append("price", row.price);
-    formData.append("stock", row.stock);
-    formData.append("maxQuantityPerOrder", row.maxQuantityPerOrder);
-    formData.append("preparationTime", row.preparationTime);
-    formData.append("categoryId", categoryId || currentRow?.categoryId?._id);
-    if (subCategory.length) {
-      formData.append(
-        "subCategoryId",
-        subCategoryId || currentRow?.subCategoryId?._id,
-      );
-    }
-    formData.append("restaurantId", restaurentId as string);
-    if (row.variantPricing) {
-      formData.append("variantPricing", JSON.stringify(row.variantPricing));
-    }
-    row.images?.forEach((file: File) => {
-      formData.append("images", file);
-    });
 
-    if (modalMode == "add") {
-      const itemsAdd = async () => {
+    try {
+      // 2. Start loading immediately to prevent double-clicks/rate-limits
+      setLoading(true);
+
+      // 3. Fetch AI data with a fallback
+      let aiData;
+      if (modalMode == "add") {
         try {
-          setLoading(true);
-          const res = await addItems(formData);
-          if (res.success) {
-            showSuccessToast(res.message);
-            setLoading(false);
-            queryClient.invalidateQueries({
-              queryKey: ["ItemsList", restaurentId],
-            });
-            setModalOpen(false);
-            setCurrentRow({});
-            setModalErrors({});
-          }
-        } catch (error) {
-          return;
+          aiData = await fetchItemDetailsFromAi(row.name);
+          console.log(aiData, "data is here ameer");
+        } catch (aiError) {
+          console.error("AI Generation failed, using fallback:", aiError);
+          // Fallback values so the request can still proceed
+          aiData = {
+            description: "Delicious freshly prepared item.",
+            nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+          };
         }
-      };
-      itemsAdd();
-    } else {
-      const EditItem = async () => {
-        try {
-          setLoading(true);
-          const res = await editItem(currentRow._id, formData);
-          if (res.success) {
-            setLoading(false);
-            showSuccessToast(res.message);
-            queryClient.invalidateQueries({
-              queryKey: ["ItemsList", restaurentId],
-            });
-            setModalOpen(false);
-            setCurrentRow({});
-            setModalErrors({});
-          }
-        } catch (error) {
-          return;
-        }
-      };
-      EditItem();
+      }
+      const formData = new FormData();
+      formData.append("name", row.name);
+      formData.append("price", row.price);
+      formData.append("stock", row.stock);
+      formData.append("maxQuantityPerOrder", row.maxQuantityPerOrder);
+      formData.append("preparationTime", row.preparationTime);
+      formData.append("restaurantId", restaurentId as string);
+
+      // AI and JSON data
+      if (modalMode == "add" && aiData) {
+        formData.append("description", aiData.description);
+        formData.append("nutrition", JSON.stringify(aiData.nutrition));
+      }
+
+      // IDs (handling both Add and Edit states)
+      const finalCategoryId = categoryId || currentRow?.categoryId?._id;
+      const finalSubCategoryId =
+        subCategoryId || currentRow?.subCategoryId?._id;
+
+      if (finalCategoryId) formData.append("categoryId", finalCategoryId);
+      if (subCategory.length && finalSubCategoryId) {
+        formData.append("subCategoryId", finalSubCategoryId);
+      }
+
+      if (row.variantPricing) {
+        formData.append("variantPricing", JSON.stringify(row.variantPricing));
+      }
+
+      // Handle Images
+      if (row.images && row.images.length > 0) {
+        row.images.forEach((file: File) => {
+          formData.append("images", file);
+        });
+      }
+
+      // 5. Execute API Call
+      let res;
+      if (modalMode === "add") {
+        res = await addItems(formData);
+      } else {
+        res = await editItem(currentRow._id, formData);
+      }
+
+      // 6. Handle Success
+      if (res && res.success) {
+        showSuccessToast(res.message);
+        queryClient.invalidateQueries({
+          queryKey: ["ItemsList", restaurentId],
+        });
+        setModalOpen(false);
+        setCurrentRow(null); // Changed to null to match your state type
+        setModalErrors({});
+      }
+    } catch (error: any) {
+      console.error("Submission Error:", error);
+      // You could add an error toast here for the user
+    } finally {
+      // 7. Always stop loading, even if it fails
+      setLoading(false);
     }
   };
+
   const handleView = (row: any) => {
     setCurrentRow(row);
     setModalOpen(true);

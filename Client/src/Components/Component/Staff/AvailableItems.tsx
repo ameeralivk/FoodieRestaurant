@@ -118,8 +118,19 @@ const AvailableItemsSection = () => {
     queryFn: () => getTotalOrders(restaurantId as string),
   });
 
+  const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const tomorrow = new Date(today);
+tomorrow.setDate(tomorrow.getDate() + 1);
+
   let items =
-    data?.data.flatMap((order) =>
+    data?.data.filter(
+      (order) =>
+        new Date(order.createdAt) >= today &&
+        new Date(order.createdAt) < tomorrow
+    ).
+    flatMap((order) =>
       order.items
         .filter((item) => !item.assignedCookId)
         .map((item) => ({

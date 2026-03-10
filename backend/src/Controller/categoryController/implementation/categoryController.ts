@@ -10,7 +10,7 @@ import { MESSAGES } from "../../../constants/messages";
 @injectable()
 export class CategoryController implements ICategoryController {
   constructor(
-    @inject(TYPES.categoryService) private _categoryService: ICategoryService
+    @inject(TYPES.categoryService) private _categoryService: ICategoryService,
   ) {}
 
   addCategory = async (req: Request, res: Response): Promise<Response> => {
@@ -24,10 +24,15 @@ export class CategoryController implements ICategoryController {
         const errorMessages = parsed.error.issues.map((e) => e.message);
         throw new AppError(errorMessages.join(","), HttpStatus.NOT_FOUND);
       }
-      await this._categoryService.addCategory(
+      let result = await this._categoryService.addCategory(
         parsed.data,
-        restaurantId as string
+        restaurantId as string,
       );
+      if(!result.success){
+          return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ success: false, message: result.message });
+      }
       return res
         .status(HttpStatus.OK)
         .json({ success: true, message: MESSAGES.CATEGORY_ADDED_SUCCESS });
@@ -41,7 +46,7 @@ export class CategoryController implements ICategoryController {
       const result = await this._categoryService.editCategory(
         req.params.restaurantId as string,
         req.params.categoryId as string,
-        req.body
+        req.body,
       );
       if (result) {
         return res.status(HttpStatus.OK).json({
@@ -63,7 +68,7 @@ export class CategoryController implements ICategoryController {
     try {
       const result = await this._categoryService.deleteCategory(
         req.params.categoryId as string,
-        req.params.restaurantId as string
+        req.params.restaurantId as string,
       );
       if (result) {
         return res.status(HttpStatus.OK).json({
@@ -90,7 +95,7 @@ export class CategoryController implements ICategoryController {
         restaurantId as string,
         search as string,
         Number(page),
-        Number(limit)
+        Number(limit),
       );
 
       return res.status(HttpStatus.OK).json(result);

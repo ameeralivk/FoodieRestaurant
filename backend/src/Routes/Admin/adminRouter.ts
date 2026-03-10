@@ -41,8 +41,14 @@ Router.route("/create-payment").post(
 //subcription
 Router.route("/getplan/:restaurantId").get(
   verifyAccessToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin","user"),
   asyncHandler(subcriptionController.getPlan)
+);
+
+Router.route("/subscription/upgrade").post(
+  verifyAccessToken,
+  authorizeRoles("admin"),
+  asyncHandler(paymentController.upgrade)
 );
 
 //staff

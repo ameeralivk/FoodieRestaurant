@@ -29,10 +29,11 @@ const DashboardPage: React.FC = () => {
   const [filter, setFilter] = useState<TimeFilter>("all");
   const [ordersPage, setOrdersPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState<IUserOrder | null>(null);
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const RestaurantId = useSelector(
-    (state: RootState) => state.auth.admin?._id as string
+    (state: RootState) => state.auth.admin?._id as string,
   );
 
   // Fetch all orders for this restaurant
@@ -62,17 +63,34 @@ const DashboardPage: React.FC = () => {
   const ratings: ItemRating[] = ratingsRes?.data ?? [];
 
   // ─── Derived data ───────────────────────────────────
-  const filteredOrders = useMemo(() => filterByTime(allOrders, filter), [allOrders, filter]);
+  const filteredOrders = useMemo(
+    () => filterByTime(allOrders, filter),
+    [allOrders, filter],
+  );
 
   const stats: DashboardStats = useMemo(() => {
     const totalOrders = filteredOrders.length;
-    const placed = filteredOrders.filter((o) => o.orderStatus === "PLACED").length;
-    const inKitchen = filteredOrders.filter((o) => o.orderStatus === "IN_KITCHEN").length;
-    const ready = filteredOrders.filter((o) => o.orderStatus === "READY").length;
-    const served = filteredOrders.filter((o) => o.orderStatus === "SERVED").length;
-    const assigned = filteredOrders.filter((o) => o.orderStatus === "ASSIGNED").length;
-    const serving = filteredOrders.filter((o) => o.orderStatus === "SERVING").length;
-    const cancelled = filteredOrders.filter((o) => (o.orderStatus as string) === "CANCELLED").length;
+    const placed = filteredOrders.filter(
+      (o) => o.orderStatus === "PLACED",
+    ).length;
+    const inKitchen = filteredOrders.filter(
+      (o) => o.orderStatus === "IN_KITCHEN",
+    ).length;
+    const ready = filteredOrders.filter(
+      (o) => o.orderStatus === "READY",
+    ).length;
+    const served = filteredOrders.filter(
+      (o) => o.orderStatus === "SERVED",
+    ).length;
+    const assigned = filteredOrders.filter(
+      (o) => o.orderStatus === "ASSIGNED",
+    ).length;
+    const serving = filteredOrders.filter(
+      (o) => o.orderStatus === "SERVING",
+    ).length;
+    const cancelled = filteredOrders.filter(
+      (o) => (o.orderStatus as string) === "CANCELLED",
+    ).length;
     const totalRevenue = filteredOrders
       .filter((o) => (o.orderStatus as string) !== "CANCELLED")
       .reduce((sum, o) => sum + o.totalAmount, 0);
@@ -80,7 +98,7 @@ const DashboardPage: React.FC = () => {
     const avgRating =
       ratings.length > 0
         ? ratings.reduce((sum, r) => sum + r.avgRating * r.totalReviews, 0) /
-        (totalReviews || 1)
+          (totalReviews || 1)
         : 0;
 
     return {
@@ -165,16 +183,22 @@ const DashboardPage: React.FC = () => {
       orders = orders.filter(
         (o) =>
           (o.orderId || o._id).toLowerCase().includes(q) ||
-          o.tableId.toLowerCase().includes(q)
+          o.tableId.toLowerCase().includes(q),
       );
     }
-    return orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return orders.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }, [filteredOrders, searchQuery]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / ORDERS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedOrders.length / ORDERS_PER_PAGE),
+  );
   const paginatedOrders = sortedOrders.slice(
     (ordersPage - 1) * ORDERS_PER_PAGE,
-    ordersPage * ORDERS_PER_PAGE
+    ordersPage * ORDERS_PER_PAGE,
   );
 
   // Reset page when filter or search changes
@@ -205,7 +229,7 @@ const DashboardPage: React.FC = () => {
       <div className="max-w-[1400px] mx-auto">
         <DashboardHeader filter={filter} onFilterChange={handleFilterChange} />
 
-        <StatsGrid stats={stats} />
+        <StatsGrid stats={stats} onTotalOrdersClick={()=>setShowOrdersModal(true)} />
 
         <ChartsSection
           statusChartData={statusChartData}
@@ -216,7 +240,7 @@ const DashboardPage: React.FC = () => {
           totalRatingsCount={ratings.length}
         />
 
-        <RecentOrdersTable
+        {/* <RecentOrdersTable
           paginatedOrders={paginatedOrders}
           sortedOrdersLength={sortedOrders.length}
           searchQuery={searchQuery}
@@ -225,7 +249,32 @@ const DashboardPage: React.FC = () => {
           ordersPage={ordersPage}
           setOrdersPage={setOrdersPage}
           totalPages={totalPages}
-        />
+        /> */}
+
+        {showOrdersModal && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+            <div className="bg-gray-900 rounded-2xl border border-gray-800 w-full max-w-6xl max-h-[90vh] overflow-hidden relative">
+              {/* Close button */}
+              <button
+                onClick={() => setShowOrdersModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+
+              <RecentOrdersTable
+                paginatedOrders={paginatedOrders}
+                sortedOrdersLength={sortedOrders.length}
+                searchQuery={searchQuery}
+                onSearch={handleSearch}
+                onSelectOrder={setSelectedOrder}
+                ordersPage={ordersPage}
+                setOrdersPage={setOrdersPage}
+                totalPages={totalPages}
+              />
+            </div>
+          </div>
+        )}
 
         {selectedOrder && (
           <OrderDetailModal

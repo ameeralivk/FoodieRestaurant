@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { ISubscriptionRepo } from "../../../Repositories/Subscription/Interface/ISubscriptionRepo";
 import { ISubcriptionService } from "../interface/ISubscriptionServer";
+import Stripe from "stripe";
 import { TYPES } from "../../../DI/types";
 import mongoose from "mongoose";
 import { calculateRenewalDateFrom } from "../../../helpers/subscriptionHelpers/calaculateRenewalDateFrom";
@@ -9,6 +10,9 @@ import { IAdminPlanRepository } from "../../../Repositories/planRepositories/int
 import { MESSAGES } from "../../../constants/messages";
 import { mapToPlanDto } from "../../../utils/dto/subscriptionPlanDto";
 import { PlanDto } from "../../../types/subscription";
+const stripe = new Stripe(process.env.STRIP_SECRET_KEY as string, {
+  apiVersion: "2024-06-20" as unknown as Stripe.LatestApiVersion,
+});
 @injectable()
 export class SubcriptionServer implements ISubcriptionService {
   constructor(

@@ -33,7 +33,6 @@ const items = new Schema<itemsDocument>(
       default: 0,
       min: 0,
     },
-
     description: {
       type: String,
     },
@@ -59,9 +58,9 @@ const items = new Schema<itemsDocument>(
       type: Boolean,
       default: true,
     },
-    maxQuantityPerOrder:{
-      type:Number,
-      default:null
+    maxQuantityPerOrder: {
+      type: Number,
+      default: null,
     },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -78,6 +77,25 @@ const items = new Schema<itemsDocument>(
       type: Number,
       default: 0,
       min: 0,
+    },
+
+    nutrition: {
+      calories: {
+        type: Number,
+        default: 0,
+      },
+      protein: {
+        type: Number,
+        default: 0,
+      },
+      carbs: {
+        type: Number,
+        default: 0,
+      },
+      fat: {
+        type: Number,
+        default: 0,
+      },
     },
 
     variant: {

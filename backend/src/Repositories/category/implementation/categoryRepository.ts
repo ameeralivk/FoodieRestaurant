@@ -28,7 +28,7 @@ export class CategoryRepository
     restaurantId: Types.ObjectId
   ): Promise<ICategory | null> {
     return this.getByFilter({
-      name: categoryName,
+      name: { $regex: `^${categoryName}$`, $options: "i" },
       restaurantId,
       isDeleted: false,
     });

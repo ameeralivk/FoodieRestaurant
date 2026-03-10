@@ -384,7 +384,6 @@
 
 // export default ItemDetailPage;
 
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -414,7 +413,7 @@ const ItemDetailPage: React.FC = () => {
     itemId: string;
     restaurantId: string;
   }>();
-  
+
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -422,7 +421,7 @@ const ItemDetailPage: React.FC = () => {
   const [rating, setRating] = useState<number | null>(null);
 
   // --- DUMMY DATA STATE ---
-  const [aiDescription, setAiDescription] = useState<string>("");
+  const [aiDescription, setAiDescription] = useState<string>("No Description");
   const [loadingNutrition, setLoadingNutrition] = useState(true);
   const [nutrition, setNutrition] = useState({
     calories: 0,
@@ -456,28 +455,20 @@ const ItemDetailPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  // --- REPLACED AI FETCHING WITH DUMMY LOGIC ---
   useEffect(() => {
-    if (!item?.name) return;
-    
-    setLoadingNutrition(true);
-    
-    // Simulate a brief delay to maintain the UI feel
-    const timer = setTimeout(() => {
-      setAiDescription(
-        `Our signature ${item.name} is prepared with the finest ingredients, offering a perfect balance of flavors and textures that will delight your senses.`
-      );
-      setNutrition({
-        calories: 450,
-        protein: 24,
-        carbs: 52,
-        fat: 16,
-      });
-      setLoadingNutrition(false);
-    }, 500);
+    if (item?.description) {
+      setAiDescription(item.description);
+    }
+    if (item?.nutrition) {
+      const parsed =
+        typeof item.nutrition === "string"
+          ? JSON.parse(item.nutrition)
+          : item.nutrition;
 
-    return () => clearTimeout(timer);
-  }, [item?.name]);
+      setNutrition(parsed);
+      setLoadingNutrition(false);
+    }
+  }, [item]);
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -497,7 +488,10 @@ const ItemDetailPage: React.FC = () => {
     fetchRating();
   }, [item, restaurantId]);
 
-  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>, item: Item) => {
+  const handleAddToCart = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    item: Item,
+  ) => {
     e.stopPropagation();
 
     if (item.variant && item.variant.values && item.variant.values.length > 0) {
@@ -561,7 +555,10 @@ const ItemDetailPage: React.FC = () => {
         </div>
 
         <img
-          src={images[currentImageIndex] || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"}
+          src={
+            images[currentImageIndex] ||
+            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"
+          }
           alt={item.name}
           className="w-full h-full object-cover"
         />
@@ -585,7 +582,8 @@ const ItemDetailPage: React.FC = () => {
           basePrice={selectedItem.price}
           variant={{
             category: selectedItem.variant?.category ?? "",
-            values: selectedItem.variant?.values?.map((v) => ({
+            values:
+              selectedItem.variant?.values?.map((v) => ({
                 _id: v._id ?? `${selectedItem._id}-variant`,
                 option: v.option ?? "Unknown Option",
                 price: v.price ?? selectedItem.price,
@@ -608,11 +606,13 @@ const ItemDetailPage: React.FC = () => {
                 selectedItem._id,
                 table,
                 quantity.toString(),
-                variantOption ? {
+                variantOption
+                  ? {
                       category: selectedItem.variant?.category ?? "",
                       option: variantOption.option,
                       price: variantOption.price,
-                    } : undefined,
+                    }
+                  : undefined,
               );
 
               if (res.success) {
@@ -662,7 +662,9 @@ const ItemDetailPage: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-gray-900 font-bold mb-3">Nutrition (approx.)</h3>
+            <h3 className="text-gray-900 font-bold mb-3">
+              Nutrition (approx.)
+            </h3>
             <div className="grid grid-cols-4 gap-3">
               {[
                 { k: "cal", l: "Calories", v: nutrition.calories, u: "kcal" },
@@ -670,12 +672,19 @@ const ItemDetailPage: React.FC = () => {
                 { k: "fat", l: "Fat", v: nutrition.fat, u: "g" },
                 { k: "car", l: "Carbs", v: nutrition.carbs, u: "g" },
               ].map((n, i) => (
-                <div key={i} className="bg-gray-50 rounded-2xl p-3 text-center border border-gray-100">
+                <div
+                  key={i}
+                  className="bg-gray-50 rounded-2xl p-3 text-center border border-gray-100"
+                >
                   <div className="text-orange-600 font-bold text-lg">
                     {loadingNutrition ? "-" : n.v}
-                    <span className="text-xs font-normal text-gray-400 ml-0.5">{n.u}</span>
+                    <span className="text-xs font-normal text-gray-400 ml-0.5">
+                      {n.u}
+                    </span>
                   </div>
-                  <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mt-1">{n.l}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mt-1">
+                    {n.l}
+                  </div>
                 </div>
               ))}
             </div>
@@ -692,7 +701,9 @@ const ItemDetailPage: React.FC = () => {
             >
               <Minus className="w-5 h-5" />
             </button>
-            <span className="w-8 text-center font-bold text-lg">{quantity}</span>
+            <span className="w-8 text-center font-bold text-lg">
+              {quantity}
+            </span>
             <button
               onClick={() => setQuantity(quantity + 1)}
               className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-700 hover:text-orange-600 active:scale-95 transition-all"
@@ -711,7 +722,9 @@ const ItemDetailPage: React.FC = () => {
             }`}
           >
             <span>{item.isStock ? "Add to Cart" : "Out of Stock"}</span>
-            <span className="bg-white/20 px-2 py-1 rounded-lg text-sm">₹{totalPrice}</span>
+            <span className="bg-white/20 px-2 py-1 rounded-lg text-sm">
+              ₹{totalPrice}
+            </span>
           </button>
         </div>
       </div>
@@ -720,6 +733,3 @@ const ItemDetailPage: React.FC = () => {
 };
 
 export default ItemDetailPage;
-
-
-

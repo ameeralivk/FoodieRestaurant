@@ -53,7 +53,7 @@ const OrderHistory: React.FC = () => {
     },
   });
 
-  const handleOrderClick = (
+  const handleTrackOrderClick = (
     orderId: string,
     status: "PLACED" | "IN_KITCHEN" | "READY" | "SERVED" | "FAILED"|"PREPARING"|"ASSIGNED"|"SERVING",
   ) => {
@@ -63,6 +63,14 @@ const OrderHistory: React.FC = () => {
     }
     navigator(`/user/order/track/${orderId}`);
   };
+
+  const handleOrderClick = (orderId:string,status:"PLACED" | "IN_KITCHEN" | "READY" | "SERVED" | "FAILED"|"PREPARING"|"ASSIGNED"|"SERVING")=>{
+     if (status === "FAILED") {
+      setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+      return;
+    }
+    navigator(`/user/order/${orderId}`)
+  }
 
   useEffect(() => {
     if (data?.total) {
@@ -288,7 +296,7 @@ const OrderHistory: React.FC = () => {
                   </button>
                   <button
                     onClick={() =>
-                      handleOrderClick(order.orderId, order.orderStatus)
+                      handleTrackOrderClick(order.orderId, order.orderStatus)
                     }
                     className="px-5 py-2 text-sm font-bold bg-white text-orange-600 border border-orange-200 rounded-lg shadow-sm hover:shadow-md transition-all"
                   >

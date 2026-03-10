@@ -10,6 +10,7 @@ interface Props {
   restaurantId?: string;
   table?: string | null;
   onClose: () => void;
+  onSuccess?: (table: string) => void;
 }
 
 const VariantHandler: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const VariantHandler: React.FC<Props> = ({
   restaurantId,
   table,
   onClose,
+  onSuccess,
 }) => {
   if (!open || !item) return null;
 
@@ -48,6 +50,7 @@ const VariantHandler: React.FC<Props> = ({
             );
 
             if (res.success) {
+              if (table && onSuccess) onSuccess(table);
               showSuccessToast("Added to Cart Successfully");
             }
           }

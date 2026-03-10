@@ -5,7 +5,7 @@ export interface IItem {
   stock: number;
   points: number;
   description?: string;
-  SubcategoryName?:string;
+  SubcategoryName?: string;
   isStock: boolean;
   isActive: boolean;
   isDeleted: boolean;
@@ -66,17 +66,26 @@ export interface Variant {
   values?: VariantValue[];
 }
 
+type Nutrition = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
+
 export interface Item {
   _id: string;
   name: string;
   price: number;
   images: string[];
+  description?: string;
   preparationTime: number;
   points: number;
   stock: number;
   isStock: boolean;
   isActive: boolean;
   categoryId: string;
+  nutrition: Nutrition;
   restaurantId: string;
   createdAt: string;
   variant?: Variant;

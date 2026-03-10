@@ -4,6 +4,7 @@ import { ISubcriptionController } from "../interface/ISubcriptionController";
 import { TYPES } from "../../../../DI/types";
 import { Request, Response } from "express";
 import HttpStatus from "../../../../constants/htttpStatusCode";
+import { AppError } from "../../../../utils/Error";
 @injectable()
 export class SubcriptionController implements ISubcriptionController {
   constructor(

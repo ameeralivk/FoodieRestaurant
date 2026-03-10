@@ -7,7 +7,7 @@ import {
   Mail,
   Phone,
   Edit2,
-} from "lucide-react";
+} from "lucide-react"; 
 import UserModal from "../../Components/Elements/Reusable/userModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";

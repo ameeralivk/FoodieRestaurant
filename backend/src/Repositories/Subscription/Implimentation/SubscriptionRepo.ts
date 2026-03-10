@@ -15,7 +15,7 @@ export class SubscriptionRepo
   async addSubcription(data: {
     restaurentId: mongoose.Types.ObjectId | undefined;
     planId: mongoose.Types.ObjectId | undefined;
-    planSnapshot:IPlanSnapshot;
+    planSnapshot: IPlanSnapshot;
     planName: string;
     planPrice: number;
     stripeSessionId: string;
@@ -41,11 +41,11 @@ export class SubscriptionRepo
   }
 
   async findActivePlanByAdminId(
-    adminId: string
+    adminId: string,
   ): Promise<ISubscriptiontype | null> {
     try {
       return await this.getByFilter({
-        restaurentId:adminId,
+        restaurentId: adminId,
         status: "active",
         renewalDate: { $gte: new Date() },
       });

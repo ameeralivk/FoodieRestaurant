@@ -6,12 +6,17 @@ import { showConfirm } from "../Elements/ConfirmationSwall";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { logoutRequest } from "../../services/Auth";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../redux/store/store";
 interface role {
   role: String;
-  restaurantName?:String,
+  restaurantName?: String;
 }
-const Admin_Navbar: React.FC<role> = ({ role , restaurantName}) => {
+const Admin_Navbar: React.FC<role> = ({ role, restaurantName }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   function handleLogout() {
@@ -41,28 +46,16 @@ const Admin_Navbar: React.FC<role> = ({ role , restaurantName}) => {
 
       {/* Desktop Menu */}
       <ul className="hidden md:flex items-center gap-6 mr-6">
-        {role !== "login" && role !== "register" ? (
-          <>
-            <li className="cursor-pointer hover:text-[#EDAB12] transition">
-              Menu
-            </li>
-            <li className="cursor-pointer hover:text-[#EDAB12] transition">
-              About
-            </li>
-            <li className="cursor-pointer hover:text-[#EDAB12] transition">
-              Contact
-            </li>
-          </>
-        ) : (
-          ""
+        {!isAuthenticated && (
+          <div>
+            <button className="bg-[#EDAB12] text-black font-medium w-20 rounded-md h-[30px] hover:bg-yellow-400 transition">
+              Login
+            </button>
+            <button className="bg-[#383329] w-24 rounded-md h-[30px] hover:bg-[#4a4033] transition">
+              Sign Up
+            </button>
+          </div>
         )}
-
-        <button className="bg-[#EDAB12] text-black font-medium w-20 rounded-md h-[30px] hover:bg-yellow-400 transition">
-          Login
-        </button>
-        <button className="bg-[#383329] w-24 rounded-md h-[30px] hover:bg-[#4a4033] transition">
-          Sign Up
-        </button>
         {role == "admin" && <LogOut color="white" onClick={handleLogout} />}
       </ul>
 

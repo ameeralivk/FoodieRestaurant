@@ -148,22 +148,22 @@ const CategoryComponent = () => {
             setCurrentRow({});
             setModalErrors({});
           }
-        } catch (error) {
-          return;
+        } catch (error: any) {
+           return 
         }
       };
       addcategory();
     } else {
       const editcategory = async () => {
         try {
-          setLoading(true)
+          setLoading(true);
           const res = await editCategory(restaurentId, currentRow.id, data);
           if (res.success) {
             showSuccessToast(res.message);
             queryClient.invalidateQueries({
               queryKey: ["activeCategory", restaurentId],
             });
-            setLoading(false)
+            setLoading(false);
             setModalOpen(false);
             setModalErrors({});
             setCurrentRow({});

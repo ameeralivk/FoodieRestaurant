@@ -1,5 +1,5 @@
 import { IPaymentService } from "../Interface/IPaymentService";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import Stripe from "stripe";
 import { inject, injectable } from "inversify";
 import { IPaymentRepository } from "../../../Repositories/payment/Interface/interface";
@@ -14,7 +14,9 @@ import { MESSAGES } from "../../../constants/messages";
 import { getIO } from "../../../config/socket";
 import { generateOrderId } from "../../../helpers/generateOrderId";
 import { INotificationService } from "../../notificationService/interface/INotificationService";
-dotenv.config()
+import { ISubscriptionRepo } from "../../../Repositories/Subscription/Interface/ISubscriptionRepo";
+import { IAdminPlanRepository } from "../../../Repositories/planRepositories/interface/IAdminPlanRepositories";
+dotenv.config();
 const stripe = new Stripe(process.env.STRIP_SECRET_KEY as string, {
   apiVersion: "2024-06-20" as unknown as Stripe.LatestApiVersion,
 });
@@ -32,6 +34,10 @@ export class PaymentService implements IPaymentService {
     private _cartRepository: ICartRepository,
     @inject(TYPES.NotificationService)
     private _notificationService: INotificationService,
+    @inject(TYPES.AdminPlanRepository)
+    private _adminPlanRepo: IAdminPlanRepository,
+    @inject(TYPES.SubcriptionRepo)
+    private _subscriptionRepo: ISubscriptionRepo,
   ) {}
   async paymentCreate(
     amount: number,
@@ -168,11 +174,66 @@ export class PaymentService implements IPaymentService {
             status: res.orderStatus,
             createdAt: res.createdAt,
           });
-           await this._notificationService.createNotification(
+          await this._notificationService.createNotification(
             restaurantId.toString(),
             "User",
             `New Order ${res.orderId} Recieved`,
           );
+        }
+      }else if (metadata.paymentType === "upgrade_subscription") {
+        console.log('hi heelfldsalfjkdlsajfldsajfldksa')
+        await this._paymentRepository.addPayment(
+          session.id,
+          "paid",
+          metadata.restaurentId || null,
+          metadata.planId || null,
+          (session.amount_total ?? 0) / 100,
+          session.payment_intent as string,
+        );
+        const restaurantId = metadata.restaurentId;
+        const newPlanId = metadata.planId;
+        if (restaurantId && newPlanId) {
+          const activeSub = await this._subscriptionRepo.findActivePlan(restaurantId);
+          const newPlan = await this._adminPlanRepo.find(newPlanId);
+          if (activeSub && newPlan) {
+            const now = new Date();
+            let msInDuration = 0;
+            const [amountStr, unit] = String(newPlan.duration).split(" ");
+            const unitStr = unit ? unit.toLowerCase() : "";
+            const numAmount = parseInt(amountStr || "0");
+            if (unitStr.includes("month")) msInDuration = numAmount * 30 * 24 * 60 * 60 * 1000;
+            else if (unitStr.includes("year")) msInDuration = numAmount * 365 * 24 * 60 * 60 * 1000;
+            else if (unitStr.includes("day")) msInDuration = numAmount * 24 * 60 * 60 * 1000;
+
+            activeSub.status = "expired";
+            activeSub.endDate = now;
+            await (activeSub as any).save();
+
+            let renewalDate = now;
+            if (msInDuration > 0) {
+              renewalDate = new Date(now.getTime() + msInDuration);
+            }
+
+            await this._subscriptionRepo.addSubcription({
+              restaurentId: new mongoose.Types.ObjectId(restaurantId),
+              planId: new mongoose.Types.ObjectId(newPlanId),
+              planName: newPlan.planName,
+              planPrice: newPlan.price,
+              planSnapshot: {
+                planName: newPlan.planName,
+                planPrice: newPlan.price,
+                duration: newPlan.duration,
+                noOfDishes: newPlan.noOfDishes,
+                noOfStaff: newPlan.noOfStaff,
+                features: newPlan.features,
+              },
+              startDate: now,
+              renewalDate,
+              stripeSessionId: session.id,
+              stripePaymentIntentId: session.payment_intent as string,
+              status: "active" as any
+            });
+          }
         }
       }
     }
@@ -218,6 +279,124 @@ export class PaymentService implements IPaymentService {
       );
 
       return;
+    }
+  }
+
+  async upgradeSubscription(
+    restaurantId: string,
+    newPlanId: string,
+  ): Promise<{ success: boolean; message: string; url?: string }> {
+    try {
+      const activeSub =
+        await this._subscriptionRepo.findActivePlan(restaurantId);
+      if (!activeSub) {
+        throw new Error("No active subscription found");
+      }
+
+      const newPlan = await this._adminPlanRepo.find(newPlanId);
+      if (!newPlan) throw new Error("New plan not found");
+
+      const now = new Date();
+      const startDate = activeSub.startDate || now;
+      const renewalDate = activeSub.renewalDate || activeSub.endDate;
+
+      let unusedValue = 0;
+      if (renewalDate && renewalDate.getTime() > now.getTime()) {
+        const totalTime = renewalDate.getTime() - startDate.getTime();
+        const remainingTime = renewalDate.getTime() - now.getTime();
+        if (totalTime > 0) {
+          unusedValue = (activeSub.planPrice / totalTime) * remainingTime;
+        }
+      }
+
+      const newPlanPrice = newPlan.price;
+      let amountToCharge = newPlanPrice - unusedValue;
+      amountToCharge = Math.max(0, amountToCharge);
+
+      if (amountToCharge > 0 && amountToCharge < 50) {
+        amountToCharge = 50;
+      }
+
+      if (amountToCharge > 0) {
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          line_items: [
+            {
+              price_data: {
+                currency: "inr",
+                product_data: { name: `Upgrade to ${newPlan.planName}` },
+                unit_amount: Math.round(amountToCharge * 100),
+              },
+              quantity: 1,
+            },
+          ],
+          mode: "payment",
+          success_url: `${process.env.FRONTEND_BASE_URL}/admin/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${process.env.FRONTEND_BASE_URL}/payment-failed`,
+          metadata: {
+            restaurentId: restaurantId,
+            planId: newPlanId,
+            amount: amountToCharge,
+            planName: newPlan.planName,
+            paymentType: "upgrade_subscription",
+          },
+        });
+
+        return {
+          success: true,
+          message: "Checkout session created for upgrade",
+          url: session.url!,
+        };
+      } else {
+        let msInDuration = 0;
+        const [amountStr, unit] = String(newPlan.duration).split(" ");
+        const unitStr = unit ? unit.toLowerCase() : "";
+        const numAmount = parseInt(amountStr || "0");
+        if (unitStr.includes("month"))
+          msInDuration = numAmount * 30 * 24 * 60 * 60 * 1000;
+        else if (unitStr.includes("year"))
+          msInDuration = numAmount * 365 * 24 * 60 * 60 * 1000;
+        else if (unitStr.includes("day"))
+          msInDuration = numAmount * 24 * 60 * 60 * 1000;
+
+        activeSub.status = "expired";
+        activeSub.endDate = now;
+        await (activeSub as any).save();
+
+        let renewalDate = now;
+        if (msInDuration > 0) {
+          renewalDate = new Date(now.getTime() + msInDuration);
+        }
+
+        await this._subscriptionRepo.addSubcription({
+          restaurentId: new mongoose.Types.ObjectId(restaurantId),
+          planId: new mongoose.Types.ObjectId(newPlanId),
+          planName: newPlan.planName,
+          planPrice: newPlan.price,
+          planSnapshot: {
+            planName: newPlan.planName,
+            planPrice: newPlan.price,
+            duration: newPlan.duration,
+            noOfDishes: newPlan.noOfDishes,
+            noOfStaff: newPlan.noOfStaff,
+            features: newPlan.features,
+          },
+          startDate: now,
+          renewalDate,
+          stripeSessionId: activeSub.stripeSessionId,
+          stripePaymentIntentId: activeSub.stripePaymentIntentId,
+          status: "active" as any,
+        });
+
+        return {
+          success: true,
+          message:
+            "Subscription upgraded successfully without additional charge",
+        };
+      }
+    } catch (error: any) {
+      console.error("Upgrade error:", error);
+      return { success: false, message: error.message };
     }
   }
 }

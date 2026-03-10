@@ -28,7 +28,7 @@ export class ItemController implements IItemController {
         const itemData = {
         name: req.body.name,
         price: Number(req.body.price),
-
+        description:req.body.description,
         stock:
           req.body.stock && req.body.stock !== "" ? Number(req.body.stock) : null,
 
@@ -41,7 +41,7 @@ export class ItemController implements IItemController {
         category: req.body.categoryId, 
         subCategoryId: req.body.subCategoryId,
         restaurantId: req.body.restaurantId,
-
+        nutrition: req.body.nutrition ? JSON.parse(req.body.nutrition) : undefined,
         images: imageUrls,
         variant: variantPricing, 
         isActive: true, 
