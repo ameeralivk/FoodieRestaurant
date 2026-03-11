@@ -18,7 +18,6 @@ import jsQR from "jsqr";
 import { getUserLocation } from "../../../Components/Helpers/user/Location";
 import isOpenNow from "../../../Components/Helpers/user/restuarentAvailability";
 import { ToastContainer } from "react-toastify";
-import { getActivePlanByRestaurant } from "../../../services/planService";
 import { getAllItems } from "../../../services/ItemsService";
 import { useDispatch } from "react-redux";
 import { setRestaurantName } from "../../../redux/slice/userSlice";
