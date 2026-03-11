@@ -21,6 +21,7 @@ import { ToastContainer } from "react-toastify";
 import { getAllItems } from "../../../services/ItemsService";
 import { useDispatch } from "react-redux";
 import { setRestaurantName } from "../../../redux/slice/userSlice";
+import { getActivePlanByRestaurant } from "../../../services/planService";
 const UserLandingPage: React.FC = () => {
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -98,13 +99,13 @@ const UserLandingPage: React.FC = () => {
           const restaurantsWithPlan = await Promise.all(
             response.data.map(async (restaurant: any) => {
               try {
-                // const planResponse = await getActivePlanByRestaurant(
-                //   restaurant._id,
-                // );
+                const planResponse = await getActivePlanByRestaurant(
+                  restaurant._id,
+                );
 
-                // if (!planResponse?.data?.success) {
-                //   return null; // remove restaurant
-                // }
+                if (!planResponse?.data?.success) {
+                  return null; // remove restaurant
+                }
 
                 const itemsResponse = await getAllItems(
                   restaurant._id,
