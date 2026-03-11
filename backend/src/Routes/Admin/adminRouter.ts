@@ -34,6 +34,8 @@ const Router = express.Router();
 
 //subcription
 Router.route("/getplan/:restaurantId").get(
+  verifyAccessToken,
+  authorizeRoles("admin","User"),
   asyncHandler(subcriptionController.getPlan)
 );
 

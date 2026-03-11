@@ -99,13 +99,13 @@ const UserLandingPage: React.FC = () => {
           const restaurantsWithPlan = await Promise.all(
             response.data.map(async (restaurant: any) => {
               try {
-                const planResponse = await getActivePlanByRestaurant(
-                  restaurant._id,
-                );
+                // const planResponse = await getActivePlanByRestaurant(
+                //   restaurant._id,
+                // );
 
-                if (!planResponse?.data?.success) {
-                  return null; // remove restaurant
-                }
+                // if (!planResponse?.data?.success) {
+                //   return null; // remove restaurant
+                // }
 
                 const itemsResponse = await getAllItems(
                   restaurant._id,
