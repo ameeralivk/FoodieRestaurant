@@ -21,7 +21,7 @@ const userController = container.get<UserController>(TYPES.userController);
 const router = exprees.Router();
 router
   .route("/getallrestaurent")
-  .get(verifyAccessToken,asyncHandler(superAdminController.getAllRestaurent));
+  .get(asyncHandler(superAdminController.getAllRestaurent));
 
 router
   .route("/restaurent/approve/:id")
