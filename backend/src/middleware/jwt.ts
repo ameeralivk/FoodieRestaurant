@@ -69,7 +69,7 @@ export const verifyAccessToken = (
     if (
       role === "admin" ||
       role === "superadmin" ||
-      role === "user" ||
+      role === "User" ||
       role === "staff" ||
       role === "chef"
     ) {
