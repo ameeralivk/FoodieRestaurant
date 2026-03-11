@@ -19,9 +19,16 @@ const userController = container.get<UserController>(TYPES.userController);
 
 
 const router = exprees.Router();
+// router
+//   .route("/getallrestaurent")
+//   .get(asyncHandler(superAdminController.getAllRestaurent));
+console.log("hi heello afldjksalfjdaslfjdasjfdsa")
 router
   .route("/getallrestaurent")
-  .get(asyncHandler(superAdminController.getAllRestaurent));
+  .get((req,res,next)=>{
+     console.log("ROUTE HIT");
+     next();
+  }, asyncHandler(superAdminController.getAllRestaurent));
 
 router
   .route("/restaurent/approve/:id")
