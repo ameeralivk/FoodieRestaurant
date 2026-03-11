@@ -32,12 +32,6 @@ const subCategoryController = container.get<SubCategoryController>(
 
 const Router = express.Router();
 
-Router.route("/create-payment").post(
-  verifyAccessToken,
-  authorizeRoles("admin"),
-  asyncHandler(paymentController.createPayment)
-);
-
 //subcription
 Router.route("/getplan/:restaurantId").get(
   verifyAccessToken,
@@ -49,6 +43,12 @@ Router.route("/subscription/upgrade").post(
   verifyAccessToken,
   authorizeRoles("admin"),
   asyncHandler(paymentController.upgrade)
+);
+
+Router.route("/create-payment").post(
+  verifyAccessToken,
+  authorizeRoles("admin"),
+  asyncHandler(paymentController.createPayment)
 );
 
 //staff
