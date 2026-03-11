@@ -125,8 +125,16 @@ const UserOrderSchema = new Schema<IUserOrderDocument>(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+     estimatedPrepTime: {
+      type: Number,
+      default: 0,
+    },
 
+    estimatedReadyAt: {
+      type: Date,
+    },
     servedAt: Date,
+    
   },
   { timestamps: true },
 );

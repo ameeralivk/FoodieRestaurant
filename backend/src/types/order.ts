@@ -42,6 +42,8 @@ export interface IUserOrder {
   assignedByStaffId?: Types.ObjectId;
   status?:string;
   servedAt?: Date;
+  estimatedPrepTime?: number;
+  estimatedReadyAt?: Date;
 }
 
 export interface IUserOrderDocument extends IUserOrder, Document {

@@ -14,6 +14,7 @@ import {
 import { MESSAGES } from "../../../constants/messages";
 import { IUserWalletRepository } from "../../../Repositories/userWallet/interface/IImplementation";
 import { INotificationService } from "../../notificationService/interface/INotificationService";
+import { IStaffRepository } from "../../../Repositories/staff/interface/IStaffRepository";
 
 @injectable()
 export class OrderService implements IOrderService {
@@ -23,6 +24,8 @@ export class OrderService implements IOrderService {
     private _userWalletRepo: IUserWalletRepository,
     @inject(TYPES.NotificationService)
     private _notificationService: INotificationService,
+    @inject(TYPES.staffRepository)
+    private StaffRepo:IStaffRepository
   ) {}
 
   getAllOrders(
@@ -428,5 +431,31 @@ export class OrderService implements IOrderService {
     } else {
       return { success: false, message: MESSAGES.ORDER_UPDATED_FAILED };
     }
+  }
+
+    async calculateEstimatedPrepTime (restaurantId: string): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }> {
+    const staffCount = await this.StaffRepo.totalCount(restaurantId)
+    const actualStaffCount = staffCount > 0 ? staffCount : 1;
+
+    const activeOrders = await this._orderRepo.totalCount(restaurantId)
+
+    const averagePrepTime = 10;
+    const ordersPerStaff = Math.ceil(Number(activeOrders)  / actualStaffCount);
+    const estimatedPrepTime = ordersPerStaff * averagePrepTime;
+
+    const estimatedReadyAt = new Date();
+    estimatedReadyAt.setMinutes(estimatedReadyAt.getMinutes() + estimatedPrepTime);
+
+    return { estimatedPrepTime, estimatedReadyAt };
+  }
+
+
+  async getEstimate(orderId: string): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date } | null> {
+    const order = await this.getOrder(orderId);
+    if (!order) return null;
+    return {
+      estimatedPrepTime: order.estimatedPrepTime || 0,
+      estimatedReadyAt: order.estimatedReadyAt || new Date()
+    };
   }
 }

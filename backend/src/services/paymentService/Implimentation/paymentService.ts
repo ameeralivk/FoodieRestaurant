@@ -16,6 +16,7 @@ import { generateOrderId } from "../../../helpers/generateOrderId";
 import { INotificationService } from "../../notificationService/interface/INotificationService";
 import { ISubscriptionRepo } from "../../../Repositories/Subscription/Interface/ISubscriptionRepo";
 import { IAdminPlanRepository } from "../../../Repositories/planRepositories/interface/IAdminPlanRepositories";
+import { IOrderService } from "../../orderService/interface/IOrderService";
 dotenv.config();
 const stripe = new Stripe(process.env.STRIP_SECRET_KEY as string, {
   apiVersion: "2024-06-20" as unknown as Stripe.LatestApiVersion,
@@ -38,6 +39,8 @@ export class PaymentService implements IPaymentService {
     private _adminPlanRepo: IAdminPlanRepository,
     @inject(TYPES.SubcriptionRepo)
     private _subscriptionRepo: ISubscriptionRepo,
+    @inject(TYPES.orderService)
+    private _orderService: IOrderService,
   ) {}
   async paymentCreate(
     amount: number,
@@ -153,9 +156,12 @@ export class PaymentService implements IPaymentService {
           (session.amount_total ?? 0) / 100,
           session.payment_intent as string,
         );
+         let estimate = await this._orderService.calculateEstimatedPrepTime(metadata.restaurentId as string);
         let res = await this._orderRepository.addOrder(
           cart,
           metadata.orderId as string,
+          estimate.estimatedPrepTime,
+          estimate.estimatedReadyAt
         );
         if (res) {
           await this._cartRepository.deleteCart(cart._id.toString());

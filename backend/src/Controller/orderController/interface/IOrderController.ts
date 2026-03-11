@@ -9,4 +9,5 @@ export interface IOrderController {
   getAssignedItems(req:Request,res:Response):Promise<Response>
   assignOrder(req:Request,res:Response):Promise<Response>
   updateOrderStatus(req:Request,res:Response):Promise<Response>
+  getEstimate(req: Request, res: Response): Promise<Response>;
 }

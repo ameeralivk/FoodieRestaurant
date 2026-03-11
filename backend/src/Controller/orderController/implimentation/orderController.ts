@@ -206,4 +206,18 @@ export class OrderController implements IOrderController {
       throw new AppError(error.message);
     }
   };
+
+
+  getEstimate = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { orderId } = req.params;
+      const estimate = await this._orderService.getEstimate(orderId as string);
+      if (estimate) {
+        return res.status(HttpStatus.OK).json(estimate);
+      }
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: "Order not found" });
+    } catch (error: any) {
+      throw new AppError(error.message);
+    }
+  };
 }

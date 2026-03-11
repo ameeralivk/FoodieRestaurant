@@ -134,5 +134,6 @@ export const MESSAGES = {
   ORDER_UPDATED_SUCCESSFULL:"Order updated Successfully",
   ORDER_UPDATED_FAILED:"Order updated Failed",
   NOTI_MARK_SUCCESS:"Notification marked as Read",
+  ORDER_PLACED_SUCCESSFULLY: "Order placed Successfully",
   NOTI_MARK_FAILED:"Notification failed to mark as Read"
 };

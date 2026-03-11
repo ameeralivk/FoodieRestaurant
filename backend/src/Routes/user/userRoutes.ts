@@ -74,6 +74,7 @@ Router.route("/order/payment").post(
 );
 Router.route("/orders").get(asyncHandler(orderController.getAllOrders));
 Router.route("/orders/:orderId").get(asyncHandler(orderController.getOrder));
+Router.route("/orders/:orderId/estimate").get(asyncHandler(orderController.getEstimate));
 Router.route("/orders/:orderId/cancell").post(
   asyncHandler(orderController.cancelOrder),
 );

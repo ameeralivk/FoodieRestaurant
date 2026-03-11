@@ -42,3 +42,11 @@ export const cancellOrder = async(
 ):Promise<{success:boolean,message:string}>=>{
   return apiRequest("POST",`/user/orders/${orderId}/cancell`,{userId})
 }
+
+
+export const getOrderEstimate = async (
+  orderId: string
+): Promise<{ estimatedPrepTime: number; estimatedReadyAt: string }> => {
+  return apiRequest("GET", `/user/orders/${orderId}/estimate`);
+};
+

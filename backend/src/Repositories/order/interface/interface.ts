@@ -4,7 +4,7 @@ import { ICart } from "../../../types/cart";
 
 
 export interface IOrderRepo{
-    addOrder(data:ICart,orderId:string):Promise<IUserOrderDocument>
+    addOrder(data:ICart,orderId:string,estimatedPrepTime?: number, estimatedReadyAt?: Date):Promise<IUserOrderDocument>
     getAllOrders(userId:string,page:number,limit:number,search:string):Promise<{data:IUserOrderDocument[]|null,total:number}>
     getOrder(orderId:string):Promise<IUserOrderDocument|null>
     getOrderById(orderId:string):Promise<IUserOrderDocument|null>
@@ -15,4 +15,5 @@ export interface IOrderRepo{
     getAssignedItems(restaurantId:string):Promise<IUserOrderDocument[]|null>;
     assignOrder(orderId:string,staffId:string):Promise<IUserOrderDocument|null>
     updateOrder(orderId:string,status:string):Promise<IUserOrderDocument|null>
+    totalCount(restaurantId:string):Promise<Number>
 }

@@ -20,4 +20,5 @@ export interface IStaffRepository {
   ): Promise<{ data: IStaff[],total:number}>;
   findById(userId:string):Promise<IStaff|null>
   updatePassword(userId:string,newPassword:string):Promise<IStaff|null>
+  totalCount(restaurantId:string): Promise<number>
 }

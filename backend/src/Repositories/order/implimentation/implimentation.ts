@@ -15,7 +15,7 @@ export class OrderRepository
     super(UserOrder);
   }
 
-  async addOrder(data: ICart, orderId: string): Promise<IUserOrderDocument> {
+  async addOrder(data: ICart, orderId: string,estimatedPrepTime?: number, estimatedReadyAt?: Date): Promise<IUserOrderDocument> {
     try {
       const orderItems = data.items.map((item) => ({
         itemId: item.itemId,
@@ -40,6 +40,8 @@ export class OrderRepository
         currency: "INR",
         orderId,
         orderStatus: "PLACED",
+        estimatedPrepTime: estimatedPrepTime || 0,
+        estimatedReadyAt: estimatedReadyAt || undefined,
       });
       return res;
     } catch (error: any) {
@@ -182,5 +184,13 @@ export class OrderRepository
   async updateOrder(orderId: string, status: string): Promise<IUserOrderDocument | null> {
 
     return await this.model.findOneAndUpdate({orderId:orderId},{orderStatus:status})
+  }
+
+
+   async totalCount(restaurantId:string): Promise<number> {
+    return await this.model.countDocuments({
+      restaurantId,
+      orderStatus: { $in: ["PLACED", "PREPARING", "ASSIGNED"] },
+    });
   }
 }

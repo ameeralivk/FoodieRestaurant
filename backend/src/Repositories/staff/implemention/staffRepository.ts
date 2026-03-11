@@ -63,11 +63,14 @@ export class StaffRepository
   }
 
   updatePassword(userId: string, newPassword: string): Promise<IStaff | null> {
-    
     return this.findByIdAndUpdate(userId, { password: newPassword });
   }
 
   findByEmail(email: string): Promise<IStaff | null> {
     return this.model.findOne({ email: email });
+  }
+
+  async totalCount(restaurantId:string): Promise<number> {
+    return await this.model.countDocuments({ restaurantId, role: { $in: ["staff", "chef"] }, status: true, isBlocked: false });
   }
 }
