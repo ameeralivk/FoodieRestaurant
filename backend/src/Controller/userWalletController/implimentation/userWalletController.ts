@@ -43,7 +43,7 @@ export class UserWalletController implements IUserWalletController {
    payWithWallet = async (req: Request, res: Response):Promise<Response> => {
     try {
       const { userId, amount, description } = req.body;
-      const result = await this._userWalletService.payWithWallet(userId, amount, description);
+      const result = await this._userWalletService.payUsingWallet(userId, amount, description);
      return res.status(200).json(result);
     } catch (error: any) {
        throw new AppError(error.message)
