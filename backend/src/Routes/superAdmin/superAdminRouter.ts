@@ -22,7 +22,6 @@ const router = exprees.Router();
 // router
 //   .route("/getallrestaurent")
 //   .get(asyncHandler(superAdminController.getAllRestaurent));
-console.log("hi heello afldjksalfjdaslfjdasjfdsa")
 router
   .route("/getallrestaurent")
   .get((req,res,next)=>{
