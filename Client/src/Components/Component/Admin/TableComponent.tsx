@@ -4,9 +4,7 @@ import { useState } from "react";
 import Pagination from "../../Elements/Reusable/Pagination";
 import ReusableModal from "../../modals/SuperAdmin/GeneralModal";
 import ReusableTable from "../../Elements/Reusable/reusableTable";
-import type {
-  GetTablesResponse,
-} from "../../../types/tableTypes";
+import type { GetTablesResponse } from "../../../types/tableTypes";
 import { useEffect } from "react";
 import { showConfirm } from "../../Elements/ConfirmationSwall";
 import {
@@ -37,7 +35,7 @@ const TableComponent = () => {
   const limit = 10;
   const queryClient = useQueryClient();
 
-  const { data} = useQuery<GetTablesResponse, Error>({
+  const { data } = useQuery<GetTablesResponse, Error>({
     queryKey: [
       "activeTable",
       restaurentId,
@@ -94,7 +92,7 @@ const TableComponent = () => {
       "Change this status?",
       `Are you Wand to Change the Status?`,
       "Change",
-      "Cancel"
+      "Cancel",
     );
     if (!confirmed) return;
     const newValue = value;
@@ -115,10 +113,10 @@ const TableComponent = () => {
                 data: oldData.data.map((table) =>
                   table._id === row._id
                     ? { ...table, isAvailable: newValue }
-                    : table
+                    : table,
                 ),
               };
-            }
+            },
           );
           setModalOpen(false);
         }
@@ -140,7 +138,7 @@ const TableComponent = () => {
       "Delete this Table?",
       `Are you sure you want to delete "fdsafjdlsa"?`,
       "Delete",
-      "Cancel"
+      "Cancel",
     );
 
     if (!confirmed) return;
@@ -191,19 +189,20 @@ const TableComponent = () => {
     if (modalMode == "add") {
       const addtable = async () => {
         try {
-          setLoading(true)
+          setLoading(true);
           const res = await addTable(data);
           if (res.success) {
             showSuccessToast(res.message);
             queryClient.invalidateQueries({
               queryKey: ["activeTable", restaurentId],
             });
-            setLoading(false)
+            setLoading(false);
             setModalOpen(false);
             setCurrentRow({});
             setModalErrors({});
           }
         } catch (error) {
+          setLoading(false);
           return;
         }
       };
@@ -336,15 +335,15 @@ const TableComponent = () => {
             modalMode === "add"
               ? "Add Table"
               : modalMode === "edit"
-              ? "Edit Table"
-              : "View Table"
+                ? "Edit Table"
+                : "View Table"
           }
           submitText={
             modalMode === "add"
               ? "Create Table"
               : modalMode === "edit"
-              ? "Save Changes"
-              : ""
+                ? "Save Changes"
+                : ""
           }
           cancelText="Close"
           mode={modalMode}

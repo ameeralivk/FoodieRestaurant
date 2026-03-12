@@ -57,6 +57,7 @@ Router.route("/cart/:userId/:restaurantId").get(
 
 //user
 Router.route("/profile/verify-email-otp").post(
+  verifyAccessToken,
   asyncHandler(userController.verifyEmailOtp),
 );
 Router.route("/profile/:userId/image").put(

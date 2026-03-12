@@ -95,6 +95,7 @@ export default function UserProfile() {
         showSuccessToast(result.message);
       }
     } catch (error) {
+      setIsLoading(false)
       console.log(error, "err");
       return;
     }

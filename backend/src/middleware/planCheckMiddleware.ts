@@ -29,7 +29,7 @@ export const checkActivePlan = async (
     const activePlan = await PlanRepository.findActivePlanByAdminId(decoded.id);
     if (!activePlan) {
       return next(
-        new AppError("No active subscription plan", HttpStatus.FORBIDDEN)
+        new AppError("No active subscription plan")
       );
     }
     req.activePlan = activePlan
