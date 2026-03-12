@@ -48,7 +48,6 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
     const tableExist = await checkTable(restaurantId as string, tableNumber);
     if (!tableExist.success) {
       alert("Table Not Exist");
-      showErrorToast("Table not exist");
       return;
     }
     if (!tableNumber) {
