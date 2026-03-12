@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import type { RegisterFormData } from "../types/AdminTypes";
 import type { ForgetPasswordFormData } from "../types/AdminTypes";
 import { getErrorMessage } from "../Components/Helpers/getErrorMessage";
-const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+// const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 interface registerFormData {
   restaurantName: string;
   email: string;
@@ -21,13 +21,16 @@ interface registerFormData {
 }
 export const register = async (formData: registerFormData) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/admin/auth/signup`,
-      formData,
-      {
-        withCredentials: true,
-      },
-    );
+    // const response = await axios.post(
+    //   `${BASE_URL}/admin/auth/signup`,
+    //   formData,
+    //   {
+    //     withCredentials: true,
+    //   },
+    // );
+    const response = await api.post("/admin/auth/signup", formData, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
