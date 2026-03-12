@@ -48,10 +48,10 @@ export default function TableExample({ approval }: TableExampleProps) {
     setLoading(true);
     try {
       const response = await getAllRestaurent(
-        approval == false ? approval : false,
+        approval ? approval : false,
         page,
         limit,
-        searchTerm
+        searchTerm,
       );
       if (response && response.success) {
         await new Promise((res) => setTimeout(res, 500));
@@ -72,7 +72,7 @@ export default function TableExample({ approval }: TableExampleProps) {
           approval ? approval : false,
           page,
           limit,
-          searchTerm
+          searchTerm,
         );
         if (response && response.success) {
           await new Promise((res) => setTimeout(res, 300));

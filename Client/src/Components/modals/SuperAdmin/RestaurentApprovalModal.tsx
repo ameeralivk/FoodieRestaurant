@@ -4,6 +4,7 @@ import type { RestaurantApprovalModalProps } from "../../../types/SuperAdmin";
 import Swal from "sweetalert2";
 import {
   approveRestaurant,
+  rejectRestaurant,
 } from "../../../services/superAdmin";
 import { useState } from "react";
 import handleDownload from "../../../utils/superAdmin/download";
@@ -97,7 +98,7 @@ const RestaurantApprovalModal: React.FC<RestaurantApprovalModalProps> = ({
     });
     if (result.isConfirmed) {
       try {
-        // await rejectRestaurant(data._id, rejectReason);
+        await rejectRestaurant(data._id, rejectReason);
         Swal.fire("rejected!", "Restaurant has been rejected.", "success");
         onApprove();
         onClose();

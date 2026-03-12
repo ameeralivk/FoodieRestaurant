@@ -71,7 +71,7 @@ export const rejectRestaurant = async (
 ) => {
   try {
     const response = await api.patch(
-      `/superadmin/reject/${restaurantId}`,
+      `/superadmin/restaurent/reject/${restaurantId}`,
       { reason: rejectionReason },
       {
         withCredentials: true,
