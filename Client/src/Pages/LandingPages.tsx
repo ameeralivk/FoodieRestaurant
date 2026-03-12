@@ -1,8 +1,5 @@
 import Admin_Navbar from "../Components/Layouts/Admin_Navbar";
 import {
-  Instagram,
-  Twitter,
-  Facebook,
   QrCode,
   Smartphone,
   Zap,
