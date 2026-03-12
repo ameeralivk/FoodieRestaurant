@@ -15,6 +15,7 @@ export const apiRequest = async <T>(
       data,
       ...config,
     });
+    console.log(response, "response");
     return response.data as T;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

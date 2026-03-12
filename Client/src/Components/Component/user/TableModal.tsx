@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { showErrorToast } from "../../Elements/ErrorToast";
 import { useDispatch } from "react-redux";
-import { ToastContainer } from "react-toastify";
 import { checkTable } from "../../../services/user";
 import { setTableNo } from "../../../redux/slice/userSlice";
+import { showSuccessToast } from "../../Elements/SuccessToast";
 interface TableNumberModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -46,8 +46,10 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
 
   const handleContinue = async () => {
     const tableExist = await checkTable(restaurantId as string, tableNumber);
-    if (!tableExist) {
+    if (!tableExist.success) {
+      alert("Table Not Exist");
       showErrorToast("Table not exist");
+      return;
     }
     if (!tableNumber) {
       showErrorToast("Please enter TableNo");
@@ -60,6 +62,7 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
       !location.pathname.includes(`/user/restaurant/${restaurantId}`)
     ) {
       navigate(`/user/restaurant/${restaurantId}?table=${tableNumber}`);
+      showSuccessToast("Added to cart Successfully");
       dispatch(setTableNo(tableNumber));
     }
 
@@ -69,7 +72,6 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <ToastContainer />
       {/* Faded background */}
       <div className="absolute inset-0 backdrop-blur-sm bg-white/30"></div>
 

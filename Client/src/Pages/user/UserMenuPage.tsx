@@ -453,7 +453,6 @@ const UserRestaurantPage: React.FC = () => {
       <div className="fixed bottom-24 right-4 z-[99]">
         <DraggableAIChatbot />
       </div>
-      <ToastContainer />
 
       <Navbar restaurantName={restaurantName || "Foodie Restarent"} />
 

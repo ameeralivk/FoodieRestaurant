@@ -140,7 +140,7 @@ export class TableController implements ITableController {
 
       if (!table) {
         return res
-          .status(404)
+          .status(200)
           .json({ success: false, message: "Table not found" });
       }
 
