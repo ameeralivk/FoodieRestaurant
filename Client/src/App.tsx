@@ -11,16 +11,14 @@ const UserRoutes = React.lazy(() => import("./Routes/userRoutes"));
 const SuperAdminRoutes = React.lazy(() => import("./Routes/SuperAdminRoutes"));
 const ChefRoutes = React.lazy(() => import("./Routes/cheffRoutes"));
 const StaffRoutes = React.lazy(() => import("./Routes/StaffRoutes"));
-
-// Small page
-import StaffResetPasswordPage from "./Pages/auth/forgetStaffPasswordResetPage";
+const ResetPasswordPage = React.lazy(()=>import("./Pages/auth/forgetPasswordResetPage"));
 
 const App = () => {
   return (
     <Suspense fallback={<AppLoader />}>
       <Routes>
         <Route path="/*" element={<LandingPagesRoutes />} />
-        <Route path="/staff/reset-password" element={<StaffResetPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/user/*" element={<UserRoutes />} />
         <Route path="/superadmin/*" element={<SuperAdminRoutes />} />

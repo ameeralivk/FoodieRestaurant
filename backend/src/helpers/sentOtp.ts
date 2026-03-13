@@ -202,6 +202,7 @@ export const sendResetStaffPasswordEmail = async (
   role: "admin" | "user" | "staff"
 ) => {
   try {
+    console.log("hifdsafldajf")
 
     let resetPath = "";
 
