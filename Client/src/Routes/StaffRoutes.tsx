@@ -9,6 +9,7 @@ import Profile from "../Pages/staff/StaffProfile";
 import StaffHistory from "../Pages/staff/StaffHistory";
 import StaffAnalytics from "../Pages/staff/StaffAnalytics";
 import StaffForgotPassword from "../Pages/staff/forgetPassword";
+import StaffResetPasswordPage from "../Pages/auth/forgetStaffPasswordResetPage";
 const StaffRoutes = () => {
   return (
     <div>
@@ -36,6 +37,7 @@ const StaffRoutes = () => {
         <Route path="/stafforders" element={<StaffOrders />} />
         <Route path="/history" element={<StaffHistory />} />
         <Route path="/forgot-password" element={<StaffForgotPassword />} />
+        <Route path="/reset-password" element={<StaffResetPasswordPage/>}/>
         <Route path="/analytics" element={<StaffAnalytics />} />
       </Routes>
     </div>

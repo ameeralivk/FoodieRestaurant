@@ -152,7 +152,7 @@ export class UserAuthService implements IUserAuthService {
     email: string
   ): Promise<{ success: boolean; message: string }> => {
     const admin = await this._userAuthRepository.findByEmail(email);
-    if (!admin) throw new Error(MESSAGES.ADMIN_NOT_FOUND);
+    if (!admin) throw new Error("No account found with this email. Please sign up first.");
     const token = crypto.randomBytes(32).toString("hex");
     await redisClient.setEx(`resetPassword:${email}`, 120, token);
     await sendResetPasswordEmail(email, token, "user");

@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
           newPassword: password,
           token,
         },
-        role
+        role,
       );
       if (res?.success) {
         if (role == "admin") {

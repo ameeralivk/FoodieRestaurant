@@ -1,17 +1,19 @@
-
-
-import React, { Suspense} from "react";
+import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import AppLoader from "./Components/Elements/AppLoader";
 
 // Lazy-loaded route groups
-const LandingPagesRoutes = React.lazy(() => import("./Routes/LandingPageRoutes"));
+const LandingPagesRoutes = React.lazy(
+  () => import("./Routes/LandingPageRoutes"),
+);
 const AdminRoutes = React.lazy(() => import("./Routes/AdminRoutes"));
 const UserRoutes = React.lazy(() => import("./Routes/userRoutes"));
 const SuperAdminRoutes = React.lazy(() => import("./Routes/SuperAdminRoutes"));
 const ChefRoutes = React.lazy(() => import("./Routes/cheffRoutes"));
 const StaffRoutes = React.lazy(() => import("./Routes/StaffRoutes"));
-const ResetPasswordPage = React.lazy(()=>import("./Pages/auth/forgetPasswordResetPage"));
+const ResetPasswordPage = React.lazy(
+  () => import("./Pages/auth/forgetPasswordResetPage"),
+);
 
 const App = () => {
   return (
