@@ -52,7 +52,7 @@ const UserLandingPage: React.FC = () => {
   const [total, setTotal] = useState(10);
   const limit = 10;
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!userLocation) return;
@@ -169,7 +169,6 @@ const UserLandingPage: React.FC = () => {
     setSelectedRestaurant(restaurant);
     setIsModalOpen(true);
   };
-
 
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -365,7 +364,7 @@ const UserLandingPage: React.FC = () => {
               ) : (
                 // restaurants.map((restaurant) => {
                 restaurants
-                  .filter((r) => r.status === "approved") // ✅ approved
+                  .filter((r) => r.status === "approved" && !r.isBlocked) // ✅ approved
                   .filter((r) => {
                     if (!r.distance) return true;
                     return parseFloat(r.distance) <= maxDistance;
@@ -522,7 +521,9 @@ const UserLandingPage: React.FC = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              dispatch(setRestaurantName(restaurant.restaurantName))
+                              dispatch(
+                                setRestaurantName(restaurant.restaurantName),
+                              );
                               navigate(`/user/restaurant/${restaurant._id}`);
                             }}
                             className="w-full bg-gray-50 text-gray-900 font-bold py-3.5 px-4 rounded-xl hover:bg-orange-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-orange-500/20"

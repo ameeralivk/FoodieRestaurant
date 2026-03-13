@@ -26,7 +26,7 @@ export class AdminPlanRepository
 
   async findByName(name: string): Promise<ISubscription | null> {
     try {
-      return await this.getByFilter({ planName: name });
+      return await this.getByFilter({ planName: { $regex: name, $options: "i" } });
     } catch (error) {
       console.error("Error checking plan by name:", error);
       return null;

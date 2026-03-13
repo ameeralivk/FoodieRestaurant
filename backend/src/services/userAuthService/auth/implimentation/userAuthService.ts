@@ -19,6 +19,7 @@ import { AppError } from "../../../../utils/Error";
 import { mapUserToDto } from "../../../../utils/dto/userDto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../DI/types";
+import { success } from "zod";
 
 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10);
 
@@ -64,6 +65,9 @@ export class UserAuthService implements IUserAuthService {
     });
     const { sub, name, email, picture } = response.data;
     let user = await this._userAuthRepository.findByEmail(email);
+    if(user?.isBlocked){
+      throw new AppError("User is blocked")
+    }
     if (!user) {
       const result = await this._userAuthRepository.googleregister({
         name: name,

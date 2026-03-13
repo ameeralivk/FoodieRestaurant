@@ -12,7 +12,7 @@ export class VarientRepository
   }
 
   async getVarient(name: string): Promise<IGroup | null> {
-    return await this.getByFilter({ name: name , isDeleted:false});
+    return await this.getByFilter({  name: { $regex: name, $options: "i" } , isDeleted:false});
   }
 
   async getVarientById(varientId: string): Promise<IGroup | null> {

@@ -16,7 +16,7 @@ const refreshTokenMaxAge =
 @injectable()
 export class UserAuthController implements IUserAuthController {
   constructor(
-    @inject(TYPES.UserAuthService) private _userAuthService: IUserAuthService
+    @inject(TYPES.UserAuthService) private _userAuthService: IUserAuthService,
   ) {}
 
   register = async (req: Request, res: Response): Promise<Response> => {
@@ -40,10 +40,7 @@ export class UserAuthController implements IUserAuthController {
     }
   };
 
-  verifyOtp = async (
-    req: Request,
-    res: Response,
-  ): Promise<Response> => {
+  verifyOtp = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { email, otp } = req.body;
       const { success, message, data, accesstoken } =
@@ -71,7 +68,7 @@ export class UserAuthController implements IUserAuthController {
 
       const { user, token, refreshToken } = await this._userAuthService.login(
         email,
-        password
+        password,
       );
 
       res.cookie("refresh_token", refreshToken, {
@@ -101,7 +98,7 @@ export class UserAuthController implements IUserAuthController {
       const { user, accesstoken, refreshToken } =
         await this._userAuthService.googleAuth(token);
       const data = {
-        phone:user.phone,
+        phone: user.phone,
         _id: user._id,
         role: "user",
         name: user.Name,
@@ -127,11 +124,14 @@ export class UserAuthController implements IUserAuthController {
         data,
         accesstoken,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       return res
         .status(500)
-        .json({ success: false, message: "Google auth failed" });
+        .json({
+          success: false,
+          message: error.message || "Google auth failed",
+        });
     }
   };
 
@@ -171,7 +171,7 @@ export class UserAuthController implements IUserAuthController {
       let response = await this._userAuthService.updatePassword(
         token,
         newPassword,
-        email
+        email,
       );
       if (response.success) {
         return res
@@ -187,10 +187,7 @@ export class UserAuthController implements IUserAuthController {
     }
   };
 
-  resendOtp = async (
-    req: Request,
-    res: Response,
-  ): Promise<Response> => {
+  resendOtp = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { email } = req.body;
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -198,7 +195,7 @@ export class UserAuthController implements IUserAuthController {
       if (!email || !emailRegex.test(email)) {
         throw new AppError(
           "Email Format are not Correct",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
       const { message, success } = await this._userAuthService.resendOtp(email);

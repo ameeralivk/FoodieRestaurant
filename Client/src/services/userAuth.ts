@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 export const handleUserLogin = async (
   email: string,
   password: string,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
 ) => {
   try {
     const data = { email, password };
@@ -41,7 +41,7 @@ export const handleUserLogin = async (
       dispatch(
         userLoginAction({
           user: userData,
-        })
+        }),
       );
 
       return { success: true, data: response.data };
@@ -63,7 +63,7 @@ export const handleUserLogin = async (
 export const handleUserRegister = async (
   name: string,
   email: string,
-  password: string
+  password: string,
 ) => {
   try {
     const data = { name, email, password };
@@ -101,7 +101,7 @@ export const userVerifyOtp = async (otp: string, email: string) => {
       console.error("SignUp Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -120,7 +120,7 @@ export const userResendOtp = async (email: string) => {
       console.error("SignUp Error:", error.response);
       throw new Error(
         error.response?.data?.message ||
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
     throw new Error("Something went wrong. Please try again.");
@@ -151,7 +151,7 @@ export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
           dispatch(
             userLoginAction({
               user: saveddata,
-            })
+            }),
           );
 
           showSuccessToast("Google login successful!");
@@ -159,9 +159,9 @@ export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
         } else {
           showErrorToast("Google authentication failed!");
         }
-      } catch (err) {
-        console.error(err)
-        showErrorToast("Google login failed!");
+      } catch (err: any) {
+        console.error(err);
+        showErrorToast(err?.response.data.message || "Google login failed!");
       }
     },
     onError: () => showErrorToast("Google authentication failed"),
@@ -169,7 +169,7 @@ export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
 };
 
 export const handleUserForgetPasswordSubmit = async (
-  formData: ForgetPasswordFormData
+  formData: ForgetPasswordFormData,
 ) => {
   const loadingId = loadingToast();
 
@@ -180,7 +180,7 @@ export const handleUserForgetPasswordSubmit = async (
     if (response.data.success || response.data.succes) {
       await AfterLoading(
         "Sending reset link...",
-        response.data.message || "Password reset link sent successfully!"
+        response.data.message || "Password reset link sent successfully!",
       );
       toast.dismiss(loadingId);
       return {
@@ -201,8 +201,8 @@ export const handleUserForgetPasswordSubmit = async (
       render: axios.isAxiosError(error)
         ? error.response?.data?.message || "Something went wrong!"
         : error instanceof Error
-        ? error.message
-        : "An unknown error occurred",
+          ? error.message
+          : "An unknown error occurred",
       type: "error",
       isLoading: false,
       autoClose: 3000,

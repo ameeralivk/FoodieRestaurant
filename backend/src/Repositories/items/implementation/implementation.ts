@@ -12,7 +12,7 @@ export class ItemsRepository
     super(Items);
   }
 
-  async findByName(
+  async findByName( 
     name: string,
     restaurantId: string
   ): Promise<IItemInterface | null> {
