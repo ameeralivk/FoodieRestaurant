@@ -63,7 +63,7 @@ const DashboardPage: React.FC = () => {
   const pendingCount = applicantsList.filter(
     (r: any) => r.status === "pending",
   ).length;
-  const usersTotal = usersResp?.total;
+  const usersTotal = usersResp?.users?.total;
   const plans = plansResp?.data?.data || [];
 
   const stats = useMemo(() => {
@@ -191,14 +191,6 @@ const DashboardPage: React.FC = () => {
               <p className="text-neutral-500 mt-2 font-medium">
                 Real-time platform insights calculated from existing API data.
               </p>
-            </div>
-            <div className="flex items-center gap-3 bg-neutral-900/50 backdrop-blur-md border border-neutral-800 p-1.5 rounded-2xl">
-              <button className="px-5 py-2.5 bg-amber-500 text-black text-sm font-bold rounded-xl shadow-lg shadow-amber-500/20 hover:bg-amber-400 transition-colors">
-                Live Insights
-              </button>
-              <button className="px-5 py-2.5 text-neutral-400 text-sm font-medium hover:text-white transition-colors">
-                History
-              </button>
             </div>
           </div>
 
@@ -488,9 +480,6 @@ const DashboardPage: React.FC = () => {
                         <span className="text-[10px] bg-amber-500/10 text-amber-500 px-3 py-1.5 rounded-xl border border-amber-500/20 uppercase font-black tracking-widest shadow-sm">
                           Review
                         </span>
-                        <p className="text-[10px] text-neutral-500 font-bold mt-2 uppercase tracking-tighter">
-                          {new Date(item.createdAt).toLocaleDateString()}
-                        </p>
                       </div>
                     </motion.div>
                   ))}

@@ -7,6 +7,7 @@ export const getUsers = async (
   searchTerm: string
 ): Promise<{
   success: boolean;
+  users:any;
   message: string;
   data: GetUsersResponse[];
   total: number;

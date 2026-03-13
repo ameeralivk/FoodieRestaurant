@@ -23,27 +23,6 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
   const dispatch = useDispatch();
   if (!isOpen) return null;
 
-  // const handleContinue = async () => {
-  //   const tableExist = await checkTable(restaurantId as string, tableNumber);
-  //   if (!tableExist) {
-  //     showErrorToast("Table not exist");
-  //   }
-  //   if (!isRestaurantOpen) {
-  //     showErrorToast("Restaurant is not open");
-  //     return;
-  //   }
-  //   if (restaurantName) {
-  //     dispatch(setRestaurantName(restaurantName));
-  //   }
-  //   if (!tableNumber) {
-  //     showErrorToast("Please enter TableNo");
-  //     return;
-  //   }
-  //   navigate(`/user/restaurant/${restaurantId}?table=${tableNumber}`);
-  //   setTableNumber("");
-  //   onClose();
-  // };
-
   const handleContinue = async () => {
     const tableExist = await checkTable(restaurantId as string, tableNumber);
     if (!tableExist.success) {
