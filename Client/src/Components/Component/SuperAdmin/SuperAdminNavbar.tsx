@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Menu, Search, Bell, User, LogOut } from "lucide-react";
+import { Menu,User, LogOut } from "lucide-react";
 import { logoutAction } from "../../../redux/slice/adminSlice";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
