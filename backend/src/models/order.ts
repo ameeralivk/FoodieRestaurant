@@ -117,7 +117,7 @@ const UserOrderSchema = new Schema<IUserOrderDocument>(
 
     orderStatus: {
       type: String,
-      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED", "ASSIGNED","SERVING"],
+      enum: ["PLACED", "IN_KITCHEN", "READY", "SERVED", "ASSIGNED","SERVING","PREPARING"],
       default: "PLACED",
     },
 

@@ -18,6 +18,7 @@ import {
   ChefHat,
   Truck,
   ArrowRight,
+  UserCheck,
 } from "lucide-react";
 import { showSuccessToast } from "../../Components/Elements/SuccessToast";
 import { ToastContainer } from "react-toastify";
@@ -55,7 +56,15 @@ const OrderHistory: React.FC = () => {
 
   const handleTrackOrderClick = (
     orderId: string,
-    status: "PLACED" | "IN_KITCHEN" | "READY" | "SERVED" | "FAILED"|"PREPARING"|"ASSIGNED"|"SERVING",
+    status:
+      | "PLACED"
+      | "IN_KITCHEN"
+      | "READY"
+      | "SERVED"
+      | "FAILED"
+      | "PREPARING"
+      | "ASSIGNED"
+      | "SERVING",
   ) => {
     if (status === "FAILED") {
       setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
@@ -64,13 +73,24 @@ const OrderHistory: React.FC = () => {
     navigator(`/user/order/track/${orderId}`);
   };
 
-  const handleOrderClick = (orderId:string,status:"PLACED" | "IN_KITCHEN" | "READY" | "SERVED" | "FAILED"|"PREPARING"|"ASSIGNED"|"SERVING")=>{
-     if (status === "FAILED") {
+  const handleOrderClick = (
+    orderId: string,
+    status:
+      | "PLACED"
+      | "IN_KITCHEN"
+      | "READY"
+      | "SERVED"
+      | "FAILED"
+      | "PREPARING"
+      | "ASSIGNED"
+      | "SERVING",
+  ) => {
+    if (status === "FAILED") {
       setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
       return;
     }
-    navigator(`/user/order/${orderId}`)
-  }
+    navigator(`/user/order/${orderId}`);
+  };
 
   useEffect(() => {
     if (data?.total) {
@@ -112,8 +132,8 @@ const OrderHistory: React.FC = () => {
 
   const getStatusBadge = (
     status:
-        "ASSIGNED"
-      |  "SERVING"
+      | "ASSIGNED"
+      | "SERVING"
       | "PREPARING"
       | "PLACED"
       | "IN_KITCHEN"
@@ -130,6 +150,21 @@ const OrderHistory: React.FC = () => {
             Placed
           </span>
         );
+      case "ASSIGNED":
+        return (
+          <span className="inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full gap-1.5">
+            <UserCheck className="w-3.5 h-3.5" />
+            Assigned
+          </span>
+        );
+      case "PREPARING":
+        return (
+          <span className="inline-flex items-center px-3 py-1 bg-orange-100 text-orange-800 text-xs font-bold rounded-full gap-1.5">
+            <ChefHat className="w-3.5 h-3.5" />
+            Preparing
+          </span>
+        );
+
       case "IN_KITCHEN":
         return (
           <span className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full gap-1.5">
@@ -286,14 +321,16 @@ const OrderHistory: React.FC = () => {
                     </button>
                   </div>
                 )}
-              {order.orderStatus === "PLACED" && (
+              {order.orderStatus != "READY" && (
                 <div className="bg-orange-50/50 border-t border-orange-100 px-6 py-3 flex justify-end gap-3">
-                  <button
-                    onClick={(e) => handleCancellButton(e, order._id)}
-                    className="px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
-                  >
-                    Cancel Order
-                  </button>
+                  {order.orderStatus === "PLACED" && (
+                    <button
+                      onClick={(e) => handleCancellButton(e, order._id)}
+                      className="px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
+                    >
+                      Cancel Order
+                    </button>
+                  )}
                   <button
                     onClick={() =>
                       handleTrackOrderClick(order.orderId, order.orderStatus)

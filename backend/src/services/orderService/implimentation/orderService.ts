@@ -4,13 +4,8 @@ import { TYPES } from "../../../DI/types";
 import { IOrderRepo } from "../../../Repositories/order/interface/interface";
 import { Types } from "mongoose";
 import { getIO } from "../../../config/socket";
-import {
-  AssignedItemsResponse,
-  AssignedItem,
-} from "../../../types/order";
-import {
-  IUserOrderDocument,
-} from "../../../types/order";
+import { AssignedItemsResponse, AssignedItem } from "../../../types/order";
+import { IUserOrderDocument } from "../../../types/order";
 import { MESSAGES } from "../../../constants/messages";
 import { IUserWalletRepository } from "../../../Repositories/userWallet/interface/IImplementation";
 import { INotificationService } from "../../notificationService/interface/INotificationService";
@@ -25,7 +20,7 @@ export class OrderService implements IOrderService {
     @inject(TYPES.NotificationService)
     private _notificationService: INotificationService,
     @inject(TYPES.staffRepository)
-    private StaffRepo:IStaffRepository
+    private StaffRepo: IStaffRepository,
   ) {}
 
   getAllOrders(
@@ -185,6 +180,9 @@ export class OrderService implements IOrderService {
     if (res) {
       let AllOrderReady = order?.items.every((o) => o.itemStatus === "READY");
       let AnyPreparing = order?.items.some((o) => o.itemStatus === "PREPARING");
+      if (AnyPreparing) {
+        await this._orderRepo.updateOrder(orderId, "PREPARING");
+      }
 
       const io = getIO();
 
@@ -238,7 +236,7 @@ export class OrderService implements IOrderService {
             "staff",
             `Order ${orderId} is READY`,
           );
-            await this._notificationService.createNotification(
+          await this._notificationService.createNotification(
             order.userId.toString(),
             "User",
             `Order ${orderId} is READY`,
@@ -259,7 +257,7 @@ export class OrderService implements IOrderService {
             itemId,
             orderStatus: status,
             order: updatedOrder,
-            message:res,
+            message: res,
           });
         }
 
@@ -433,29 +431,34 @@ export class OrderService implements IOrderService {
     }
   }
 
-    async calculateEstimatedPrepTime (restaurantId: string): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }> {
-    const staffCount = await this.StaffRepo.totalCount(restaurantId)
+  async calculateEstimatedPrepTime(
+    restaurantId: string,
+  ): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }> {
+    const staffCount = await this.StaffRepo.totalCount(restaurantId);
     const actualStaffCount = staffCount > 0 ? staffCount : 1;
 
-    const activeOrders = await this._orderRepo.totalCount(restaurantId)
+    const activeOrders = await this._orderRepo.totalCount(restaurantId);
 
     const averagePrepTime = 10;
-    const ordersPerStaff = Math.ceil(Number(activeOrders)  / actualStaffCount);
+    const ordersPerStaff = Math.ceil(Number(activeOrders) / actualStaffCount);
     const estimatedPrepTime = ordersPerStaff * averagePrepTime;
 
     const estimatedReadyAt = new Date();
-    estimatedReadyAt.setMinutes(estimatedReadyAt.getMinutes() + estimatedPrepTime);
+    estimatedReadyAt.setMinutes(
+      estimatedReadyAt.getMinutes() + estimatedPrepTime,
+    );
 
     return { estimatedPrepTime, estimatedReadyAt };
   }
 
-
-  async getEstimate(orderId: string): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date } | null> {
+  async getEstimate(
+    orderId: string,
+  ): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date } | null> {
     const order = await this.getOrder(orderId);
     if (!order) return null;
     return {
       estimatedPrepTime: order.estimatedPrepTime || 0,
-      estimatedReadyAt: order.estimatedReadyAt || new Date()
+      estimatedReadyAt: order.estimatedReadyAt || new Date(),
     };
   }
 }
