@@ -2,6 +2,7 @@ import { BaseRepository } from "../../IBaseRepository";
 import Staff from "../../../models/staff";
 import { IStaff, RequestEditIStaff, RequestIStaff } from "../../../types/staff";
 import { IStaffRepository } from "../interface/IStaffRepository";
+import { date } from "zod";
 export class StaffRepository
   extends BaseRepository<IStaff>
   implements IStaffRepository
