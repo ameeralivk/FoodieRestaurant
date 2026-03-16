@@ -133,6 +133,17 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     return this.model.findByIdAndUpdate(id, update, { new: true });
   }
 
+  async findOneAndUpdateUpsert(
+  filter: FilterQuery<T>,
+  update: UpdateQuery<T>
+): Promise<T | null> {
+  return this.model.findOneAndUpdate(filter, update, {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true,
+  });
+}
+
   async getAll(
     filter: any = {},
     options: { page?: number; limit?: number } = {}

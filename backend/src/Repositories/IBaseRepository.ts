@@ -12,6 +12,11 @@ export interface IBaseRepository<T> {
     update: UpdateQuery<T>
   ): Promise<T | null>;
 
+  findOneAndUpdateUpsert(
+  filter: FilterQuery<T>,
+  update: UpdateQuery<T>
+): Promise<T | null>;
+
   findByIdAndUpdate(
     id: string,
     update: UpdateQuery<T>
