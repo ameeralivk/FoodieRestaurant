@@ -1,5 +1,5 @@
 import Admin, { AdminDocument } from "../../../models/admin";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { IAdminAuthRepository } from "../interface/IAdminRepositories";
 import { IRestaurantRegisterData } from "../../../types/admin";
 import getPlaceName from "../../../config/getPlaceName";
@@ -18,7 +18,6 @@ export class AdminAuthRepository
     googleID?: string;
     imageUrl?: string;
   }): Promise<{ admin: AdminDocument }> {
-   
     try {
       const admin = await this.model.create({
         role: adminData.role,
@@ -36,8 +35,8 @@ export class AdminAuthRepository
       throw error;
     }
   }
-  async findByEmail(email: string):Promise<AdminDocument | null>{
-    return await this.getByFilter({ email: email, isDeleted: false});
+  async findByEmail(email: string): Promise<AdminDocument | null> {
+    return await this.getByFilter({ email: email, isDeleted: false });
   }
   async findById(id: string) {
     return await this.getById(id);
@@ -45,18 +44,18 @@ export class AdminAuthRepository
 
   async updatePasswordByEmail(
     email: string,
-    hashedPassword: string
+    hashedPassword: string,
   ): Promise<AdminDocument | null> {
     return this.updateOne({ email }, { password: hashedPassword });
   }
 
   async registerRestaurent(
     id: string,
-    data: IRestaurantRegisterData
+    data: IRestaurantRegisterData,
   ): Promise<AdminDocument | null> {
     const place = await getPlaceName(
       parseFloat(data.latitude),
-      parseFloat(data.longitude)
+      parseFloat(data.longitude),
     );
     const updateData = {
       restaurantName: data.restaurantName,
@@ -82,7 +81,7 @@ export class AdminAuthRepository
     approval: boolean,
     page: number,
     limit: number,
-    filter: any = {}
+    filter: any = {},
   ): Promise<{ data: AdminDocument[]; total: number }> {
     try {
       let finalFilter: any = {
@@ -93,7 +92,7 @@ export class AdminAuthRepository
       if (approval) {
         finalFilter.status = { $ne: "approved" };
       } else {
-        finalFilter.status = { $nin: ["pending", "rejected" , "resubmited"] };
+        finalFilter.status = { $nin: ["pending", "rejected", "resubmited"] };
       }
       return await this.getAll(finalFilter, { page, limit });
     } catch (error: any) {
@@ -104,19 +103,15 @@ export class AdminAuthRepository
 
   async updateById(
     id: string,
-    updateData: Partial<AdminDocument>
+    updateData: Partial<AdminDocument>,
   ): Promise<AdminDocument | null> {
     return this.findByIdAndUpdate(id, updateData);
   }
 
-
   async changeStatus(
     restaurantId: string,
-    isBlocked: boolean
+    isBlocked: boolean,
   ): Promise<AdminDocument | null> {
-    return await this.findByIdAndUpdate(
-      restaurantId,
-      { $set: { isBlocked } } 
-    );
+    return await this.findByIdAndUpdate(restaurantId, { $set: { isBlocked } });
   }
 }

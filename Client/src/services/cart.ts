@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 import type { ResponseCart } from "../types/cart";
 import type { Variant } from "../types/Items";
 
@@ -10,7 +12,7 @@ export const AddToCart = (
   quantity: string,
   variant?: { category: string; option: string; price: number },
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("POST", "/user/cart", {
+  return apiRequest(HTTP_METHOD.POST, API_ROUTES.CART.ADD, {
     userId,
     restaurantId,
     itemId,
@@ -24,7 +26,7 @@ export const getCart = (
   userId: string,
   restaurantId: string,
 ): Promise<ResponseCart> => {
-  return apiRequest("GET", `/user/cart/${userId}/${restaurantId}`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.CART.GET(userId, restaurantId));
 };
 
 export const CartUpdate = (
@@ -34,7 +36,7 @@ export const CartUpdate = (
   action: "inc" | "dec",
   variant?: Variant | null,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PUT", "/user/cart/update-quantity", {
+  return apiRequest(HTTP_METHOD.PUT, API_ROUTES.CART.UPDATE_QUANTITY, {
     cartId,
     restaurantId,
     itemId,
@@ -49,7 +51,7 @@ export const deleteCart = (
   itemId: string,
   variant: Variant | undefined,
 ): Promise<ResponseCart> => {
-  return apiRequest("DELETE", `/user/cart/${cartId}/${restaurantId}`, {
+  return apiRequest(HTTP_METHOD.DELETE,API_ROUTES.CART.DELETE(cartId, restaurantId), {
     itemId,
     variant,
   });
@@ -59,12 +61,12 @@ export const addInstruction = (
   cartId: string,
   cartItemId: string,
   instruction: string,
-  variant:Variant|null
+  variant: Variant | null,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/user/instruction`, {
+  return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.INSTRUCTION.ADD, {
     cartId,
     cartItemId,
     instruction,
-    variant
+    variant,
   });
 };

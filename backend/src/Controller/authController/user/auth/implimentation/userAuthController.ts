@@ -12,6 +12,8 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../../../../DI/types";
 const refreshTokenMaxAge =
   Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
+const accessTokenMaxAge =
+  Number(process.env.ACCESS_TOKEN_MAX_AGE) || 15 * 60 * 1000;
 
 @injectable()
 export class UserAuthController implements IUserAuthController {
@@ -81,7 +83,7 @@ export class UserAuthController implements IUserAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        maxAge: accessTokenMaxAge,
       });
       return res.json({ user, token });
     } catch (error) {
@@ -117,7 +119,7 @@ export class UserAuthController implements IUserAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        maxAge: accessTokenMaxAge,
       });
       return res.status(200).json({
         success: true,

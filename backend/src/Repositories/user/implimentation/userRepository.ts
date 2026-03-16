@@ -1,4 +1,4 @@
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { IUserRepository } from "../interface/IUserRepository";
 import { IUser } from "../../../types/usert";
 import User from "../../../models/user";
@@ -14,7 +14,7 @@ export class UserRepository
   async getAllUsers(
     search: string,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<{ data: IUser[]; total: number }> {
     const filter: any = {
       isDeleted: false,
@@ -31,7 +31,7 @@ export class UserRepository
 
   async updateStatus(
     userId: string,
-    isBlocked: boolean
+    isBlocked: boolean,
   ): Promise<IUser | null> {
     return this.updateOne({ _id: userId } as FilterQuery<IUser>, { isBlocked });
   }
@@ -42,7 +42,7 @@ export class UserRepository
 
   async updateUser(
     userId: string,
-    data: { name: string; phone: string; email?: string }
+    data: { name: string; phone: string; email?: string },
   ): Promise<IUser | null> {
     let result;
     if (data.email) {
@@ -60,11 +60,17 @@ export class UserRepository
     return await this.findByIdAndUpdate(userId, result);
   }
 
-   async updateProfileImage(image: string, userId: string): Promise<IUser | null> {
-    return await this.findByIdAndUpdate(userId,{imageUrl:image})
+  async updateProfileImage(
+    image: string,
+    userId: string,
+  ): Promise<IUser | null> {
+    return await this.findByIdAndUpdate(userId, { imageUrl: image });
   }
 
-  async updatePassword(userId: string, newPassword: string): Promise<IUser | null> {
-     return await this.findByIdAndUpdate(userId,{password:newPassword})
+  async updatePassword(
+    userId: string,
+    newPassword: string,
+  ): Promise<IUser | null> {
+    return await this.findByIdAndUpdate(userId, { password: newPassword });
   }
 }

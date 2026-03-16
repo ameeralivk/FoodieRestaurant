@@ -1,5 +1,5 @@
 import { subCategoryDocument } from "../../../models/subcategory";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { ISubCategoryRepository } from "../interface/ISubCategoryRepository";
 import SubCategory from "../../../models/subcategory";
 import mongoose from "mongoose";
@@ -17,7 +17,7 @@ export class SubCategoryRepository
   async findByName(
     name: string,
     restaurantId: string,
-    categoryId: string
+    categoryId: string,
   ): Promise<ISubCategory | null> {
     return this.getByFilter({
       name: { $regex: `^${name.trim()}$`, $options: "i" },
@@ -30,7 +30,7 @@ export class SubCategoryRepository
   async createSubCategory(
     data: IZodSubCategory,
     restaurantId: Types.ObjectId,
-    categoryId: Types.ObjectId
+    categoryId: Types.ObjectId,
   ): Promise<ISubCategory> {
     const filter = {
       ...data,
@@ -42,7 +42,7 @@ export class SubCategoryRepository
 
   async updateSubCategory(
     id: string,
-    data: IZodSubCategory
+    data: IZodSubCategory,
   ): Promise<ISubCategory | null> {
     return this.findByIdAndUpdate(id, data);
   }
@@ -54,7 +54,7 @@ export class SubCategoryRepository
   async getAllSubCategories(
     filter: FilterQuery<ISubCategory>,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<{ data: ISubCategory[]; total: number }> {
     return this.getAll(filter, { page, limit });
   }
@@ -63,7 +63,7 @@ export class SubCategoryRepository
     restaurantId: Types.ObjectId,
     search = "",
     page = 1,
-    limit = 10
+    limit = 10,
   ): Promise<{ data: ISubCategory[]; total: number }> {
     const filter: any = {
       restaurantId,
@@ -88,5 +88,4 @@ export class SubCategoryRepository
 
     return { data: data as ISubCategory[], total };
   }
-
 }

@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 import type { SubCategoryResponse } from "../types/subCategory";
 
 export const getAllSubCategory = async (
@@ -8,8 +10,8 @@ export const getAllSubCategory = async (
   search: string
 ): Promise<SubCategoryResponse> => {
   return apiRequest(
-    "GET",
-    `/admin/subcategory/${restaurantId}?search=${search}&page=${page}&limit=${limit}`
+    HTTP_METHOD.GET,
+    API_ROUTES.SUBCATEGORY.GET_ALL(restaurantId, page, limit, search)
   );
 };
 
@@ -19,17 +21,17 @@ export const addSubCategory = async (data: {
   restaurantId?: string;
   categoryId?: string;
 }): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("POST", `/admin/subcategory`, data);
+  return apiRequest(HTTP_METHOD.POST,API_ROUTES.SUBCATEGORY.ADD, data);
 };
 
 export const deleteSubCategory = async (
-  categoryId: string
+  subcategoryId: string
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("DELETE", `/admin/subcategory/${categoryId}`);
+  return apiRequest(HTTP_METHOD.DELETE,API_ROUTES.SUBCATEGORY.DELETE(subcategoryId));
 };
 
 export const editSubCategory = async (
-  categoryId: string,
+  subcategoryId: string,
   data: {
     name: string;
     description: string;
@@ -37,5 +39,5 @@ export const editSubCategory = async (
     categoryId?: string;
   }
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/admin/subcategory/${categoryId}`, data);
+  return apiRequest(HTTP_METHOD.PATCH,API_ROUTES.SUBCATEGORY.EDIT(subcategoryId), data);
 };

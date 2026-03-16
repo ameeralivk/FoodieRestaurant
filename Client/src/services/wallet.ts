@@ -1,9 +1,11 @@
 import type { WalletResponse } from "../types/wallet";
 import { apiRequest } from "../api/apiRequest";
+import { HTTP_METHOD } from "../constants/httpMethods";
+import { API_ROUTES } from "../constants/ApiRoutes";
 
 export const getWallet = async (userId: string): Promise<WalletResponse> => {
   console.log(userId,'id is here')
-  return apiRequest("GET", `/user/wallet?userId=${userId}`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.WALLET.GET(userId));
 };
 
 export const payWithWallet = async (
@@ -11,7 +13,7 @@ export const payWithWallet = async (
   amount: number,
   description: string
 ): Promise<WalletResponse> => {
-  return apiRequest("POST", `/user/wallet/pay`, {
+  return apiRequest(HTTP_METHOD.POST,API_ROUTES.WALLET.PAY, {
     userId,
     amount,
     description,

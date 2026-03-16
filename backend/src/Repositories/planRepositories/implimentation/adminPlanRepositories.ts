@@ -1,5 +1,5 @@
 import { PlanDocument } from "../../../models/plan";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import SubscriptionPlan from "../../../models/plan";
 import { IAdminPlanRepository } from "../interface/IAdminPlanRepositories";
 import { ISubscriptionPlan, ISubscription } from "../../../types/plan";
@@ -26,16 +26,21 @@ export class AdminPlanRepository
 
   async findByName(name: string): Promise<ISubscription | null> {
     try {
-      return await this.getByFilter({ planName: { $regex: name, $options: "i" } });
+      return await this.getByFilter({
+        planName: { $regex: name, $options: "i" },
+      });
     } catch (error) {
       console.error("Error checking plan by name:", error);
       return null;
     }
   }
 
-  async findAll(page?: number, limit?: number): Promise<{data:ISubscription[];total:number}> {
+  async findAll(
+    page?: number,
+    limit?: number,
+  ): Promise<{ data: ISubscription[]; total: number }> {
     try {
-      const finalFilter = {}; 
+      const finalFilter = {};
 
       if (page && limit) {
         return await this.getAll(finalFilter, { page, limit });
@@ -57,7 +62,7 @@ export class AdminPlanRepository
   }
   async findAndUpdate(
     id: string,
-    update: UpdateQuery<PlanDocument>
+    update: UpdateQuery<PlanDocument>,
   ): Promise<ISubscription | null> {
     try {
       if (Number(update.duration)) {
@@ -78,6 +83,4 @@ export class AdminPlanRepository
       throw new AppError(error.message);
     }
   }
-
-
 }

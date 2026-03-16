@@ -1,4 +1,4 @@
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import Notification, {
   NotificationDocument,
 } from "../../../models/notification";
@@ -38,7 +38,7 @@ export class NotificationRepository
     }
     return await this.model.find({
       recipientId,
-      recipientModel:"User",
+      recipientModel: "User",
       isRead: false,
       isDeleted: false,
     });

@@ -1,6 +1,6 @@
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { IOrderRepo } from "../interface/interface";
-import {  IUserOrderDocument } from "../../../types/order";
+import { IUserOrderDocument } from "../../../types/order";
 import UserOrder from "../../../models/order";
 import { ICart } from "../../../types/cart";
 import { FilterQuery } from "mongoose";
@@ -15,7 +15,12 @@ export class OrderRepository
     super(UserOrder);
   }
 
-  async addOrder(data: ICart, orderId: string,estimatedPrepTime?: number, estimatedReadyAt?: Date): Promise<IUserOrderDocument> {
+  async addOrder(
+    data: ICart,
+    orderId: string,
+    estimatedPrepTime?: number,
+    estimatedReadyAt?: Date,
+  ): Promise<IUserOrderDocument> {
     try {
       const orderItems = data.items.map((item) => ({
         itemId: item.itemId,
@@ -24,7 +29,7 @@ export class OrderRepository
         price: item.price,
         quantity: item.quantity,
         assignedCookId: null,
-        preparationTime:item.preparationTime?item.preparationTime:null,
+        preparationTime: item.preparationTime ? item.preparationTime : null,
         variant: unwrapVariant(item.variant) ?? null,
         itemStatus: "PENDING" as const,
         instraction: item.instraction,
@@ -133,7 +138,6 @@ export class OrderRepository
     );
   }
 
-
   async assignChefToItem(
     orderId: string,
     itemId: string,
@@ -172,22 +176,33 @@ export class OrderRepository
     return await this.model.find({ restaurantId: restaurantId });
   }
 
-
-  async assignOrder(orderId: string, staffId: string): Promise<IUserOrderDocument | null> {
-     return await this.model.findOneAndUpdate(
-    { orderId: orderId },
-    { $set: { assignedByStaffId: new Types.ObjectId(staffId) ,orderStatus:"ASSIGNED"} },
-    { new: true }
-  );
+  async assignOrder(
+    orderId: string,
+    staffId: string,
+  ): Promise<IUserOrderDocument | null> {
+    return await this.model.findOneAndUpdate(
+      { orderId: orderId },
+      {
+        $set: {
+          assignedByStaffId: new Types.ObjectId(staffId),
+          orderStatus: "ASSIGNED",
+        },
+      },
+      { new: true },
+    );
   }
 
-  async updateOrder(orderId: string, status: string): Promise<IUserOrderDocument | null> {
-
-    return await this.model.findOneAndUpdate({orderId:orderId},{orderStatus:status})
+  async updateOrder(
+    orderId: string,
+    status: string,
+  ): Promise<IUserOrderDocument | null> {
+    return await this.model.findOneAndUpdate(
+      { orderId: orderId },
+      { orderStatus: status },
+    );
   }
 
-
-   async totalCount(restaurantId:string): Promise<number> {
+  async totalCount(restaurantId: string): Promise<number> {
     return await this.model.countDocuments({
       restaurantId,
       orderStatus: { $in: ["PLACED", "PREPARING", "ASSIGNED"] },

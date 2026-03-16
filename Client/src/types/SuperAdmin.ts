@@ -72,3 +72,34 @@ export interface Subscription {
   duration: string;
   features: string[];
 }
+
+
+export interface Restaurant {
+  _id: string;
+  restaurantName: string;
+  ownerName: string;
+  email: string;
+  contactNumber: number;
+  role: string;
+
+  openingTime: string;
+  closingTime: string;
+
+  placeName: string;
+
+  location: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+
+  restaurantPhoto: string;
+  proofDocument: string;
+
+  status: "pending" | "approved" | "rejected";
+  isBlocked: boolean;
+
+  subscription: string | null;
+
+  reason: string;
+  rejectedAt: string | null;
+}

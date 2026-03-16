@@ -9,6 +9,9 @@ import { AppError } from "../../../../utils/Error";
 
 const refreshTokenMaxAge =
   Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
+
+const accessTokenMaxAge =
+  Number(process.env.ACCESS_TOKEN_MAX_AGE) || 15 * 60 * 1000;
 @injectable()
 export class StaffAuthController implements IStaffAuthController {
   constructor(
@@ -24,7 +27,7 @@ export class StaffAuthController implements IStaffAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        maxAge:accessTokenMaxAge,
       });
       res.cookie("refresh_token", result.token.refreshToken, {
         httpOnly: true,

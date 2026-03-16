@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 
 export interface ItemRating {
   itemId: string;
@@ -18,7 +20,7 @@ export const AddFeedback = (
   rating: number,
   comment: string,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("POST", "/user/feedback", {
+  return apiRequest(HTTP_METHOD.POST,API_ROUTES.FEEDBACK.ADD, {
     restaurantId,
     orderId,
     itemId,
@@ -27,6 +29,6 @@ export const AddFeedback = (
   });
 };
 
-export const getRating = (restataurantId:string):Promise<GetRatingsResponse>=>{
-    return apiRequest("GET",`/user/feedback/items/${restataurantId}`)
+export const getRating = (restaurantId: string):Promise<GetRatingsResponse>=>{
+    return apiRequest(HTTP_METHOD.GET, API_ROUTES.FEEDBACK.GET_ITEM_RATINGS(restaurantId))
 }

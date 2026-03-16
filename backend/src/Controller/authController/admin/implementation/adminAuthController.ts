@@ -11,6 +11,8 @@ import { getS3PublicUrl } from "../../../../utils/s3-url.utils";
 
 const refreshTokenMaxAge =
   Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
+const accessTokenMaxAge =
+  Number(process.env.ACCESS_TOKEN_MAX_AGE) || 15 * 60 * 1000;
 @injectable()
 export class AdminAuthController implements IAdminAuthController {
   constructor(
@@ -114,7 +116,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        maxAge: accessTokenMaxAge,
       });
       return res.status(200).json({
         success: true,
@@ -143,7 +145,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        maxAge:accessTokenMaxAge,
       });
       res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
     } catch (error) {
@@ -170,7 +172,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge: 15 * 60 * 1000,
+        maxAge:accessTokenMaxAge,
       });
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,

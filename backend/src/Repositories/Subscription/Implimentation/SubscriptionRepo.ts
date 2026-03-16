@@ -1,5 +1,5 @@
 import { IPlanSnapshot, ISubscriptiontype } from "../../../types/subscription";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { ISubscriptionRepo } from "../Interface/ISubscriptionRepo";
 import subscription from "../../../models/subscription";
 import { AppError } from "../../../utils/Error";

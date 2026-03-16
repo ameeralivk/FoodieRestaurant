@@ -1,14 +1,14 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 
 export const changeRestaurantStatus = async (
   restaurantId: string,
-  status: boolean
+  status: boolean,
 ): Promise<{ success: boolean; message: string }> => {
-  let temp = "";
-  if (status) {
-    temp = "block";
-  } else {
-    temp = "unblock";
-  }
-  return apiRequest("PATCH", `/superadmin/restaurant/${restaurantId}/${temp}`);
+  const action = status ? "block" : "unblock";
+  return apiRequest(
+    HTTP_METHOD.PATCH,
+    API_ROUTES.SUPERADMIN_RESTAURANT.CHANGE_STATUS(restaurantId,action),
+  );
 };

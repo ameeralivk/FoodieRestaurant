@@ -1,4 +1,4 @@
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import Staff from "../../../models/staff";
 import { IStaff, RequestEditIStaff, RequestIStaff } from "../../../types/staff";
 import { IStaffRepository } from "../interface/IStaffRepository";
@@ -71,7 +71,12 @@ export class StaffRepository
     return this.model.findOne({ email: email });
   }
 
-  async totalCount(restaurantId:string): Promise<number> {
-    return await this.model.countDocuments({ restaurantId, role: { $in: ["staff", "chef"] }, status: true, isBlocked: false });
+  async totalCount(restaurantId: string): Promise<number> {
+    return await this.model.countDocuments({
+      restaurantId,
+      role: { $in: ["staff", "chef"] },
+      status: true,
+      isBlocked: false,
+    });
   }
 }

@@ -1,17 +1,20 @@
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { ITableRepository } from "../interface/ITableRepository";
 import Table from "../../../models/table";
 import { ITable, PaginatedTableResult } from "../../../types/table";
 import mongoose, { Types } from "mongoose";
 import { FilterQuery } from "mongoose";
-export class TableRepository extends BaseRepository<ITable> implements ITableRepository{
-    constructor(){
-      super(Table)
-    }
+export class TableRepository
+  extends BaseRepository<ITable>
+  implements ITableRepository
+{
+  constructor() {
+    super(Table);
+  }
 
-    async findByTableNo(
+  async findByTableNo(
     restaurantId: mongoose.Types.ObjectId,
-    tableNo: number
+    tableNo: number,
   ): Promise<ITable | null> {
     return this.getByFilter({ restaurantId, tableNo });
   }
@@ -22,18 +25,17 @@ export class TableRepository extends BaseRepository<ITable> implements ITableRep
 
   async editTable(
     tableId: string,
-    updateData: Partial<ITable>
+    updateData: Partial<ITable>,
   ): Promise<ITable | null> {
     return this.findByIdAndUpdate(tableId, updateData);
   }
 
-
-   async getAllTables(
+  async getAllTables(
     restaurantId: string,
     search: string | undefined,
     page: number,
-    limit: number
-  ):Promise<PaginatedTableResult<ITable>> {
+    limit: number,
+  ): Promise<PaginatedTableResult<ITable>> {
     const filter: FilterQuery<ITable> = {
       restaurantId,
     };
@@ -48,10 +50,9 @@ export class TableRepository extends BaseRepository<ITable> implements ITableRep
     return this.getAll(filter, { page, limit });
   }
 
-
   async updateAvailability(
     tableId: string,
-    isAvailable: boolean
+    isAvailable: boolean,
   ): Promise<ITable | null> {
     return this.findByIdAndUpdate(tableId, { isAvailable });
   }
@@ -59,10 +60,14 @@ export class TableRepository extends BaseRepository<ITable> implements ITableRep
   async deleteTable(tableId: string): Promise<ITable | null> {
     return this.findByIdAndDel(tableId);
   }
-  
 
-   async checkTable(restaurantId: string, tableId: string): Promise<ITable | null> {
-     return this.model.findOne({restaurantId:new Types.ObjectId(restaurantId),tableNo:tableId})
+  async checkTable(
+    restaurantId: string,
+    tableId: string,
+  ): Promise<ITable | null> {
+    return this.model.findOne({
+      restaurantId: new Types.ObjectId(restaurantId),
+      tableNo: tableId,
+    });
   }
-
 }

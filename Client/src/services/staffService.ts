@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 import type { ItemStatus } from "../types/dummyOrder";
 import type { AssignedItemsResponse, IUserOrder } from "../types/order";
 import type {
@@ -11,46 +13,59 @@ import type {
 export const addStaff = async (
   staffData: IStaffAdd,
 ): Promise<AddStaffResponse> => {
-  return apiRequest("POST", `/admin/staff`, staffData);
+  return apiRequest(HTTP_METHOD.POST, API_ROUTES.ADMIN_STAFF.ADD, staffData);
 };
+
+// export const getAllStaff = async (
+//   restaurantId: string,
+//   page?: number,
+//   limit?: number,
+//   searchQuery?: string,
+// ): Promise<StaffListResponse> => {
+//   let url = `/admin/staff/${restaurantId}?page=${page}&limit=${limit}`;
+//   if (searchQuery) {
+//     url += `&search=${encodeURIComponent(searchQuery)}`;
+//   }
+//   return apiRequest(HTTP_METHOD.GET, url);
+// };
 
 export const getAllStaff = async (
   restaurantId: string,
   page?: number,
   limit?: number,
-  searchQuery?: string,
+  searchQuery?: string
 ): Promise<StaffListResponse> => {
-  let url = `/admin/staff/${restaurantId}?page=${page}&limit=${limit}`;
-  if (searchQuery) {
-    url += `&search=${encodeURIComponent(searchQuery)}`;
-  }
-  return apiRequest("GET", url);
+  return apiRequest(
+    HTTP_METHOD.GET,
+    API_ROUTES.ADMIN_STAFF.GET_ALL(restaurantId, page, limit, searchQuery)
+  );
 };
+
 
 export const deleteStaff = async (
   staffId: string,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("DELETE", `/admin/staff/${staffId}`);
+  return apiRequest(HTTP_METHOD.DELETE,API_ROUTES.ADMIN_STAFF.DELETE(staffId));
 };
 
 export const editStaff = async (
   staffId: string,
   updatedData: IStaffAdd,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PUT", `/admin/staff/${staffId}`, updatedData);
+  return apiRequest(HTTP_METHOD.PUT,API_ROUTES.ADMIN_STAFF.EDIT(staffId), updatedData);
 };
 
 export const changeStaffStatus = async (
   staffId: string,
   status: boolean,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/admin/staff/${staffId}`, { status });
+  return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.ADMIN_STAFF.CHANGE_STATUS(staffId), { status });
 };
 
 export const getTotalOrders = async (
   restaurantId: string,
 ): Promise<{ success: boolean; data: IUserOrder[] }> => {
-  return apiRequest("GET", `/staff/getOrders/${restaurantId}`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.STAFF_OPERATIONS.GET_TOTAL_ORDERS(restaurantId));
 };
 
 export const updateOrder = async (
@@ -59,7 +74,7 @@ export const updateOrder = async (
   status: ItemStatus,
   variant?: string,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/staff/update-item`, {
+  return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.STAFF_OPERATIONS.UPDATE_ITEM_STATUS, {
     orderId,
     itemId,
     status,
@@ -74,8 +89,8 @@ export const assignChefToItem = (
   variant: string,
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest(
-    "PATCH",
-    `/staff/orders/${orderId}/item/${itemId}/assign-cheff`,
+    HTTP_METHOD.PATCH,
+     API_ROUTES.STAFF_OPERATIONS.ASSIGN_CHEF(orderId, itemId),
     { chefId: chefId, varient: variant },
   );
 };
@@ -84,14 +99,17 @@ export const getAssignedItems = (
   restaurentId: string,
   chefId: string,
 ): Promise<AssignedItemsResponse> => {
-  return apiRequest("GET", `/staff/getAssignedItems/${restaurentId}/${chefId}`);
+  return apiRequest(
+    HTTP_METHOD.GET,
+    API_ROUTES.STAFF_OPERATIONS.GET_ASSIGNED_ITEMS(restaurentId, chefId),
+  );
 };
 
 export const assignOrder = (
   orderId: string,
   staffId: string,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/staff/assignOrder/${orderId}`, {
+  return apiRequest(HTTP_METHOD.PATCH,API_ROUTES.STAFF_OPERATIONS.ASSIGN_ORDER(orderId), {
     staffId: staffId,
   });
 };
@@ -100,7 +118,7 @@ export const changeOrderStatus = (
   orderId: string,
   status: string,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/staff/order/updatestatus/${orderId}`, {
+  return apiRequest(HTTP_METHOD.PATCH,API_ROUTES.STAFF_OPERATIONS.CHANGE_ORDER_STATUS(orderId), {
     status: status,
   });
 };
@@ -108,14 +126,14 @@ export const changeOrderStatus = (
 export const getStaff = (
   staffId: string,
 ): Promise<{ success: boolean; data: StaffResponseDTO }> => {
-  return apiRequest("GET", `/staff/getstaff/${staffId}`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.STAFF_OPERATIONS.GET_STAFF(staffId));
 };
 
 export const changeStaffPassword = async (
   oldPassword: string,
   newPassword: string,
 ): Promise<{ success: boolean; message: string }> => {
-   return apiRequest("PATCH", `/staff/change-password`, {
+  return apiRequest(HTTP_METHOD.PATCH,API_ROUTES.STAFF_OPERATIONS.CHANGE_PASSWORD, {
     oldPassword,
     newPassword,
   });

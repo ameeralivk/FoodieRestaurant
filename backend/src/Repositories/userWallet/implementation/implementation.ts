@@ -1,5 +1,5 @@
 import { IUserWallet } from "../../../types/wallet";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { UserWallet } from "../../../models/userWallet";
 import { IUserWalletRepository } from "../interface/IImplementation";
 import mongoose from "mongoose";
@@ -43,20 +43,20 @@ export class UserWalletRepository
 
   async createWallet(userId: string): Promise<IUserWallet> {
     return this.create({
-      userId:new mongoose.Types.ObjectId(userId),
+      userId: new mongoose.Types.ObjectId(userId),
       balance: 0,
       transaction: [],
     });
   }
 
-    async debitWallet(
+  async debitWallet(
     userId: string,
     amount: number,
     description: string,
-    method: string
+    method: string,
   ): Promise<IUserWallet | null> {
     return this.model.findOneAndUpdate(
-      { userId, balance: { $gte: amount } }, 
+      { userId, balance: { $gte: amount } },
       {
         $push: {
           transaction: {
@@ -69,8 +69,7 @@ export class UserWalletRepository
         },
         $inc: { balance: -amount },
       },
-      { new: true }
+      { new: true },
     );
   }
-
 }

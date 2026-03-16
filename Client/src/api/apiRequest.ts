@@ -1,9 +1,10 @@
 import api from "../services/Api";
 import axios, { type AxiosRequestConfig } from "axios";
 import { showErrorToast } from "../Components/Elements/ErrorToast";
+import type { HttpMethod } from "../constants/httpMethods";
 
 export const apiRequest = async <T>(
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+  method:HttpMethod,
   url: string,
   data?: any,
   config?: AxiosRequestConfig,

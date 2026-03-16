@@ -1,6 +1,5 @@
-
 import { ICartRepository } from "../interface/ICartRepository";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { CartDocument } from "../../../models/cart";
 import Cart from "../../../models/cart";
 import { Types } from "mongoose";
@@ -71,8 +70,10 @@ export class CartRepository
   async deleteCart(cartId: string): Promise<ICart | null> {
     return this.findByIdAndDel(cartId);
   }
-    async deleteByUserId(userId: string): Promise<ICart | null> {
-    return this.model.findOneAndDelete({ userId:new mongoose.Types.ObjectId(userId) });
+  async deleteByUserId(userId: string): Promise<ICart | null> {
+    return this.model.findOneAndDelete({
+      userId: new mongoose.Types.ObjectId(userId),
+    });
   }
 
   findCartById(cartId: string, restaurantId: string): Promise<ICart | null> {
@@ -87,36 +88,33 @@ export class CartRepository
     return this.findByIdAndUpdate(cartId, { ...cart });
   }
 
-
   async updateInstruction(
-  cartId: string,
-  cartItemId: string,
-  instraction: string,
-  variant?: { category: string; option: string; price: number }
-): Promise<ICart | null> {
+    cartId: string,
+    cartItemId: string,
+    instraction: string,
+    variant?: { category: string; option: string; price: number },
+  ): Promise<ICart | null> {
+    const updatePath = variant
+      ? "items.$[item].instraction"
+      : "items.$[item].instraction";
+    const arrayFilter: any = { "item.itemId": new Types.ObjectId(cartItemId) };
 
-  const updatePath = variant
-    ? "items.$[item].instraction"
-    : "items.$[item].instraction";
-  const arrayFilter: any = { "item.itemId": new Types.ObjectId(cartItemId) };
-
-  if (variant) {
-    arrayFilter["item.variant.category"] = variant.category;
-    arrayFilter["item.variant.option"] = variant.option;
-  }
-
-  const result = await this.model.collection.findOneAndUpdate(
-    { _id: new Types.ObjectId(cartId) },
-    { $set: { [updatePath]: instraction } },
-    {
-      arrayFilters: [arrayFilter],
-      returnDocument: "after"
+    if (variant) {
+      arrayFilter["item.variant.category"] = variant.category;
+      arrayFilter["item.variant.option"] = variant.option;
     }
-  );
 
-  return result?.value as ICart | null;
-}
+    const result = await this.model.collection.findOneAndUpdate(
+      { _id: new Types.ObjectId(cartId) },
+      { $set: { [updatePath]: instraction } },
+      {
+        arrayFilters: [arrayFilter],
+        returnDocument: "after",
+      },
+    );
 
+    return result?.value as ICart | null;
+  }
 
   getByCartId(cartId: string): Promise<ICart | null> {
     return this.getById(cartId);

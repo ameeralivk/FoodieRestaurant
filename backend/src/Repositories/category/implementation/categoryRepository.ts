@@ -1,5 +1,5 @@
 import { ICategory, ICategoryAdd } from "../../../types/category";
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { ICategoryRepository } from "../interface/ICategoryRepository";
 import Category, { categoryDocument } from "../../../models/category";
 import { UpdateQuery } from "mongoose";
@@ -14,7 +14,7 @@ export class CategoryRepository
   }
   async add(
     data: ICategoryAdd,
-    restaurantId: Types.ObjectId
+    restaurantId: Types.ObjectId,
   ): Promise<ICategory | null> {
     const addData = {
       ...data,
@@ -25,7 +25,7 @@ export class CategoryRepository
 
   async find(
     categoryName: string,
-    restaurantId: Types.ObjectId
+    restaurantId: Types.ObjectId,
   ): Promise<ICategory | null> {
     return this.getByFilter({
       name: { $regex: `^${categoryName}$`, $options: "i" },
@@ -34,9 +34,9 @@ export class CategoryRepository
     });
   }
 
-   async findByCategoryId(
+  async findByCategoryId(
     categoryId: Types.ObjectId,
-    restaurantId: Types.ObjectId
+    restaurantId: Types.ObjectId,
   ): Promise<ICategory | null> {
     return this.getByFilter({
       _id: categoryId,
@@ -47,7 +47,7 @@ export class CategoryRepository
 
   async findAndUpdate(
     id: string,
-    update: UpdateQuery<categoryDocument>
+    update: UpdateQuery<categoryDocument>,
   ): Promise<ICategory | null> {
     return this.findByIdAndUpdate(id, update);
   }
@@ -56,13 +56,11 @@ export class CategoryRepository
     return this.findByIdAndDel(id, "isDeleted", true);
   }
 
-
   async findAll(
     filter: any,
     page?: number,
-    limit?: number
+    limit?: number,
   ): Promise<{ data: ICategory[]; total: number }> {
     return this.getAll(filter, { page, limit });
   }
-  
 }

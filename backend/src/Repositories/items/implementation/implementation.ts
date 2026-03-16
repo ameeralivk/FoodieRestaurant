@@ -1,4 +1,4 @@
-import { BaseRepository } from "../../IBaseRepository";
+import { BaseRepository } from "../../BaseRepository";
 import { IItemsRepository } from "../interface/interface";
 import Items, { itemsDocument } from "../../../models/items";
 import { IItemInterface } from "../../../types/items";
@@ -12,9 +12,9 @@ export class ItemsRepository
     super(Items);
   }
 
-  async findByName( 
+  async findByName(
     name: string,
-    restaurantId: string
+    restaurantId: string,
   ): Promise<IItemInterface | null> {
     return this.getByFilter({
       name: { $regex: `^${name}$`, $options: "i" },
@@ -24,20 +24,20 @@ export class ItemsRepository
   }
 
   async createItem(data: IItemInterface): Promise<IItemInterface> {
-    console.log(data,'data is here service')
-    return this.create({...data,preparationTime:data.preparationTime});
+    console.log(data, "data is here service");
+    return this.create({ ...data, preparationTime: data.preparationTime });
   }
 
   async editItem(
     id: string,
     data: Partial<IItemInterface>,
-    images: string[]
+    images: string[],
   ): Promise<IItemInterface | null> {
     if (images.length) {
       return await this.findByIdAndUpdate(id, {
         ...data,
         images: images || data.existingImages,
-        preparationTime:Number(data.preparationTime),
+        preparationTime: Number(data.preparationTime),
       });
     } else {
       return await this.findByIdAndUpdate(id, {
@@ -56,7 +56,7 @@ export class ItemsRepository
 
   async changeStatus(
     id: string,
-    isActive: boolean
+    isActive: boolean,
   ): Promise<IItemInterface | null> {
     return await this.findByIdAndUpdate(id, { isActive });
   }
@@ -66,25 +66,23 @@ export class ItemsRepository
     filter: FilterQuery<IItemInterface>,
     page: number,
     limit: number,
-    role:string
+    role: string,
   ): Promise<{ data: IItemInterface[]; total: number }> {
     const skip = (page - 1) * limit;
-    let queryFilter = {}
-    if(role && role === "user"){
+    let queryFilter = {};
+    if (role && role === "user") {
       queryFilter = {
-      restaurantId,
-      isActive:true,
-      isDeleted: false,
-      ...filter,
-    };
-    }else{
-
+        restaurantId,
+        isActive: true,
+        isDeleted: false,
+        ...filter,
+      };
+    } else {
       queryFilter = {
-      restaurantId,
-      isDeleted: false,
-      ...filter,
-    };
-
+        restaurantId,
+        isDeleted: false,
+        ...filter,
+      };
     }
 
     const dataPromise = this.model

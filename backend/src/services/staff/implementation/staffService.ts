@@ -127,38 +127,36 @@ export class StaffService implements IStaffService {
     oldPassword: string,
     newPassword: string,
   ): Promise<{ success: boolean; message: string }> {
-   const user = await this._staffRepo.findById(userId);
-       if (!user) {
-         return { success: false, message: MESSAGES.USER_NOT_FOUND };
-       }
-       const isPasswordMatch = await bcrypt.compare(
-         oldPassword,
-         user.password
-       );
-       if (!isPasswordMatch) {
-         return { success: false, message: MESSAGES.INVALID_CURRENT_PASSWORD };
-       }
-       const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-       console.log(hashedPassword,'hash')
-       await this._staffRepo.updatePassword(userId, hashedPassword);
-       return {
-         success: true,
-         message: MESSAGES.PASSWORD_CHANGED_SUCCESS,
-       };
-     }
-
-     async getStaff(staffId: string): Promise<{ success: boolean; data: StaffResponseDTO | []; }> {
-         if(!staffId){
-          return {success:false,data:[]}
-         }
-         let result =await this._staffRepo.findById(staffId)
-         if(!result) return {success:false,data:[]}
-         const dtoData = mapStaffToDTO(result)
-         if(result){
-          return {success:true,data:dtoData}
-         }else{
-          return {success:false,data:[]}
-         }
-     }
+    const user = await this._staffRepo.findById(userId);
+    if (!user) {
+      return { success: false, message: MESSAGES.USER_NOT_FOUND };
+    }
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordMatch) {
+      return { success: false, message: MESSAGES.INVALID_CURRENT_PASSWORD };
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    console.log(hashedPassword, "hash");
+    await this._staffRepo.updatePassword(userId, hashedPassword);
+    return {
+      success: true,
+      message: MESSAGES.PASSWORD_CHANGED_SUCCESS,
+    };
   }
 
+  async getStaff(
+    staffId: string,
+  ): Promise<{ success: boolean; data: StaffResponseDTO | [] }> {
+    if (!staffId) {
+      return { success: false, data: [] };
+    }
+    let result = await this._staffRepo.findById(staffId);
+    if (!result) return { success: false, data: [] };
+    const dtoData = mapStaffToDTO(result);
+    if (result) {
+      return { success: true, data: dtoData };
+    } else {
+      return { success: false, data: [] };
+    }
+  }
+}

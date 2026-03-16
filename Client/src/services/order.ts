@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 import type { CartItem } from "../types/cart";
 import type { IGetOrderResponse, IPaginatedOrdersResponse} from "../types/order";
 export const orderPayment = async (
@@ -7,7 +9,7 @@ export const orderPayment = async (
   userId: string,
   items: CartItem[]
 ): Promise<{ success: boolean; data: { url: string } }> => {
-  return apiRequest("POST", `/user/order/payment`, {
+  return apiRequest(HTTP_METHOD.POST,API_ROUTES.ORDERS.PAYMENT, {
     amount,
     restaurantId,
     userId,
@@ -22,17 +24,15 @@ export const getAllOrders = async (
   search?: string
 ): Promise<IPaginatedOrdersResponse> => {
   return apiRequest(
-    "GET",
-    `/user/orders?userId=${userId}&page=${page}&limit=${limit}&search=${
-      search || ""
-    }`
+    HTTP_METHOD.GET,
+    API_ROUTES.ORDERS.GET_ALL(userId, page, limit, search)
   );
 };
 
 export const getOrder = async (
   orderId: string
 ): Promise<IGetOrderResponse> => {
-  return apiRequest("GET", `/user/orders/${orderId}`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.ORDERS.GET_ONE(orderId));
 };
 
 
@@ -40,13 +40,13 @@ export const cancellOrder = async(
   orderId:string,
   userId:string
 ):Promise<{success:boolean,message:string}>=>{
-  return apiRequest("POST",`/user/orders/${orderId}/cancell`,{userId})
+  return apiRequest(HTTP_METHOD.POST, API_ROUTES.ORDERS.CANCEL(orderId),{userId})
 }
 
 
 export const getOrderEstimate = async (
   orderId: string
 ): Promise<{ estimatedPrepTime: number; estimatedReadyAt: string }> => {
-  return apiRequest("GET", `/user/orders/${orderId}/estimate`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.ORDERS.ESTIMATE(orderId));
 };
 

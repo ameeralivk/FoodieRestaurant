@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 import type { CategoryResponse } from "../types/category";
 
 export const getAllCategory = async (
@@ -8,8 +10,8 @@ export const getAllCategory = async (
   search?: string
 ): Promise<CategoryResponse> => {
   return apiRequest(
-    "GET",
-    `/admin/category/${restaurantId}?search=${search}&page=${page}&limit=${limit}`
+    HTTP_METHOD.GET,
+    API_ROUTES.CATEGORY.GET_ALL(restaurantId, page, limit, search)
   );
 };
 
@@ -18,7 +20,7 @@ export const addCategory = async (
   description: string,
   restuarantId: string | undefined
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("POST", `/admin/category`, {
+  return apiRequest(HTTP_METHOD.POST,API_ROUTES.CATEGORY.ADD, {
     name,
     description,
     restaurantId: restuarantId,
@@ -29,7 +31,7 @@ export const deleteCategory = async (
   restaurantId: string | undefined,
   categoryId: string
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("DELETE", `/admin/category/${restaurantId}/${categoryId}`);
+  return apiRequest(HTTP_METHOD.DELETE,API_ROUTES.CATEGORY.DELETE(restaurantId!, categoryId));
 };
 
 export const editCategory = async (
@@ -38,8 +40,8 @@ export const editCategory = async (
   data: { name: string; description: string }
 ): Promise<{ success: boolean; message: string }> => {
   return apiRequest(
-    "PATCH",
-    `/admin/category/${restaurantId}/${categoryId}`,
+    HTTP_METHOD.PATCH,
+    API_ROUTES.CATEGORY.EDIT(restaurantId!, categoryId),
     data
   );
 };

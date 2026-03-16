@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RestaurantRow from "../../Elements/SuperAdmin/AdminTableRow";
 import TableHeader from "../../Elements/SuperAdmin/TableHeader";
-import type { TableColumn } from "../../../types/SuperAdmin";
+import type { Restaurant, TableColumn } from "../../../types/SuperAdmin";
 import RestaurantApprovalModal from "../../modals/SuperAdmin/RestaurentApprovalModal";
 import { getAllRestaurent } from "../../../services/superAdmin";
 import LoadingRow from "../../Elements/SuperAdmin/LoadingRow";
@@ -55,7 +55,10 @@ export default function TableExample({ approval }: TableExampleProps) {
       );
       if (response && response.success) {
         await new Promise((res) => setTimeout(res, 500));
-        setRestaurants(response.data);
+          let filterData = response.data.filter(
+            (res:Restaurant) => res.location.coordinates.length > 0,
+          );
+        setRestaurants(filterData);
         setTotal(response.pagination.total);
       }
     } catch (error) {
@@ -76,7 +79,11 @@ export default function TableExample({ approval }: TableExampleProps) {
         );
         if (response && response.success) {
           await new Promise((res) => setTimeout(res, 300));
-          setRestaurants(response.data);
+          console.log(response.data)
+          let filterData = response.data.filter(
+            (res:Restaurant) => res.location.coordinates.length > 0,
+          );
+          setRestaurants(filterData);
           setTotal(response.pagination.total);
         }
       } catch (err) {

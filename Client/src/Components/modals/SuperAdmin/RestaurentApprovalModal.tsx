@@ -255,7 +255,7 @@ const RestaurantApprovalModal: React.FC<RestaurantApprovalModalProps> = ({
               </div>
 
               <div className="bg-neutral-800 p-6 rounded-lg flex flex-col items-center gap-4">
-                {data.verificationDocument.endsWith(".pdf") ? (
+                {data?.verificationDocument?.endsWith(".pdf") ? (
                   // PDF → Only download button
                   <a
                     href={data.verificationDocument}

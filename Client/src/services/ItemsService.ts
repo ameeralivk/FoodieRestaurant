@@ -1,4 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
+import { API_ROUTES } from "../constants/ApiRoutes";
+import { HTTP_METHOD } from "../constants/httpMethods";
 import type { IItemResponse } from "../types/Items";
 
 export const getAllItems = async (
@@ -8,39 +10,39 @@ export const getAllItems = async (
   search: string
 ): Promise<IItemResponse> => {
   return apiRequest(
-    "GET",
-    `/admin/restaurants/items/${restaurantId}?search=${search}&page=${page}&limit=${limit}`
+    HTTP_METHOD.GET,
+    API_ROUTES.ITEMS.GET_ALL(restaurantId, page, limit, search)
   );
 };
 
 export const addItems = async (
   data: FormData
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("POST", `/admin/items`, data);
+  return apiRequest(HTTP_METHOD.POST, API_ROUTES.ITEMS.ADD, data);
 };
 
 export const deleteItem = async (
-  ItemId: string
+  itemId: string
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("DELETE", `/admin/items/${ItemId}`);
+  return apiRequest(HTTP_METHOD.DELETE,API_ROUTES.ITEMS.DELETE(itemId));
 };
 
 export const editItem = async (
   ItemId: string,
   data: FormData
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/admin/items/${ItemId}`, data);
+  return apiRequest(HTTP_METHOD.PATCH, `/admin/items/${ItemId}`, data);
 };
 
 export const changeItemStatus = async (
-  ItemId: string,
+  itemId: string,
   isActive: boolean
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest("PATCH", `/admin/items/${ItemId}/status`, { isActive });
+  return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.ITEMS.CHANGE_STATUS(itemId), { isActive });
 };
 
 export const getAllMenuItems = async (
   restaurantId: string
 ): Promise<IItemResponse> => {
-  return apiRequest("GET", `/admin/items/${restaurantId}`);
+  return apiRequest(HTTP_METHOD.GET,API_ROUTES.ITEMS.GET_MENU_ITEMS(restaurantId));
 };
