@@ -1,7 +1,7 @@
 import { otpResponse } from "../../../helpers/sentOtp";
 import { AdminDocument } from "../../../models/admin";
 import type { IAdminStatusBase, IRestaurantRegisterData } from "../../../types/admin";
-import { AdminDTO } from "../../../utils/dto/adminDto";
+import { AdminDTO } from "../../../utils/dto/types/admin.dto.types";
 export default interface IAdminAuthService {
   login(
     email: string,

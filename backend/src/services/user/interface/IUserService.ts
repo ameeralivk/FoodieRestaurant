@@ -1,6 +1,5 @@
 import { IUser, UpdateProfileResult } from "../../../types/usert";
-import { IMappedUserData} from "../../../utils/dto/userDto";
-
+import { IMappedUserData } from "../../../utils/dto/types/user.dto.types";
 
 export interface IUserService{
      getAllUsers(search:string,page:number,limit:number):Promise<{users:IMappedUserData[],total:number,page:number,limit:number,totalPages:number}>;

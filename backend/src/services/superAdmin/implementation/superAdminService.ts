@@ -1,6 +1,6 @@
 import ISuperAdminService from "../interface/ISuperAdminService";
 import { IAdminAuthRepository } from "../../../Repositories/Admin/interface/IAdminRepositories";
-import { IMappedAdminData } from "../../../utils/dto/SuperAdminDto";
+import { IMappedAdminData } from "../../../utils/dto/types/superadmin.types";
 import { AppError } from "../../../utils/Error";
 import { SuperadminDataMapping } from "../../../utils/dto/SuperAdminDto";
 import { inject, injectable } from "inversify";

@@ -1,6 +1,6 @@
 
 import { IUser } from "../../../../types/usert";
-import { IMappedUserData } from "../../../../utils/dto/userDto";
+import { IMappedUserData } from "../../../../utils/dto/types/user.dto.types";
 
 export default interface IUserAuthService {
   register(

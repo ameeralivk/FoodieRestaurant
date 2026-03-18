@@ -1,5 +1,5 @@
 import { IVariant } from "../../../types/varient";
-import { IVarientResponseDto } from "../../../utils/dto/varientDto";
+import { IVarientResponseDto } from "../../../utils/dto/types/varient.dto.types";
 export interface IVarientService {
   addVarient(
     name: string,

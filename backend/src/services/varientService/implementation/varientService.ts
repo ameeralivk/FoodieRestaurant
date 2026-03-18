@@ -5,8 +5,8 @@ import { IVarientRepository } from "../../../Repositories/varient/interface/IVar
 import { IVariant } from "../../../types/varient";
 import { MESSAGES } from "../../../constants/messages";
 import { AppError } from "../../../utils/Error";
+import { IVarientResponseDto } from "../../../utils/dto/types/varient.dto.types";
 import {
-  IVarientResponseDto,
   VarientResponseDto,
 } from "../../../utils/dto/varientDto";
 @injectable()

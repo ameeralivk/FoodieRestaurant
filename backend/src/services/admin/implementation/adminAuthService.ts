@@ -18,7 +18,8 @@ import {
 } from "../../../middleware/jwt";
 import { IRestaurantRegisterData } from "../../../types/admin";
 import IAdminAuthService from "../interface/IAdminAuthService";
-import { AdminDTO, adminDTO } from "../../../utils/dto/adminDto";
+import { AdminDTO } from "../../../utils/dto/types/admin.dto.types";
+import { adminDTO } from "../../../utils/dto/adminDto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../../DI/types";
 import { IUserRepository } from "../../../Repositories/user/interface/IUserRepository";
