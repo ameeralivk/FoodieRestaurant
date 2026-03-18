@@ -1,21 +1,5 @@
 
-import { Types } from "mongoose";
-import { IGroup, IVariant } from "../../types/varient";
-
-export interface IVarientResponseDto{
-    _id:Types.ObjectId
-    name:string,
-    Varient:IVariant[],
-    createdAt:Date
-}
-export interface IGetAllVariantResponse {
-  success: boolean;
-  data: IVarientResponseDto[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+import { IGroup} from "../../types/varient";
 
 export const VarientResponseDto = (group: IGroup) => {
   return {

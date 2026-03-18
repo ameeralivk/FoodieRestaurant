@@ -2,5 +2,5 @@
 
 
 export interface IAIService{
-    getReply(prompt: string): Promise<string>
+    getReply(prompt: string,restaurantId:string): Promise<string>
 }

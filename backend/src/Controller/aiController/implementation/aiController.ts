@@ -10,12 +10,13 @@ export class AiController implements IAiController {
 
   sendResponse = async(req: Request, res: Response): Promise<Response>=> {
     try {
-      const { prompt } = req.body;
+      const { prompt,restaurantId } = req.body;
+      console.log(restaurantId,'id is here')
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const reply = await this._AiService.getReply(prompt);
+      const reply = await this._AiService.getReply(prompt,restaurantId?.toString());
 
      return res.status(200).json({ reply });
     } catch (error:any) {

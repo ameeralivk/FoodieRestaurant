@@ -6,10 +6,10 @@ import type { GetUsersResponse } from "../types/userTypes";
 export const getUsers = async (
   currentPage: number,
   limit: number,
-  searchTerm: string
+  searchTerm: string,
 ): Promise<{
   success: boolean;
-  users:any;
+  users: any;
   message: string;
   data: GetUsersResponse[];
   total: number;
@@ -18,25 +18,41 @@ export const getUsers = async (
 }> => {
   return apiRequest(
     HTTP_METHOD.GET,
-    API_ROUTES.SUPERADMIN_USER.GET_ALL(currentPage, limit, searchTerm)
+    API_ROUTES.SUPERADMIN_USER.GET_ALL(currentPage, limit, searchTerm),
   );
 };
 
 export const changeUserStatus = async (
   userId: string,
-  status: boolean
+  status: boolean,
 ): Promise<{ success: boolean; message: string }> => {
-  return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.SUPERADMIN_USER.CHANGE_STATUS(userId), { status });
+  return apiRequest(
+    HTTP_METHOD.PATCH,
+    API_ROUTES.SUPERADMIN_USER.CHANGE_STATUS(userId),
+    { status },
+  );
 };
 
 export const getItem = async (id: string): Promise<GetMenuItemsResponse> => {
   return apiRequest(HTTP_METHOD.GET, API_ROUTES.ADMIN_ITEMS.GET_ONE(id));
 };
 
-export const sendToAi = async (prompt: string): Promise<{ reply: string }> => {
-  return apiRequest(HTTP_METHOD.POST,API_ROUTES.AI.ASK, { prompt });
+export const sendToAi = async (
+  prompt: string,
+  restaurantId?: string,
+): Promise<{ reply: string }> => {
+  return apiRequest(HTTP_METHOD.POST, API_ROUTES.AI.ASK, {
+    prompt,
+    restaurantId,
+  });
 };
 
-export const checkTable = async(restaurantId:string,tableNo:string):Promise<{success:boolean,message:string}>=>{
-  return apiRequest(HTTP_METHOD.POST,API_ROUTES.TABLE.CHECK,{restaurantId, tableNo})
-}
+export const checkTable = async (
+  restaurantId: string,
+  tableNo: string,
+): Promise<{ success: boolean; message: string }> => {
+  return apiRequest(HTTP_METHOD.POST, API_ROUTES.TABLE.CHECK, {
+    restaurantId,
+    tableNo,
+  });
+};

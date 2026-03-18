@@ -1,4 +1,4 @@
-import { ICategory } from "../../types/category";
+import { ICategory } from "./types/category.dto.types";
 
 export const categoryDTO = (category: ICategory) => ({
   id: category._id,

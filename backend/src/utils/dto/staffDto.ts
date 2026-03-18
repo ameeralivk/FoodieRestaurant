@@ -1,5 +1,5 @@
 import { IStaff } from "../../types/staff";
-import { StaffResponseDTO } from "../../types/staff";
+import { StaffResponseDTO } from "./types/staff.dto.types";
 
 export const mapStaffToDTO = (staff: IStaff): StaffResponseDTO => {
   return {

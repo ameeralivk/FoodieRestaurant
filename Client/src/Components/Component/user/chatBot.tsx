@@ -2,7 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { sendToAi } from "../../../services/user";
-export default function DraggableAIChatbot() {
+export default function DraggableAIChatbot({
+  restaurantId,
+}: {
+  restaurantId: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   // Bubble position
@@ -113,7 +117,7 @@ export default function DraggableAIChatbot() {
     setIsLoading(true);
 
     try {
-      const res = await sendToAi(inputText);
+      const res = await sendToAi(inputText,restaurantId);
       setMessages((p) => [...p, { role: "ai", text: res.reply }]);
     } catch {
       setMessages((p) => [...p, { role: "ai", text: "Error 😕" }]);

@@ -104,4 +104,15 @@ export class ItemsRepository
   find(id: string): Promise<IItemInterface | null> {
     return this.getById(id);
   }
+
+  async findByItemName(
+  name: string,
+  restaurantId: string,
+): Promise<IItemInterface[]> {
+  return this.model.find({
+    name: { $regex: name, $options: "i" },
+    isDeleted: false,
+    restaurantId,
+  });
+}
 }
