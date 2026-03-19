@@ -9,5 +9,5 @@ export const getAllNotification = (recipientId: string,model?:string):Promise<No
 }
 export const markAsRead = (notificationId?: string,isAll?:string):Promise<{success:boolean,message:string}> =>{
        console.log(isAll)
-      return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.NOTIFICATION.MARK_AS_READ(notificationId))
+      return apiRequest(HTTP_METHOD.PATCH, API_ROUTES.NOTIFICATION.MARK_AS_READ(notificationId),{isAll})
 }

@@ -18,8 +18,8 @@ export interface IOrderItem {
   variant?: { _id: string; category: string; option: string; price: number };
   assignedCookId: string | null;
   createdAt?: string;
-  preparationTime?:string;
-  updatedAt?:string;
+  preparationTime?: string;
+  updatedAt?: string;
   itemStatus: OrderItemStatus;
 }
 
@@ -69,7 +69,7 @@ export interface IOrder {
   subTotal: number;
   totalAmount: number;
   orderStatus:
-      "SERVED"
+    | "SERVED"
     | "ASSIGNED"
     | "SERVING"
     | "PLACED"
@@ -102,6 +102,7 @@ export interface AssignedItem {
     instruction?: string | null;
   };
   tableNumber: string;
+  createdAt?: string;
   orderStatus:
     | "ASSIGNED"
     | "PREPARING"

@@ -10,7 +10,7 @@ export const mapUserToDto = (user: IUser): IUserResponseDto => {
       id: user._id.toString(),
       name: user.Name,
       email: user.Email,
-      phone: user.phone,
+      phone: user.phone, 
       allergies: user.Allergies,
       dietaryRestriction: user.DietaryRestriction,
       imageUrl: user.imageUrl,

@@ -292,6 +292,7 @@ export class OrderService implements IOrderService {
           },
           tableNumber: order.tableId,
           orderStatus: order.orderStatus,
+          createdAt:order.createdAt
         })),
     );
 

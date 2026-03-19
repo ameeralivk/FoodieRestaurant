@@ -181,3 +181,236 @@ const StaffHistoryContent = () => {
 };
 
 export default StaffHistoryContent
+
+
+// import { useState, useEffect } from "react";
+// import { motion, AnimatePresence } from "framer-motion";
+// import { useQuery } from "@tanstack/react-query";
+// import { getTotalOrders } from "../../../services/staffService";
+// import { useSelector } from "react-redux";
+// import type{ RootState } from "../../../redux/store/store";
+// import type{ IUserOrder } from "../../../types/order";
+// import { 
+//     History, 
+//     Truck, 
+//     ChevronLeft,  
+//     ChevronRight, 
+//     ClipboardList,
+//     Clock,
+//     Hash,
+//     MapPin
+// } from "lucide-react";
+
+// const StaffHistoryContent = () => {
+//     const [filter, setFilter] = useState<"today" | "week" | "month" | "all">("all");
+//     const [currentPage, setCurrentPage] = useState(1);
+//     const itemsPerPage = 10;
+//     const userId = useSelector((state: RootState) => state.userAuth.user?._id);
+//     const restaurantId = useSelector((state: RootState) => state.userAuth.user?.restaurantId);
+
+//     const { data, isLoading } = useQuery<{ success: boolean; data: IUserOrder[] }>({
+//         queryKey: ["orders", userId, "staff-history"],
+//         queryFn: () => getTotalOrders(restaurantId as string),
+//         enabled: !!restaurantId,
+//     });
+
+//     const getFilteredItems = () => {
+//         if (!data?.data || !userId) return [];
+//         const staffOrders = data.data.filter(
+//             order => order.assignedByStaffId === userId && order.orderStatus === "SERVED"
+//         );
+
+//         const now = new Date();
+//         return staffOrders.filter(order => {
+//             const itemDate = new Date(order.updatedAt || order.createdAt);
+//             if (filter === "all") return true;
+//             if (filter === "today") return itemDate.toDateString() === now.toDateString();
+//             if (filter === "week") {
+//                 const lw = new Date(); lw.setDate(lw.getDate() - 7); return itemDate >= lw;
+//             }
+//             if (filter === "month") {
+//                 const lm = new Date(); lm.setMonth(lm.getMonth() - 1); return itemDate >= lm;
+//             }
+//             return true;
+//         }).sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
+//     };
+
+//     const historyOrders = getFilteredItems();
+//     const totalPages = Math.ceil(historyOrders.length / itemsPerPage);
+//     const paginatedOrders = historyOrders.slice(
+//         (currentPage - 1) * itemsPerPage,
+//         currentPage * itemsPerPage
+//     );
+
+//     useEffect(() => { setCurrentPage(1); }, [filter]);
+
+//     return (
+//         <div className="max-w-7xl mx-auto px-6 pb-12 pt-4">
+//             {/* Header / Filter Section */}
+//             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+//                 <div>
+//                     <h2 className="text-4xl font-black text-gray-900 tracking-tight flex items-center gap-4">
+//                         <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-xl shadow-blue-200 ring-4 ring-blue-50">
+//                             <History className="w-8 h-8" />
+//                         </div>
+//                         Delivery <span className="text-blue-600">Archive</span>
+//                     </h2>
+//                     <p className="text-gray-500 font-medium mt-2 ml-1">Historical review of your served tasks</p>
+//                 </div>
+
+//                 <div className="flex bg-gray-100/80 backdrop-blur-md p-1.5 rounded-2xl border border-gray-200 shadow-sm">
+//                     {["today", "week", "month", "all"].map(f => (
+//                         <button
+//                             key={f}
+//                             onClick={() => setFilter(f as any)}
+//                             className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-300 capitalize ${
+//                                 filter === f 
+//                                     ? "bg-white text-blue-600 shadow-xl scale-105 border border-blue-50" 
+//                                     : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+//                             }`}
+//                         >
+//                             {f}
+//                         </button>
+//                     ))}
+//                 </div>
+//             </div>
+
+//             {isLoading ? (
+//                 <div className="min-h-[500px] flex flex-col items-center justify-center gap-4 bg-white/50 rounded-[3rem] border border-gray-100">
+//                     <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+//                     <p className="text-xs font-black text-gray-400 animate-pulse tracking-widest uppercase italic">Loading Archives...</p>
+//                 </div>
+//             ) : (
+//                 <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-gray-200 border border-gray-100 overflow-hidden flex flex-col h-full ring-8 ring-gray-50/50 min-h-[600px]">
+//                     {historyOrders.length === 0 ? (
+//                         <motion.div 
+//                             initial={{ opacity: 0, scale: 0.9 }}
+//                             animate={{ opacity: 1, scale: 1 }}
+//                             className="text-center py-32 flex-grow flex flex-col items-center justify-center px-6"
+//                         >
+//                             <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+//                                 <ClipboardList className="w-12 h-12 text-gray-200" />
+//                             </div>
+//                             <h3 className="text-2xl font-black text-gray-900 mb-2">Clean Slate</h3>
+//                             <p className="text-gray-400 font-medium max-w-xs mx-auto italic">No assignments found for this period. Move some tickets to see them here.</p>
+//                         </motion.div>
+//                     ) : (
+//                         <>
+//                             <div className="overflow-x-auto flex-grow px-8 pt-8">
+//                                 <table className="w-full text-left border-separate border-spacing-y-4">
+//                                     <thead>
+//                                         <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+//                                             <th className="px-6 pb-4">Task Manifest</th>
+//                                             <th className="px-6 pb-4">Location</th>
+//                                             <th className="px-6 pb-4">Contents</th>
+//                                             <th className="px-6 pb-4">Revenue</th>
+//                                             <th className="px-6 pb-4 text-center">Completion Time</th>
+//                                         </tr>
+//                                     </thead>
+//                                     <tbody className="space-y-4">
+//                                         <AnimatePresence mode="popLayout">
+//                                             {paginatedOrders.map((order, idx) => (
+//                                                 <motion.tr 
+//                                                     key={order.orderId}
+//                                                     initial={{ opacity: 0, x: -20 }}
+//                                                     animate={{ opacity: 1, x: 0 }}
+//                                                     transition={{ delay: idx * 0.05 }}
+//                                                     className="group hover:bg-gray-50 transition-all duration-300"
+//                                                 >
+//                                                     <td className="px-6 py-6 border-y border-l bg-white group-hover:bg-blue-50/30 rounded-l-[2rem] border-gray-50 group-hover:border-blue-100 shadow-sm transition-all">
+//                                                         <div className="flex flex-col">
+//                                                             <div className="flex items-center gap-2 mb-1.5">
+//                                                                 <Hash className="w-3.5 h-3.5 text-blue-400" />
+//                                                                 <span className="text-sm font-black text-gray-900 group-hover:text-blue-700 transition-colors">#{order.orderId.slice(-8).toUpperCase()}</span>
+//                                                             </div>
+//                                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest italic group-hover:text-blue-400 transition-colors">Order Manifest</span>
+//                                                         </div>
+//                                                     </td>
+//                                                     <td className="px-6 py-6 border-y bg-white group-hover:bg-blue-50/30 border-gray-50 group-hover:border-blue-100 shadow-sm transition-all text-center">
+//                                                         <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-700 rounded-2xl font-black text-xs border border-blue-100 shadow-sm">
+//                                                             <MapPin className="w-3.5 h-3.5" />
+//                                                             Table {order.tableId}
+//                                                         </div>
+//                                                     </td>
+//                                                     <td className="px-6 py-6 border-y bg-white group-hover:bg-blue-50/30 border-gray-50 group-hover:border-blue-100 shadow-sm transition-all">
+//                                                         <div className="flex flex-col">
+//                                                             <span className="text-sm font-black text-gray-900">{order.items.length} Primary Items</span>
+//                                                             <span className="text-[10px] font-bold text-gray-400 truncate max-w-[180px] mt-1 italic">
+//                                                                 {order.items.map(i => i.itemName).join(", ")}
+//                                                             </span>
+//                                                         </div>
+//                                                     </td>
+//                                                     <td className="px-6 py-6 border-y bg-white group-hover:bg-blue-50/30 border-gray-50 group-hover:border-blue-100 shadow-sm transition-all">
+//                                                         <div className="flex items-center gap-2">
+//                                                             <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
+//                                                                 <Truck className="w-3.5 h-3.5" />
+//                                                             </div>
+//                                                             <span className="text-lg font-black text-gray-900 group-hover:text-emerald-700 transition-colors">₹{order.totalAmount}</span>
+//                                                         </div>
+//                                                     </td>
+//                                                     <td className="px-6 py-6 border-y border-r bg-white group-hover:bg-blue-50/30 rounded-r-[2rem] border-gray-50 group-hover:border-blue-100 shadow-sm transition-all text-right">
+//                                                         <div className="flex flex-col items-end">
+//                                                             <div className="flex items-center gap-2 font-black text-gray-900 text-sm mb-1.5 scale-90 sm:scale-100">
+//                                                                 <Clock className="w-3.5 h-3.5 text-orange-500" />
+//                                                                 {new Date(order.updatedAt || order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+//                                                             </div>
+//                                                             <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest italic">{new Date(order.updatedAt || order.createdAt).toDateString()}</span>
+//                                                         </div>
+//                                                     </td>
+//                                                 </motion.tr>
+//                                             ))}
+//                                         </AnimatePresence>
+//                                     </tbody>
+//                                 </table>
+//                             </div>
+
+//                             {/* Pagination Architecture */}
+//                             {totalPages > 1 && (
+//                                 <div className="flex flex-col sm:flex-row items-center justify-between px-10 py-10 gap-6">
+//                                     <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 italic">
+//                                         Revealing <span className="text-blue-600">{(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, historyOrders.length)}</span> of {historyOrders.length} History Logs
+//                                     </div>
+//                                     <div className="flex items-center gap-4">
+//                                         <button
+//                                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+//                                             disabled={currentPage === 1}
+//                                             className="p-3.5 bg-gray-50 text-gray-400 rounded-2xl hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-gray-50 transition-all duration-300 shadow-sm group/btn"
+//                                         >
+//                                             <ChevronLeft className="w-6 h-6 group-hover/btn:-translate-x-1 transition-transform" />
+//                                         </button>
+                                        
+//                                         <div className="flex items-center gap-2.5">
+//                                             {Array.from({ length: totalPages }).map((_, i) => (
+//                                                 <button
+//                                                     key={i}
+//                                                     onClick={() => setCurrentPage(i + 1)}
+//                                                     className={`w-12 h-12 flex items-center justify-center rounded-2xl text-xs font-black transition-all duration-300 ${
+//                                                         currentPage === i + 1
+//                                                             ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-110 border border-blue-400/20"
+//                                                             : "bg-white border border-gray-100 text-gray-400 hover:text-blue-600 hover:bg-gray-50 shadow-sm"
+//                                                     }`}
+//                                                 >
+//                                                     {i + 1}
+//                                                 </button>
+//                                             ))}
+//                                         </div>
+
+//                                         <button
+//                                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+//                                             disabled={currentPage === totalPages}
+//                                             className="p-3.5 bg-gray-50 text-gray-400 rounded-2xl hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-gray-50 transition-all duration-300 shadow-sm group/btn"
+//                                         >
+//                                             <ChevronRight className="w-6 h-6 group-hover/btn:translate-x-1 transition-transform" />
+//                                         </button>
+//                                     </div>
+//                                 </div>
+//                             )}
+//                         </>
+//                     )}
+//                 </div>
+//             )}
+//         </div>
+//     );
+// };
+
+// export default StaffHistoryContent

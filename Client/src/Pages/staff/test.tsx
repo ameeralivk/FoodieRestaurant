@@ -494,7 +494,6 @@ const ChefUpdateItemModal: React.FC<{
 const ChefDashboard: React.FC = () => {
   const { currentUser, orders, assignItemToChef, updateItemStatus } = useApp();
   const [selectedItem, setSelectedItem] = useState<{ order: Order; item: OrderItem; mode: 'assign' | 'update' } | null>(null);
-
   // Get available items (pending, no chef assigned)
   const availableItems = orders
     .filter(o => o.status !== 'completed' && o.status !== 'serving')
