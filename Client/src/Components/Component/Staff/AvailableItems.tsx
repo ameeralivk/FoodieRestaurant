@@ -296,15 +296,13 @@
 // export default AvailableItemsSection;
 
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
     Package, 
     UserPlus, 
     Clock, 
     Hash, 
     MapPin, 
-    ChevronRight,
-    TrendingUp,
     Zap,
     UtensilsCrossed
 } from "lucide-react";
@@ -329,7 +327,6 @@ const AvailableItemsSection = () => {
   const restaurantId = useSelector((state: RootState) => state.userAuth.user?.restaurantId);
   const queryClient = useQueryClient();
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const limit = 1000;
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
@@ -365,15 +362,15 @@ const AvailableItemsSection = () => {
     const handleNewOrder = (newOrder: IUserOrder) => {
       playSound();
       showSuccessToast(`🔥 New Order from Table ${newOrder.tableId}`);
-      queryClient.invalidateQueries({ queryKey: ["orders", userId, currentPage, limit] });
+      queryClient.invalidateQueries({ queryKey: ["orders", userId, limit] });
     };
 
     Socket.on("order:new", handleNewOrder);
     return () => { Socket.off("order:new", handleNewOrder); };
-  }, [restaurantId, userId, currentPage, limit, queryClient]);
+  }, [restaurantId, userId, limit, queryClient]);
 
   const { data, isLoading } = useQuery<{ success: boolean; data: IUserOrder[] }>({
-    queryKey: ["orders", userId, currentPage, limit],
+    queryKey: ["orders", userId, limit],
     queryFn: () => getTotalOrders(restaurantId as string),
     enabled: !!restaurantId
   });
@@ -403,7 +400,7 @@ const AvailableItemsSection = () => {
     let res = await assignChefToItem(orderId, itemId, userId ? userId : "", variant?._id?.toString());
     if (res.success) {
       showSuccessToast("Item self-assigned successfully 👨‍🍳");
-      queryClient.invalidateQueries({ queryKey: ["orders", userId, currentPage, limit] });
+      queryClient.invalidateQueries({ queryKey: ["orders", userId, limit] });
       setSelectedItem(null);
     }
   };
@@ -454,7 +451,7 @@ const AvailableItemsSection = () => {
       ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode="popLayout">
-              {items.map((item, idx) => (
+              {items.map((item) => (
                 <motion.button
                   key={`${item.orderId}-${item.itemId}-${item.variantId ?? "no-variant"}`}
                   layout

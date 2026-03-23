@@ -376,7 +376,7 @@ const MyItemsSection: React.FC = () => {
   return (
     <div className="max-w-9xl mx-auto px-6 pb-12">
       <ChefOrderStats stats={stats} />
-
+       {isLoadingStats && <p>Loading.........</p>}
       <div className="flex items-center justify-between mb-8 group">
         <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">
           <div className="p-2 bg-emerald-600 rounded-xl text-white shadow-lg group-hover:scale-110 transition-transform">

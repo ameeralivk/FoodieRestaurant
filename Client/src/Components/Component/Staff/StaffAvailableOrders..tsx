@@ -125,8 +125,6 @@ import Socket from "../../../socket";
 import { ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-    Package, 
-    Truck, 
     Zap, 
     ChevronRight, 
     Bell, 
@@ -136,7 +134,6 @@ import {
 
 const StaffDashboard: React.FC = () => {
   const queryClient = useQueryClient();
-  const [currentPage, setCurrentPage] = useState(1);
   const user = useSelector((state: RootState) => state.userAuth.user);
   const restaurantId = user?.restaurantId;
   const role = user?.role;
@@ -147,7 +144,7 @@ const StaffDashboard: React.FC = () => {
   const [readyOrders, setReadyOrders] = useState<IUserOrder[]>([]);
 
   const { data, refetch, isLoading } = useQuery<{ success: boolean; data: IUserOrder[] }>({
-    queryKey: ["orders", userId, currentPage, limit],
+    queryKey: ["orders", userId, limit],
     queryFn: () => getTotalOrders(restaurantId as string),
     enabled: !!restaurantId
   });
@@ -166,7 +163,7 @@ const StaffDashboard: React.FC = () => {
     if (!restaurantId) return;
     Socket.emit("join-restaurant", { restaurantId, role });
 
-    const handleOrderCompleted = (socketData: { order: IUserOrder; orderId: string; message: string }) => {
+    const handleOrderCompleted = () => {
       showSuccessToast("🎉 New Order Manifest Ready!");
       playSound();
       queryClient.invalidateQueries({ queryKey: ["orders", userId] });

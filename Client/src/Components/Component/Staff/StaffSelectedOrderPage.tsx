@@ -170,7 +170,7 @@
 
 import React, { useState, useEffect } from "react";
 import StaffOrderCard from "../../Elements/Staff/StaffOrderCard";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery} from "@tanstack/react-query";
 import type { IUserOrder } from "../../../types/order";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../redux/store/store";
@@ -189,9 +189,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Truck, Zap, Package, BarChart3, ChevronRight } from "lucide-react";
 
 const StaffSelectedOrders: React.FC = () => {
-  const queryClient = useQueryClient();
-  const [currentPage, setCurrentPage] = useState(1);
-  const restaurantId = useSelector((state: RootState) => state.userAuth.user?._id); // Wait! restaurantId is in user.restaurantId
   const user = useSelector((state: RootState) => state.userAuth.user);
   const realRestaurantId = user?.restaurantId;
   const role = user?.role;
@@ -202,7 +199,7 @@ const StaffSelectedOrders: React.FC = () => {
   const [readyOrders, setReadyOrders] = useState<IUserOrder[]>([]);
 
   const { data, refetch, isLoading } = useQuery<{ success: boolean; data: IUserOrder[] }>({
-    queryKey: ["orders", userId, currentPage, limit],
+    queryKey: ["orders", userId, limit],
     queryFn: () => getTotalOrders(realRestaurantId as string),
     enabled: !!realRestaurantId
   });
@@ -222,7 +219,7 @@ const StaffSelectedOrders: React.FC = () => {
     if (!realRestaurantId) return;
     Socket.emit("join-restaurant", { restaurantId: realRestaurantId, role });
 
-    const handleOrderCompleted = (socketData: { order: IUserOrder; orderId: string; message: string }) => {
+    const handleOrderCompleted = () => {
       showSuccessToast("🎉 Order Manifest Ready for Pickup!");
       refetch();
       playSound();
