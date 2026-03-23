@@ -181,10 +181,8 @@ import {
   Truck,
   CheckCircle,
   Clock,
-  Zap,
   Trophy,
   Coins,
-  ChevronRight,
   Target,
   BarChart3,
 } from "lucide-react";

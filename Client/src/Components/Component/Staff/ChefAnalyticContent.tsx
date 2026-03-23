@@ -194,7 +194,6 @@ import {
   TrendingUp,
   Zap,
   Target,
-  ChevronRight,
   ChefHat,
   Star,
 } from "lucide-react";
