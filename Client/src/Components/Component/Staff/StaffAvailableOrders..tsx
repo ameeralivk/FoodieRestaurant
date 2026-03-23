@@ -446,7 +446,6 @@
 
 // export default StaffDashboard;
 
-
 import React, { useState, useEffect } from "react";
 import StaffOrderCard from "../../Elements/Staff/StaffOrderCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -461,13 +460,7 @@ import Socket from "../../../socket";
 import { ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 
-import {
-  Zap,
-  ChevronRight,
-  Bell,
-  ClipboardCheck,
-  ChefHat,
-} from "lucide-react";
+import { Zap, ChevronRight, Bell, ClipboardCheck, ChefHat } from "lucide-react";
 
 const StaffDashboard: React.FC = () => {
   const queryClient = useQueryClient();
@@ -505,7 +498,7 @@ const StaffDashboard: React.FC = () => {
         return (
           orderDate === today &&
           o.items.every((item: any) =>
-            item.status ? item.status === "READY" : o.orderStatus === "READY"
+            item.status ? item.status === "READY" : o.orderStatus === "READY",
           )
         );
       });
@@ -523,16 +516,12 @@ const StaffDashboard: React.FC = () => {
       role,
     });
 
-    const handleOrderCompleted = (socketData: {
-      order: IUserOrder;
-    }) => {
+    const handleOrderCompleted = (socketData: { order: IUserOrder }) => {
       showSuccessToast("New Order is added");
       playSound();
 
       setReadyOrders((prev) => {
-        const exists = prev.some(
-          (o) => o.orderId === socketData.order.orderId,
-        );
+        const exists = prev.some((o) => o.orderId === socketData.order.orderId);
         return exists ? prev : [...prev, socketData.order];
       });
     };

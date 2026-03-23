@@ -175,8 +175,8 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { getTotalOrders } from "../../../services/staffService";
 import { useSelector } from "react-redux";
-import type{ RootState } from "../../../redux/store/store";
-import type{ IUserOrder } from "../../../types/order";
+import type { RootState } from "../../../redux/store/store";
+import type { IUserOrder } from "../../../types/order";
 import {
   Truck,
   CheckCircle,
@@ -535,7 +535,7 @@ const StaffAnalyticsContent = () => {
           </div>
 
           {/* Bottom Status Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-9 gap-10 pt-4">
             {/* Service Velocity */}
             <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-2xl shadow-gray-50/50 group">
               <h3 className="text-xl font-black text-gray-900 mb-10 flex items-center gap-4">
@@ -585,34 +585,6 @@ const StaffAnalyticsContent = () => {
                 ))}
               </div>
             </div>
-
-            {/* Performance Mentor */}
-            <div className="bg-indigo-600 rounded-[3rem] p-10 text-white relative overflow-hidden group shadow-2xl shadow-indigo-300/50 transition-all hover:scale-[1.02]">
-              <div className="absolute -right-16 -top-16 opacity-[0.08] group-hover:rotate-12 transition-transform duration-1000">
-                <Zap className="w-64 h-64" />
-              </div>
-              <div className="relative z-10 h-full flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                    <Target className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-black italic tracking-wide">
-                    Excellence Mentor
-                  </h3>
-                </div>
-                <p className="text-lg text-indigo-50 font-bold leading-relaxed mb-10 italic">
-                  {stats.completionRate > 90
-                    ? "Masterful consistency! Your presence on the floor elevates the entire restaurant. Maintain this zenith."
-                    : stats.completionRate > 70
-                      ? "Strong contribution today. A few more serves will lock in your 'Service Elite' status for this period."
-                      : "Focus on the open tickets, Staff. A sharp mind delivers exceptional service. You've got this."}
-                </p>
-                <button className="mt-auto w-full py-5 bg-white text-indigo-900 font-black rounded-2xl shadow-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-3 group/btn">
-                  View Full Career Progress
-                  <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1.5 transition-transform" />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}
@@ -620,5 +592,4 @@ const StaffAnalyticsContent = () => {
   );
 };
 
-
-export default StaffAnalyticsContent
+export default StaffAnalyticsContent;
