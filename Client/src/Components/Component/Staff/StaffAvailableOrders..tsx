@@ -519,7 +519,7 @@ const StaffDashboard: React.FC = () => {
     const handleOrderCompleted = (socketData: { order: IUserOrder }) => {
       showSuccessToast("New Order is added");
       playSound();
-
+      refetch();
       setReadyOrders((prev) => {
         const exists = prev.some((o) => o.orderId === socketData.order.orderId);
         return exists ? prev : [...prev, socketData.order];
