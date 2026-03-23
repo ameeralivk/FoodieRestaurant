@@ -536,11 +536,9 @@ import ChefOrderStats from "../../Elements/Staff/chefOrderState";
 
 // ✅ ONLY USED ICONS
 import {
-  Clock,
   ChefHat,
   Package,
   ChevronRight,
-  Flame,
   MapPin,
   Hash,
 } from "lucide-react";
