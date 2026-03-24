@@ -21,8 +21,8 @@ export class UserController implements IUserController {
         message: MESSAGES.USER_FETCHED_SUCCESS,
         users,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -59,8 +59,8 @@ export class UserController implements IUserController {
         success: true,
         data: user,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -88,8 +88,8 @@ export class UserController implements IUserController {
         success: true,
         message: MESSAGES.PROFILE_UPDATE_SUCCESS,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -100,8 +100,8 @@ export class UserController implements IUserController {
       const result = await this._userService.verifyEmailOtp(email, otp);
 
       return res.status(HttpStatus.OK).json(result);
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -119,8 +119,8 @@ export class UserController implements IUserController {
         message: MESSAGES.PROFILE_IMAGE_UPDATE_SUCCESS,
         imageUrl:result?.image||""
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 

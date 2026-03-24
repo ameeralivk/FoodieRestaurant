@@ -102,8 +102,8 @@ export class SuperAdminController implements ISuperAdminController {
             : "Restaurant unblocked successfully",
         data: updatedRestaurant,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

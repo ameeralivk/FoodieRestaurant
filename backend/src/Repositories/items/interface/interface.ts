@@ -22,4 +22,5 @@ export interface IItemsRepository {
     role: string,
   ): Promise<{ data: IItemInterface[]; total: number }>;
   findByItemName(name: string, restaurantId: string): Promise<IItemInterface[]>;
+  getAllItems(restaurantId:string):Promise<IItemInterface[]>
 }

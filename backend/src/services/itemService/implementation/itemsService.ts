@@ -9,14 +9,14 @@ import { FilterQuery } from "mongoose";
 import s3 from "../../../config/Bucket";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import HttpStatus from "../../../constants/htttpStatusCode";
-
+import { Request } from "express";
 @injectable()
 export class ItemsService implements IItemsService {
   constructor(
     @inject(TYPES.itemsRepository) private _itemsRepo: IItemsRepository
   ) {}
 
-  async addItem(data: IItemInterface): Promise<IItemInterface> {
+  async addItem(req: Request,data: IItemInterface): Promise<IItemInterface> {
     const existingItem = await this._itemsRepo.findByName(
       data.name,
       data.restaurantId.toString()
@@ -24,6 +24,11 @@ export class ItemsService implements IItemsService {
 
     if (existingItem) {
       throw new AppError("Item with this name already exists", 409);
+    }
+    const itemCount = req.activePlan.planSnapshot.noOfDishes;
+    const existingItemCount = await this._itemsRepo.getAllItems(data.restaurantId.toString())
+    if(itemCount <= existingItemCount.length){
+      throw new AppError("You have exceeded the subscription plan limit");
     }
     return this._itemsRepo.createItem(data);
   }

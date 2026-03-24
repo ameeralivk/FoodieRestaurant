@@ -33,8 +33,8 @@ export class CartController implements ICartController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.CART_CREATION_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -60,8 +60,8 @@ export class CartController implements ICartController {
           message: MESSAGES.CART_QUANTITY_UPDATED_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -84,8 +84,8 @@ export class CartController implements ICartController {
           cart: [],
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -110,8 +110,8 @@ export class CartController implements ICartController {
           message: MESSAGES.CART_DELETED_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -129,16 +129,15 @@ export class CartController implements ICartController {
         cartId,
         cartItemId,
         instruction,
-        variant
+        variant,
       );
 
       return res.status(HttpStatus.OK).json({
         success: true,
         data: updatedCart,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
-
 }

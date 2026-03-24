@@ -141,7 +141,7 @@ const StaffManagementPage = () => {
         }
       };
       del();
-    } catch (error: any) {
+    } catch (error:any) {
       showErrorToast(error.message);
     }
   }

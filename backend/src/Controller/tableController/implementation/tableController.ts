@@ -73,8 +73,8 @@ export class TableController implements ITableController {
         page,
         limit,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -99,8 +99,8 @@ export class TableController implements ITableController {
         success: true,
         message: MESSAGES.TABLE_STATUS_UPDATED,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -118,8 +118,8 @@ export class TableController implements ITableController {
         success: true,
         message: "Table deleted successfully",
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -147,7 +147,7 @@ export class TableController implements ITableController {
       // ✅ table exists
       return res.status(200).json({ success: true, message:"Table Exist" });
     } catch (error: any) {
-      throw new AppError(error.message);
+      throw new AppError(error);
     }
   };
 }

@@ -32,8 +32,8 @@ export class NotificationController implements INotificationController {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .json({ success: false, data: [] });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
   markAsRead = async (req: Request, res: Response): Promise<Response> => {
@@ -52,8 +52,8 @@ export class NotificationController implements INotificationController {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .json({ success: false, message: MESSAGES.NOTI_MARK_FAILED });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

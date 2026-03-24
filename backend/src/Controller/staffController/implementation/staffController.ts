@@ -36,8 +36,8 @@ export class StaffController implements IStaffController {
         success: true,
         message: MESSAGES.STAFF_UPDATED_SUCCESS,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -51,8 +51,8 @@ export class StaffController implements IStaffController {
         success: true,
         message: "Staff deleted successfully",
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
   changeStatus = async (req: Request, res: Response): Promise<Response> => {
@@ -90,8 +90,8 @@ export class StaffController implements IStaffController {
         message: "Staff fetched successfully",
         ...staff,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -127,7 +127,7 @@ export class StaffController implements IStaffController {
           success: false,
           message: result.message || "Password incorrect",
         });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error in changePassword:", error);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -148,8 +148,8 @@ export class StaffController implements IStaffController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, data: [] });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

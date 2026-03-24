@@ -115,4 +115,8 @@ export class ItemsRepository
     restaurantId,
   });
 }
+
+async getAllItems(restaurantId: string): Promise<IItemInterface[]> {
+   return this.model.find({restaurantId:restaurantId,isDeleted:false,isActive:true})
+}
 }

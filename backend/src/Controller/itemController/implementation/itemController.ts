@@ -50,7 +50,7 @@ export class ItemController implements IItemController {
         maxQuantityPerOrder:Number(req.body.maxQuantityPerOrder),
         points: 0, 
       };
-      const item = await this._itemsService.addItem(itemData);
+      const item = await this._itemsService.addItem(req,itemData);
 
       if (item) {
         return res.status(HttpStatus.CREATED).json({
@@ -63,8 +63,8 @@ export class ItemController implements IItemController {
         success: false,
         message: MESSAGES.ITEM_ADDED_FAILED,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -98,8 +98,8 @@ export class ItemController implements IItemController {
         message: MESSAGES.ITEM_EDITED_SUCCESS,
       });
     }
-  } catch (error: any) {
-    throw new AppError(error.message);
+  } catch (error) {
+    throw new AppError(error);
   }
 };
 
@@ -119,8 +119,8 @@ export class ItemController implements IItemController {
           message: MESSAGES.ITEM_DEL_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -144,8 +144,8 @@ export class ItemController implements IItemController {
           message: MESSAGES.ITEM_STATUS_CHANGE_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -172,8 +172,8 @@ export class ItemController implements IItemController {
         page,
         limit,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -192,8 +192,8 @@ export class ItemController implements IItemController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ sucess: false, messaeg: MESSAGES.ITEM_FETCHED_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

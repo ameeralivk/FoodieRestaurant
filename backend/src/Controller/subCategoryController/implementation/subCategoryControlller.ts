@@ -52,8 +52,8 @@ export class SubCategoryController implements ISubCategoryController {
         success: true,
         message: MESSAGES.SUBCATEGORY_EDITED_SUCCESS,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -76,8 +76,8 @@ export class SubCategoryController implements ISubCategoryController {
           message: MESSAGES.SUBCATEGORY_DEL_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -99,8 +99,8 @@ export class SubCategoryController implements ISubCategoryController {
         data: result.data,
         total: result.total,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 

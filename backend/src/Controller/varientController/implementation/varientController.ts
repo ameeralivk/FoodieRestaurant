@@ -26,8 +26,8 @@ export class VarientController implements IVarientController {
           .status(HttpStatus.BAD_GATEWAY)
           .json({ success: false, message: result.message });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -50,8 +50,8 @@ export class VarientController implements IVarientController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, messsage: result.message });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -70,8 +70,8 @@ export class VarientController implements IVarientController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.VARIENT_DEL_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -88,8 +88,8 @@ export class VarientController implements IVarientController {
       return res.status(HttpStatus.OK).json({
         ...result
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

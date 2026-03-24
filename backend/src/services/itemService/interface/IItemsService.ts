@@ -1,7 +1,7 @@
 import { IItemInterface } from "../../../types/items";
-
+import { Request } from "express";
 export interface IItemsService{
-   addItem(data: IItemInterface): Promise<IItemInterface>;
+   addItem(req:Request,data: IItemInterface): Promise<IItemInterface>;
    editItem(id: string,data: Partial<IItemInterface>,images:string[]): Promise<IItemInterface|undefined>;
    deleteItem(id:string):Promise<IItemInterface>;
    changeStatus(id:string,isActive:boolean):Promise<IItemInterface>;

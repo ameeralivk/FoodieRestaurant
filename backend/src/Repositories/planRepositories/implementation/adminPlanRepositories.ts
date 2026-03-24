@@ -56,8 +56,8 @@ export class AdminPlanRepository
     try {
       const result = await this.getById(id);
       return result;
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   }
   async findAndUpdate(
@@ -70,8 +70,8 @@ export class AdminPlanRepository
       }
       const result = await this.findByIdAndUpdate(id, update);
       return result;
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   }
 
@@ -79,8 +79,8 @@ export class AdminPlanRepository
     try {
       const result = await this.findByIdAndDel(id);
       return result;
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   }
 }

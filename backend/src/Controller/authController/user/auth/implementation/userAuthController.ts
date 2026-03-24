@@ -54,8 +54,8 @@ export class UserAuthController implements IUserAuthController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.OTP_INCORRECT });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -184,7 +184,7 @@ export class UserAuthController implements IUserAuthController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: response.message });
       }
-    } catch (error: any) {
+    } catch (error) {
       throw new AppError(error);
     }
   };
@@ -212,8 +212,8 @@ export class UserAuthController implements IUserAuthController {
           message: message,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

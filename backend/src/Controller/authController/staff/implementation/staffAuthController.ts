@@ -50,7 +50,7 @@ export class StaffAuthController implements IStaffAuthController {
 
   forgetPassword = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { email } = req.body;
+      const { email } = req.body;  
       if (!email) {
         return res
           .status(HttpStatus.BAD_REQUEST)

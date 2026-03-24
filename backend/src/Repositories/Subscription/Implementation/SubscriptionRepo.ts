@@ -49,8 +49,8 @@ export class SubscriptionRepo
         status: "active",
         renewalDate: { $gte: new Date() },
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   }
 }

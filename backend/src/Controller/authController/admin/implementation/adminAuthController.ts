@@ -123,8 +123,8 @@ export class AdminAuthController implements IAdminAuthController {
         data: mapedAdmin,
         accesstoken,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -207,7 +207,7 @@ export class AdminAuthController implements IAdminAuthController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ succes: false, message: MESSAGES.LINK_SENT_FAILED });
       }
-    } catch (error: any) {
+    } catch (error:any) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: error.message || "Something went Wrong",
@@ -236,7 +236,7 @@ export class AdminAuthController implements IAdminAuthController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: response.message });
       }
-    } catch (error: any) {
+    } catch (error) {
       throw new AppError(error);
     }
   };
@@ -287,8 +287,8 @@ export class AdminAuthController implements IAdminAuthController {
         success: true,
         message: MESSAGES.RESTAURANT_REGISTER_COMPLETE,
       });
-    } catch (error: any) {
-      throw new AppError(error?.message || "Something went wrong");
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -300,8 +300,8 @@ export class AdminAuthController implements IAdminAuthController {
         success: true,
         status: responseStatus,
       });
-    } catch (error: any) {
-      throw new AppError(error?.message || "Something went wrong");
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -331,8 +331,8 @@ export class AdminAuthController implements IAdminAuthController {
         message: "Document updated successfully",
         admin: updatedAdmin,
       });
-    } catch (error: any) {
-      throw new AppError(error?.message || "Something went wrong");
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

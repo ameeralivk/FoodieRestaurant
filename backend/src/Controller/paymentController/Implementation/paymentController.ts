@@ -37,8 +37,8 @@ export class PaymentController implements IPaymentController {
         success: true,
         data: { url: result.url },
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -81,8 +81,8 @@ export class PaymentController implements IPaymentController {
       const { restaurantId, newPlanId } = req.body;
       const result = await this._paymentService.upgradeSubscription(restaurantId, newPlanId);
       return res.status(200).json(result);
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

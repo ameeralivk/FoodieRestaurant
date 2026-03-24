@@ -95,7 +95,7 @@ export class AdminAuthRepository
         finalFilter.status = { $nin: ["pending", "rejected", "resubmited"] };
       }
       return await this.getAll(finalFilter, { page, limit });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error fetching restaurants:", error);
       throw error;
     }

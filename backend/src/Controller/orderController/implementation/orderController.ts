@@ -28,8 +28,8 @@ export class OrderController implements IOrderController {
         page: Number(page),
         limit: Number(limit),
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -47,8 +47,8 @@ export class OrderController implements IOrderController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, result: [] });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
   cancelOrder = async (req: Request, res: Response): Promise<Response> => {
@@ -69,8 +69,8 @@ export class OrderController implements IOrderController {
         success: true,
         message: MESSAGES.ORDER_CANCELLED_SUCCESS,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -92,8 +92,8 @@ export class OrderController implements IOrderController {
       } else {
         return res.status(HttpStatus.OK).json({ success: false, data: [] });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -110,8 +110,8 @@ export class OrderController implements IOrderController {
         success: true,
         data: updatedOrder,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -134,8 +134,8 @@ export class OrderController implements IOrderController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.CHEFID_ASSIGNED_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -155,8 +155,8 @@ export class OrderController implements IOrderController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: "Fetched Failed" });
       }
-    } catch (error: any) {
-      throw new AppError(error.messsage);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -177,8 +177,8 @@ export class OrderController implements IOrderController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.ASSIGN_STAFF_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -202,8 +202,8 @@ export class OrderController implements IOrderController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.ORDER_UPDATED_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -216,8 +216,8 @@ export class OrderController implements IOrderController {
         return res.status(HttpStatus.OK).json(estimate);
       }
       return res.status(HttpStatus.BAD_REQUEST).json({ message: "Order not found" });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

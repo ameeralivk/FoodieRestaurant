@@ -33,7 +33,7 @@ export class PlanController implements IPlanController {
           message: newPlan.message || MESSAGES.PLAN_ADDED_FAILED,
         });
       }
-    } catch (error: any) {
+    } catch (error) {
       throw new AppError(error, 404);
     }
   };
@@ -89,8 +89,8 @@ export class PlanController implements IPlanController {
           message: MESSAGES.PLAN_UPDATED_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -109,8 +109,8 @@ export class PlanController implements IPlanController {
           message: MESSAGES.PLAN_DEL_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

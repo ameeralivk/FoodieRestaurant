@@ -36,8 +36,8 @@ export class CategoryController implements ICategoryController {
       return res
         .status(HttpStatus.OK)
         .json({ success: true, message: MESSAGES.CATEGORY_ADDED_SUCCESS });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -59,8 +59,8 @@ export class CategoryController implements ICategoryController {
           message: MESSAGES.CATEGORY_UPDATED_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -81,8 +81,8 @@ export class CategoryController implements ICategoryController {
           message: MESSAGES.CATEGORY_DEL_FAILED,
         });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -99,8 +99,8 @@ export class CategoryController implements ICategoryController {
       );
 
       return res.status(HttpStatus.OK).json(result);
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

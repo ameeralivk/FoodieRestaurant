@@ -35,8 +35,8 @@ export class UserWalletController implements IUserWalletController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: MESSAGES.WALLET_FETCHED_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -45,8 +45,8 @@ export class UserWalletController implements IUserWalletController {
       const { userId, amount, description } = req.body;
       const result = await this._userWalletService.payUsingWallet(userId, amount, description);
      return res.status(200).json(result);
-    } catch (error: any) {
-       throw new AppError(error.message)
+    } catch (error) {
+       throw new AppError(error)
     }
   };
 }
