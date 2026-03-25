@@ -88,7 +88,7 @@ const Navbar = ({
 
     const handleNotification = async () => {
       playSound();
-      const result = await getAllNotification(user?._id as string, "User");
+      const result = await getAllNotification(user?._id as string,undefined,"User");
 
       if (result?.data) {
         setNotifications(result.data);

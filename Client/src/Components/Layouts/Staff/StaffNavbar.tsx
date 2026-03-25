@@ -92,6 +92,7 @@ const StaffNavbar = () => {
       // add to dropdown list
       const result = await getAllNotification(
         restaurantId as string,
+        user?._id,
         role === "staff" ? "staff" : "User",
       );
 
@@ -138,7 +139,7 @@ const StaffNavbar = () => {
     const handleOrderCompleted = async (order: IUserOrder) => {
       playSound();
 
-      const result = await getAllNotification(restaurantId, role);
+      const result = await getAllNotification(restaurantId,user?._id, role);
 
       if (result?.data) {
         setNotifications(result.data);
