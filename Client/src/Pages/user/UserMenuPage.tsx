@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "../../Components/Layouts/userLayouts/Navbar";
 import { useQuery } from "@tanstack/react-query";
@@ -46,8 +45,19 @@ const UserRestaurantPage: React.FC = () => {
   const [search, setSearch] = useState("");
   const limit = 12;
 
-  const currentTable = table || userTable || localTable;
-  // Header scroll effect state
+  // const currentTable = table ?? userTable ?? localTable ?? null;
+
+  const cleanTable = (val: string | null | undefined) =>
+    val === undefined || val === null || val === "undefined" || val === ""
+      ? null
+      : val;
+
+  const currentTable =
+    cleanTable(table) ??
+    cleanTable(userTable) ??
+    cleanTable(localTable) ??
+    null;
+ 
   const [scrolled, setScrolled] = useState(false);
 
   const { data: ItemsList } = useQuery<IItemResponse, Error>({
@@ -165,7 +175,7 @@ const UserRestaurantPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pb-20">
       <ToastContainer />
       <div className="fixed bottom-24 right-4 z-[99]">
-        <DraggableAIChatbot restaurantId={restaurantId?restaurantId:''} />
+        <DraggableAIChatbot restaurantId={restaurantId ? restaurantId : ""} />
       </div>
 
       <Navbar restaurantName={restaurantName || "Foodie Restarent"} />

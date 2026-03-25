@@ -54,7 +54,13 @@ const ItemDetailPage: React.FC = () => {
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
   const table = searchParams.get("tableId");
   const navigate = useNavigate();
-  const currentTable = userTable;
+  // const currentTable = userTable ?? null;
+  const cleanTable = (val: string | null | undefined) =>
+    val === undefined || val === null || val === "undefined" || val === ""
+      ? null
+      : val;
+
+  const currentTable = cleanTable(userTable);
   const { data, isLoading } = useQuery<GetMenuItemsResponse>({
     queryKey: ["item", itemId],
     queryFn: () => getItem(itemId as string),
@@ -114,7 +120,7 @@ const ItemDetailPage: React.FC = () => {
     overrideTable?: string,
   ) => {
     e.stopPropagation();
-     const activeTable = overrideTable || currentTable;
+    const activeTable = overrideTable || currentTable;
     if (!activeTable) {
       setPendingItem(item);
       setIsTableModalOpen(true);

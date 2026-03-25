@@ -70,7 +70,7 @@ const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({
                     </div>
                 </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
                 <table className="w-full">
                     <thead>
                         <tr className="bg-gray-800/50">
