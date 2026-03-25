@@ -103,7 +103,11 @@ export class UserWalletService implements IUserWalletService {
       );
 
       if (result) {
-         let estimate = await this._orderService.calculateEstimatedPrepTime(restaurantId);
+          let time = cart.items.reduce(
+          (acc, val) => acc + (val.preparationTime ?? 0),
+          0,
+        );
+         let estimate = await this._orderService.calculateEstimatedPrepTime(restaurantId,time);
          let res = await this._orderRepo.addOrder(cart, orderId, estimate.estimatedPrepTime, estimate.estimatedReadyAt);
          if (res) {
             await this._userCartRepo.deleteCart(cart._id.toString());
