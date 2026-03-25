@@ -11,7 +11,7 @@ const notificationController = container.get<NotificationController>(
 );
 
 router
-  .route("/getNotification/:recipientId/:model")
+  .route("/getNotification/:recipientId/:waiterId/:model")
   .get(asyncHandler(notificationController.getAllNotification));
 router
   .route("/:notificationId")

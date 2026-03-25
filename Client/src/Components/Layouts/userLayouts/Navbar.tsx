@@ -50,7 +50,11 @@ const Navbar = ({
   useEffect(() => {
     const fetchNotification = async () => {
       try {
-        const result = await getAllNotification(user?._id as string, "User");
+        const result = await getAllNotification(
+          user?._id as string,
+          undefined,
+          "User",
+        );
 
         if (result?.data) {
           setNotifications(result.data); // ✅ THIS SETS STATE

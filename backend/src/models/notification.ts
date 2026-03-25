@@ -20,6 +20,11 @@ const notificationSchema = new Schema<NotificationDocument>(
       enum: ["User", "staff"], // your two models
     },
 
+    WorkerId:{
+      type:String,
+      required:false,
+    },
+
     message: {
       type: String,
       required: true,

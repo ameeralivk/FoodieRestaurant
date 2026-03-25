@@ -36,6 +36,8 @@ const StaffProfile: React.FC = () => {
   const { data } = useQuery<{ success: boolean; data: StaffResponseDTO }>({
     queryKey: ["orders", staffId],
     queryFn: () => getStaff(staffId as string),
+    enabled: !!staffId,
+    staleTime: 5 * 60 * 1000
   });
 
   const handlePasswordChange = async (

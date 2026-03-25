@@ -6,6 +6,6 @@ export interface INotificationService {
     recipientModel: "User" | "staff",
     message: string,
   ):Promise<{success:boolean,message:string}>
-  getAllNotification(recipientId: string,model?:string):Promise<{success:boolean,data:NotificationDocument[]|[]}>
-  markAsRead(notificationId:string,isAll:string):Promise<{success:boolean,message:string}>
+  getAllNotification(recipientId: string,waiterId?:string,model?:string):Promise<{success:boolean,data:NotificationDocument[]|[]}>
+  markAsRead(notificationId:string,isAll:string,WorkerId?:string):Promise<{success:boolean,message:string}>
 }

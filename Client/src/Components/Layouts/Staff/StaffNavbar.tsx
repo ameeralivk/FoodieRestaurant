@@ -53,6 +53,7 @@ const StaffNavbar = () => {
       try {
         const result = await getAllNotification(
           restaurantId as string,
+          user?._id,
           role === "staff" ? "staff" : "User",
         );
 
@@ -189,7 +190,7 @@ const StaffNavbar = () => {
   const handlemarkAll = async () => {
     const mark = async () => {
       try {
-        const result = await markAsRead(restaurantId, "true");
+        const result = await markAsRead(restaurantId, "true",user?._id);
         if (result.success) {
           showSuccessToast("mark as read successfully");
         }

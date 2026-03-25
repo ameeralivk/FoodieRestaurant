@@ -18,11 +18,11 @@ export class NotificationController implements INotificationController {
     res: Response,
   ): Promise<Response> => {
     try {
-      const { recipientId ,model } = req.params;
-      console.log(recipientId,model,'===========================================================================')
+      const { recipientId,waiterId, model} = req.params;
       let result = await this._notificationService.getAllNotification(
         recipientId as string,
-        model as string
+        waiterId as string,
+        model as string,
       );
       if (result.success) {
         return res
@@ -39,10 +39,11 @@ export class NotificationController implements INotificationController {
   markAsRead = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { notificationId } = req.params;
-      const { isAll } = req.body;
+      const { isAll,WorkerId } = req.body;
       const result = await this._notificationService.markAsRead(
         notificationId as string,
-        isAll as string
+        isAll as string,
+        WorkerId
       );
       if (result.success) {
         return res

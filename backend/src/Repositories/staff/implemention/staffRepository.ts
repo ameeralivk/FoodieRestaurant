@@ -1,6 +1,7 @@
 import { BaseRepository } from "../../BaseRepository";
 import Staff from "../../../models/staff";
 import { IStaff, RequestEditIStaff, RequestIStaff } from "../../../types/staff";
+import { Types } from "mongoose";
 import { IStaffRepository } from "../interface/IStaffRepository";
 import { date } from "zod";
 export class StaffRepository
@@ -59,8 +60,16 @@ export class StaffRepository
     return this.getAll(filter, { page, limit });
   }
 
-  findById(userId: string): Promise<IStaff | null> {
-    return this.model.findById(userId);
+  // findById(userId: string): Promise<IStaff | null> {
+  //   return this.model.findById(userId);
+  // }
+
+  async findById(userId?: string): Promise<IStaff | null> {
+   if (!userId || !Types.ObjectId.isValid(userId)) {
+    return null;
+  }
+  const staff = await this.model.findById(userId);
+  return staff ?? null; 
   }
 
   updatePassword(userId: string, newPassword: string): Promise<IStaff | null> {
@@ -78,5 +87,10 @@ export class StaffRepository
       status: true,
       isBlocked: false,
     });
+  }
+
+
+  async getStaffByRole(restaurantId: string, role: "chef" | "staff"): Promise<IStaff[]> {
+    return await this.model.find({restaurantId: new Types.ObjectId(restaurantId),role})
   }
 }

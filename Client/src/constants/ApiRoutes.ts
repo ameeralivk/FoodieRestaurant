@@ -202,8 +202,8 @@ export const API_ROUTES = {
   },
 
   NOTIFICATION: {
-    GET_ALL: (recipientId: string, model?: string) =>
-      `/notification/getnotification/${recipientId}/${model}`,
+    GET_ALL: (recipientId: string,waiterId?:string, model?: string) =>
+      `/notification/getnotification/${recipientId}/${waiterId}/${model}`,
     MARK_AS_READ: (notificationId?: string) =>
       `/notification/${notificationId}`,
   },

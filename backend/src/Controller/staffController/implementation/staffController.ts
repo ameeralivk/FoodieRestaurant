@@ -145,7 +145,7 @@ export class StaffController implements IStaffController {
           .json({ success: true, data: result.data });
       } else {
         return res
-          .status(HttpStatus.BAD_REQUEST)
+          .status(HttpStatus.OK)
           .json({ success: false, data: [] });
       }
     } catch (error) {

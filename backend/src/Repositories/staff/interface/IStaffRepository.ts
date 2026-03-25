@@ -21,4 +21,5 @@ export interface IStaffRepository {
   findById(userId:string):Promise<IStaff|null>
   updatePassword(userId:string,newPassword:string):Promise<IStaff|null>
   totalCount(restaurantId:string): Promise<number>
+  getStaffByRole(restaurantId:string,role:"chef"|"staff"):Promise<IStaff[]>
 }
