@@ -211,11 +211,28 @@ export class OrderRepository
     });
   }
 
+  // async activeOrders(restaurantId: string): Promise<IUserOrderDocument[]> {
+  //   const date = new Date();
+  //   return await this.model.find({
+  //     restaurantId,
+  //     createdAt: date,
+  //     orderStatus: { $in: ["PLACED", "PREPARING", "ASSIGNED"] },
+  //   });
+  // }
+
   async activeOrders(restaurantId: string): Promise<IUserOrderDocument[]> {
-    const date = new Date();
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
     return await this.model.find({
       restaurantId,
-      createdAt: date,
+      createdAt: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
       orderStatus: { $in: ["PLACED", "PREPARING", "ASSIGNED"] },
     });
   }
