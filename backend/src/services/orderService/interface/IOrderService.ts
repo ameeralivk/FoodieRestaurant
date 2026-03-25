@@ -43,6 +43,6 @@ export interface IOrderService {
     orderId:string,
     status:string
   ):Promise<{success:boolean,message:string}>
-   calculateEstimatedPrepTime(restaurantId: string): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }>;
+   calculateEstimatedPrepTime(restaurantId: string,time:number): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }>;
   getEstimate(orderId: string): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date } | null>;
 }

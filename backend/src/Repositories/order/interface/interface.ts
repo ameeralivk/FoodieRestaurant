@@ -16,4 +16,5 @@ export interface IOrderRepo{
     assignOrder(orderId:string,staffId:string):Promise<IUserOrderDocument|null>
     updateOrder(orderId:string,status:string):Promise<IUserOrderDocument|null>
     totalCount(restaurantId:string):Promise<Number>
+    activeOrders(restaurantId:string):Promise<IUserOrderDocument[]>
 }

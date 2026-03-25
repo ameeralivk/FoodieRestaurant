@@ -70,9 +70,9 @@ export class VarientService implements IVarientService {
     page: number,
     limit: number,
     search?: string,
+    restaurantId?:string
   ): Promise<{ success: boolean; data:IVarientResponseDto[],total:number}> {
-    const result = await this._varientRepo.findAllVarients(page, limit, search);
-    console.log(result,'result is here')
+    const result = await this._varientRepo.findAllVarients(page, limit, search,restaurantId);
     if(result){
        return {
       success: true,

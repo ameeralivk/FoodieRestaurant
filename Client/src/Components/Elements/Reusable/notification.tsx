@@ -90,13 +90,14 @@ overflow-hidden
             All
           </button> */}
         </div>
-
-        <button
-          onClick={onMarkAllAsRead}
-          className="bg-blue-500 p-2 rounded-xl text-white hover:bg-blue-600"
-        >
-          <Check className="w-5 h-5" />
-        </button>
+        {displayedNotifications.length > 0 && (
+          <button
+            onClick={onMarkAllAsRead}
+            className="bg-blue-500 p-2 rounded-xl text-white hover:bg-blue-600"
+          >
+            <Check className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* List */}

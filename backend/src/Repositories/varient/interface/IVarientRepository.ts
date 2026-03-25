@@ -11,5 +11,5 @@ export interface IVarientRepository {
     restaurantId:string
   ): Promise<IGroup | null>;
   deleteVarient(varientId: string): Promise<IGroup | null>;
-  findAllVarients(page: number, limit: number,search?:string):Promise<{data:IGroup[],total:number}|null>
+  findAllVarients(page: number, limit: number,search?:string,restaurantId?:string):Promise<{data:IGroup[],total:number}|null>
 }

@@ -156,12 +156,19 @@ export class PaymentService implements IPaymentService {
           (session.amount_total ?? 0) / 100,
           session.payment_intent as string,
         );
-         let estimate = await this._orderService.calculateEstimatedPrepTime(metadata.restaurentId as string);
+        let time = cart.items.reduce(
+          (acc, val) => acc + (val.preparationTime ?? 0),
+          0,
+        );
+        let estimate = await this._orderService.calculateEstimatedPrepTime(
+          metadata.restaurentId as string,
+          time
+        );
         let res = await this._orderRepository.addOrder(
           cart,
           metadata.orderId as string,
           estimate.estimatedPrepTime,
-          estimate.estimatedReadyAt
+          estimate.estimatedReadyAt,
         );
         if (res) {
           await this._cartRepository.deleteCart(cart._id.toString());
@@ -186,8 +193,8 @@ export class PaymentService implements IPaymentService {
             `New Order ${res.orderId} Recieved`,
           );
         }
-      }else if (metadata.paymentType === "upgrade_subscription") {
-        console.log('hi heelfldsalfjkdlsajfldsajfldksa')
+      } else if (metadata.paymentType === "upgrade_subscription") {
+        console.log("hi heelfldsalfjkdlsajfldsajfldksa");
         await this._paymentRepository.addPayment(
           session.id,
           "paid",
@@ -199,7 +206,8 @@ export class PaymentService implements IPaymentService {
         const restaurantId = metadata.restaurentId;
         const newPlanId = metadata.planId;
         if (restaurantId && newPlanId) {
-          const activeSub = await this._subscriptionRepo.findActivePlan(restaurantId);
+          const activeSub =
+            await this._subscriptionRepo.findActivePlan(restaurantId);
           const newPlan = await this._adminPlanRepo.find(newPlanId);
           if (activeSub && newPlan) {
             const now = new Date();
@@ -207,9 +215,12 @@ export class PaymentService implements IPaymentService {
             const [amountStr, unit] = String(newPlan.duration).split(" ");
             const unitStr = unit ? unit.toLowerCase() : "";
             const numAmount = parseInt(amountStr || "0");
-            if (unitStr.includes("month")) msInDuration = numAmount * 30 * 24 * 60 * 60 * 1000;
-            else if (unitStr.includes("year")) msInDuration = numAmount * 365 * 24 * 60 * 60 * 1000;
-            else if (unitStr.includes("day")) msInDuration = numAmount * 24 * 60 * 60 * 1000;
+            if (unitStr.includes("month"))
+              msInDuration = numAmount * 30 * 24 * 60 * 60 * 1000;
+            else if (unitStr.includes("year"))
+              msInDuration = numAmount * 365 * 24 * 60 * 60 * 1000;
+            else if (unitStr.includes("day"))
+              msInDuration = numAmount * 24 * 60 * 60 * 1000;
 
             activeSub.status = "expired";
             activeSub.endDate = now;
@@ -237,7 +248,7 @@ export class PaymentService implements IPaymentService {
               renewalDate,
               stripeSessionId: session.id,
               stripePaymentIntentId: session.payment_intent as string,
-              status: "active" as any
+              status: "active" as any,
             });
           }
         }

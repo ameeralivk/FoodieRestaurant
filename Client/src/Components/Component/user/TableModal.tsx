@@ -35,6 +35,7 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
     }
 
     if (onConfirm) {
+      dispatch(setTableNo(tableNumber));
       onConfirm(tableNumber);
     } else if (
       !location.pathname.includes(`/user/restaurant/${restaurantId}`)

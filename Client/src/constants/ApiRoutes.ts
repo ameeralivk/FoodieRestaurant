@@ -22,8 +22,8 @@ export const API_ROUTES = {
    VARIANT: {
     ADD: "/user/varients",
 
-    GET_ALL: (page: number, limit: number, search: string) =>
-      `/user/varients?page=${page}&limit=${limit}&search=${search}`,
+    GET_ALL: (page: number, limit: number, search: string,restaurantId?:string) =>
+      `/user/varients?page=${page}&limit=${limit}&search=${search}&restaurantId=${restaurantId}`,
 
     DELETE: (variantId: string) => `/user/varients/${variantId}`,
 

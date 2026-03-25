@@ -15,5 +15,5 @@ export interface IVarientService {
   deleteVarient(
     varientId: string,
   ): Promise<{ success: boolean; message: string }>;
-  getAllVarient(page: number, limit: number,search?:string):Promise<{success:boolean,data:IVarientResponseDto[],total:number}>
+  getAllVarient(page: number, limit: number,search?:string,restaurantId?:string):Promise<{success:boolean,data:IVarientResponseDto[],total:number}>
 }

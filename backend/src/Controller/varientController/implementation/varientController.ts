@@ -80,10 +80,12 @@ export class VarientController implements IVarientController {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
       const search = req.query.search?.toString();
+      const restaurantId = req.query.restaurantId?.toString();
        const result = await this._VarientService.getAllVarient(
         page,
         limit,
-        search
+        search,
+        restaurantId
       );
       return res.status(HttpStatus.OK).json({
         ...result

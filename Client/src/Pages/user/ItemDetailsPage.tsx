@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -22,6 +21,7 @@ import { useSelector } from "react-redux";
 import { showErrorToast } from "../../Components/Elements/ErrorToast";
 import { showSuccessToast } from "../../Components/Elements/SuccessToast";
 import { ToastContainer } from "react-toastify";
+import TableNumberModal from "../../Components/Component/user/TableModal";
 
 const ItemDetailPage: React.FC = () => {
   const { itemId, restaurantId } = useParams<{
@@ -34,6 +34,11 @@ const ItemDetailPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [openVariantModal, setOpenVariantModal] = useState(false);
   const [rating, setRating] = useState<number | null>(null);
+  const [pendingItem, setPendingItem] = useState<any>(null);
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const userTable = useSelector(
+    (state: RootState) => state.userAuth.user?.tableNo,
+  );
 
   // --- DUMMY DATA STATE ---
   const [aiDescription, setAiDescription] = useState<string>("No Description");
@@ -49,7 +54,7 @@ const ItemDetailPage: React.FC = () => {
   const userId = useSelector((state: RootState) => state.userAuth.user?._id);
   const table = searchParams.get("tableId");
   const navigate = useNavigate();
-
+  const currentTable = userTable;
   const { data, isLoading } = useQuery<GetMenuItemsResponse>({
     queryKey: ["item", itemId],
     queryFn: () => getItem(itemId as string),
@@ -106,8 +111,15 @@ const ItemDetailPage: React.FC = () => {
   const handleAddToCart = async (
     e: React.MouseEvent<HTMLButtonElement>,
     item: Item,
+    overrideTable?: string,
   ) => {
     e.stopPropagation();
+     const activeTable = overrideTable || currentTable;
+    if (!activeTable) {
+      setPendingItem(item);
+      setIsTableModalOpen(true);
+      return;
+    }
 
     if (item.variant && item.variant.values && item.variant.values.length > 0) {
       setSelectedItem(item);
@@ -149,6 +161,24 @@ const ItemDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white pb-32">
       <ToastContainer />
+
+      <TableNumberModal
+        isOpen={isTableModalOpen}
+        restaurantId={restaurantId || ""}
+        onClose={() => {
+          setIsTableModalOpen(false);
+          setPendingItem(null);
+        }}
+        onConfirm={(tableNum) => {
+          if (pendingItem) {
+            handleAddToCart(
+              { stopPropagation: () => {} } as any,
+              pendingItem,
+              tableNum,
+            );
+          }
+        }}
+      />
 
       {/* Hero Image Section */}
       <div className="relative h-[40vh] md:h-[50vh] bg-gray-100">

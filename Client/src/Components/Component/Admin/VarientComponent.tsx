@@ -53,7 +53,7 @@ const VarientComponent = () => {
     data: VarientList,
   } = useQuery<IGetVariantsResponse, Error>({
     queryKey: ["VarientList", restaurentId, currentPage, debouncedSearch],
-    queryFn: () => getAllVarient(currentPage, limit, debouncedSearch),
+    queryFn: () => getAllVarient(currentPage, limit, debouncedSearch,restaurentId),
   });
 
   // const {

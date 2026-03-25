@@ -55,8 +55,9 @@ export class VarientRepository
     page: number,
     limit: number,
     search?: string,
+    restaurantId?:string
   ): Promise<{ data: IGroup[]; total: number } | null> {
-    const filter: any = { isDeleted: false };
+    const filter: any = { isDeleted: false ,restaurantId };
 
     if (search) {
       filter.name = { $regex: search, $options: "i" };

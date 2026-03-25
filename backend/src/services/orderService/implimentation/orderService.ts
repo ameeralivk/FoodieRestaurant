@@ -292,7 +292,7 @@ export class OrderService implements IOrderService {
           },
           tableNumber: order.tableId,
           orderStatus: order.orderStatus,
-          createdAt:order.createdAt
+          createdAt: order.createdAt,
         })),
     );
 
@@ -365,17 +365,56 @@ export class OrderService implements IOrderService {
     }
   }
 
+  // async calculateEstimatedPrepTime(
+  //   restaurantId: string,
+  // ): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }> {
+  //   const staffCount = await this.StaffRepo.totalCount(restaurantId);
+  //   const actualStaffCount = staffCount > 0 ? staffCount : 1;
+
+  //   const activeOrders = await this._orderRepo.totalCount(restaurantId);
+
+  //   const averagePrepTime = 10;
+  //   const ordersPerStaff = Math.ceil(Number(activeOrders) / actualStaffCount);
+  //   const estimatedPrepTime = ordersPerStaff * averagePrepTime;
+
+  //   const estimatedReadyAt = new Date();
+  //   estimatedReadyAt.setMinutes(
+  //     estimatedReadyAt.getMinutes() + estimatedPrepTime,
+  //   );
+
+  //   return { estimatedPrepTime, estimatedReadyAt };
+  // }
+
   async calculateEstimatedPrepTime(
     restaurantId: string,
+    time: number,
   ): Promise<{ estimatedPrepTime: number; estimatedReadyAt: Date }> {
     const staffCount = await this.StaffRepo.totalCount(restaurantId);
     const actualStaffCount = staffCount > 0 ? staffCount : 1;
 
-    const activeOrders = await this._orderRepo.totalCount(restaurantId);
+    const activeOrders = await this._orderRepo.activeOrders(restaurantId);
+    const allOrders = [
+      ...activeOrders.map((order) => ({
+        prepTime: order.estimatedPrepTime || 10,
+      })),
+      { prepTime: time},
+    ];
 
-    const averagePrepTime = 10;
-    const ordersPerStaff = Math.ceil(Number(activeOrders) / actualStaffCount);
-    const estimatedPrepTime = ordersPerStaff * averagePrepTime;
+    const staffAvailability = Array(actualStaffCount).fill(0);
+    for (const order of allOrders) {
+      const prepTime = order.prepTime;
+
+      let minIndex = 0;
+      for (let i = 1; i < staffAvailability.length; i++) {
+        if (staffAvailability[i] < staffAvailability[minIndex]) {
+          minIndex = i;
+        }
+      }
+
+      staffAvailability[minIndex] += prepTime;
+    }
+
+    const estimatedPrepTime = Math.max(...staffAvailability);
 
     const estimatedReadyAt = new Date();
     estimatedReadyAt.setMinutes(

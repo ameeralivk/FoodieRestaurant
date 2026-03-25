@@ -19,10 +19,11 @@ export const getAllVarient = async (
   page: number,
   limit: number,
   search: string,
+  restaurantId?:string
 ): Promise<IGetVariantsResponse> => {
   return apiRequest(
     HTTP_METHOD.GET,
-    API_ROUTES.VARIANT.GET_ALL(page, limit, search),
+    API_ROUTES.VARIANT.GET_ALL(page, limit, search,restaurantId),
   );
 };
 

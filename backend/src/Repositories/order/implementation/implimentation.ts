@@ -203,8 +203,19 @@ export class OrderRepository
   }
 
   async totalCount(restaurantId: string): Promise<number> {
+    const date = new Date();
     return await this.model.countDocuments({
       restaurantId,
+      createdAt: date,
+      orderStatus: { $in: ["PLACED", "PREPARING", "ASSIGNED"] },
+    });
+  }
+
+  async activeOrders(restaurantId: string): Promise<IUserOrderDocument[]> {
+    const date = new Date();
+    return await this.model.find({
+      restaurantId,
+      createdAt: date,
       orderStatus: { $in: ["PLACED", "PREPARING", "ASSIGNED"] },
     });
   }
