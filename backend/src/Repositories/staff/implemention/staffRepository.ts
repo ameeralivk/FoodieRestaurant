@@ -74,7 +74,7 @@ export class StaffRepository
   async totalCount(restaurantId: string): Promise<number> {
     return await this.model.countDocuments({
       restaurantId,
-      role: { $in: ["staff", "chef"] },
+      role: { $in: ["chef"] },
       status: true,
       isBlocked: false,
     });
