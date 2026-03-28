@@ -142,7 +142,7 @@ export class UserAuthController implements IUserAuthController {
         maxAge: refreshTokenMaxAge,
       });
 
-      res.cookie("access_token", token, {
+      res.cookie("access_token",accesstoken, {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT

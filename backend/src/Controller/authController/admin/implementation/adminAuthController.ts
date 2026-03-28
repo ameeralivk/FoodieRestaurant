@@ -129,14 +129,14 @@ export class AdminAuthController implements IAdminAuthController {
       //   maxAge: accessTokenMaxAge,
       // });
 
-      res.cookie("access_token", token, {
+      res.cookie("access_token", accesstoken, {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
         domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
-      
+
       return res.status(200).json({
         success: true,
         data: mapedAdmin,
@@ -160,10 +160,17 @@ export class AdminAuthController implements IAdminAuthController {
       const { newAccessToken } =
         await this._adminauthService.refreshToken(refreshToken);
       console.log(newAccessToken, "tocknfdlasfjdkasj");
+      // res.cookie("access_token", newAccessToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: accessTokenMaxAge,
+      // });
       res.cookie("access_token", newAccessToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in production
+        sameSite: isProduction ? "none" : "lax", // ✅ cross-site allowed in prod
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ matches hosted domain
         maxAge: accessTokenMaxAge,
       });
       res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
@@ -187,18 +194,32 @@ export class AdminAuthController implements IAdminAuthController {
 
       const { mapedAdmin, token, refreshToken } =
         await this._adminauthService.login(email, password);
+      // res.cookie("access_token", token, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: accessTokenMaxAge,
+      // });
       res.cookie("access_token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in prod
+        sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in prod
+        sameSite: isProduction ? "none" : "lax", // ✅ KEY FIX
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: refreshTokenMaxAge,
       });
+      // res.cookie("refresh_token", refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: refreshTokenMaxAge,
+      // });
       return res.json({ admin: mapedAdmin, token });
     } catch (error) {
       const err = error as Error;

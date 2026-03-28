@@ -12,6 +12,8 @@ const refreshTokenMaxAge =
 
 const accessTokenMaxAge =
   Number(process.env.ACCESS_TOKEN_MAX_AGE) || 15 * 60 * 1000;
+
+  const isProduction = process.env.NODE_ENV === "production";
 @injectable()
 export class StaffAuthController implements IStaffAuthController {
   constructor(
@@ -23,16 +25,31 @@ export class StaffAuthController implements IStaffAuthController {
     try {
       const { email, password } = req.body;
       const result = await this._staffAuthService.login(email, password);
+      // res.cookie("access_token", result.token.token, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge:accessTokenMaxAge,
+      // });
+      // res.cookie("refresh_token", result.token.refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: refreshTokenMaxAge,
+      // });
       res.cookie("access_token", result.token.token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge:accessTokenMaxAge,
+        secure: isProduction, // true in prod
+        sameSite: isProduction ? "none" : "lax", // cross-site allowed in prod
+        domain: isProduction ? ".moobiworld.shop" : undefined, // matches prod domain
+        maxAge: accessTokenMaxAge,
       });
+
       res.cookie("refresh_token", result.token.refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        domain: isProduction ? ".moobiworld.shop" : undefined,
         maxAge: refreshTokenMaxAge,
       });
       return res.status(HttpStatus.OK).json({
@@ -50,7 +67,7 @@ export class StaffAuthController implements IStaffAuthController {
 
   forgetPassword = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { email } = req.body;  
+      const { email } = req.body;
       if (!email) {
         return res
           .status(HttpStatus.BAD_REQUEST)
