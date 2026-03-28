@@ -67,8 +67,8 @@ export class StaffController implements IStaffController {
         message: "Staff status updated successfully",
         data: staff,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 

@@ -13,6 +13,7 @@ const refreshTokenMaxAge =
   Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
 const accessTokenMaxAge =
   Number(process.env.ACCESS_TOKEN_MAX_AGE) || 15 * 60 * 1000;
+const isProduction = process.env.NODE_ENV === "production";
 @injectable()
 export class AdminAuthController implements IAdminAuthController {
   constructor(
@@ -106,18 +107,36 @@ export class AdminAuthController implements IAdminAuthController {
       const { token } = req.body;
       const { mapedAdmin, accesstoken, refreshToken } =
         await this._adminauthService.googleAuth(token);
+      // res.cookie("refresh_token", refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: refreshTokenMaxAge,
+      // });
+
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in prod
+        sameSite: isProduction ? "none" : "lax", // ✅ KEY FIX
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: refreshTokenMaxAge,
       });
-      res.cookie("access_token", accesstoken, {
+
+      // res.cookie("access_token", accesstoken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: accessTokenMaxAge,
+      // });
+
+      res.cookie("access_token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in prod
+        sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
+      
       return res.status(200).json({
         success: true,
         data: mapedAdmin,
@@ -145,7 +164,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge:accessTokenMaxAge,
+        maxAge: accessTokenMaxAge,
       });
       res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
     } catch (error) {
@@ -172,7 +191,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: false,
         sameSite: "strict",
-        maxAge:accessTokenMaxAge,
+        maxAge: accessTokenMaxAge,
       });
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
@@ -207,7 +226,7 @@ export class AdminAuthController implements IAdminAuthController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ succes: false, message: MESSAGES.LINK_SENT_FAILED });
       }
-    } catch (error:any) {
+    } catch (error: any) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: error.message || "Something went Wrong",

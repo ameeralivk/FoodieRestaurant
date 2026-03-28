@@ -33,26 +33,6 @@ export class NotificationRepository
     });
   }
 
-  // async getAllByRecipientId(
-  //   recipientId: string,
-  //   waiterId?:string,
-  //   model?: string,
-  // ): Promise<NotificationDocument[] | null> {
-  //   if (model === "staff") {
-  //     return await this.model.find({
-  //       recipientId,
-  //       recipientModel: model,
-  //       isRead: false,
-  //       isDeleted: false,
-  //     });
-  //   }
-  //   return await this.model.find({
-  //     recipientId,
-  //     recipientModel: "User",
-  //     isRead: false,
-  //     isDeleted: false,
-  //   });
-  // }
 
   async getAllByRecipientId(
     recipientId: string,

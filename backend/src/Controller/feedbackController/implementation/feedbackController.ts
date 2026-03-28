@@ -22,8 +22,8 @@ export class FeedbackController implements IFeedbackController {
         message: "Feedback added successfully",
         data: feedback,
       });
-    } catch (error:any) {
-        throw new AppError(error.message)
+    } catch (error) {
+        throw new AppError(error)
     }
   }
 
@@ -39,8 +39,8 @@ export class FeedbackController implements IFeedbackController {
         success: true,
         data: ratings
       });
-    } catch (error:any) {
-       throw new AppError(error.message)
+    } catch (error) {
+       throw new AppError(error)
     }
   }
 }

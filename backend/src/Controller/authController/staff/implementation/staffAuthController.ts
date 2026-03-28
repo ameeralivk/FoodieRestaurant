@@ -95,7 +95,7 @@ export class StaffAuthController implements IStaffAuthController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: false, message: response.message });
       }
-    } catch (error: any) {
+    } catch (error) {
       throw new AppError(error);
     }
   };

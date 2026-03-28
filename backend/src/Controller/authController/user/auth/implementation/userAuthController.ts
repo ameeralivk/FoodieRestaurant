@@ -14,6 +14,7 @@ const refreshTokenMaxAge =
   Number(process.env.REFRESH_TOKEN_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
 const accessTokenMaxAge =
   Number(process.env.ACCESS_TOKEN_MAX_AGE) || 15 * 60 * 1000;
+const isProduction = process.env.NODE_ENV === "production";
 
 @injectable()
 export class UserAuthController implements IUserAuthController {
@@ -73,18 +74,35 @@ export class UserAuthController implements IUserAuthController {
         password,
       );
 
+      // res.cookie("refresh_token", refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: refreshTokenMaxAge,
+      // });
+
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        domain: isProduction ? ".moobiworld.shop" : undefined,
         maxAge: refreshTokenMaxAge,
       });
+      // res.cookie("access_token", token, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: accessTokenMaxAge,
+      // });
+
       res.cookie("access_token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        domain: isProduction ? ".moobiworld.shop" : undefined,
         maxAge: accessTokenMaxAge,
       });
+
       return res.json({ user, token });
     } catch (error) {
       const err = error as Error;
@@ -109,18 +127,35 @@ export class UserAuthController implements IUserAuthController {
         imageUrl: user.imageUrl,
       };
 
+      // res.cookie("refresh_token", refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: refreshTokenMaxAge,
+      // });
+
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in prod
+        sameSite: isProduction ? "none" : "lax", // ✅ KEY FIX
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: refreshTokenMaxAge,
       });
-      res.cookie("access_token", accesstoken, {
+
+      res.cookie("access_token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        secure: isProduction, // ✅ true in prod
+        sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
+        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
+
+      // res.cookie("access_token", accesstoken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   maxAge: accessTokenMaxAge,
+      // });
       return res.status(200).json({
         success: true,
         data,
@@ -128,12 +163,10 @@ export class UserAuthController implements IUserAuthController {
       });
     } catch (error: any) {
       console.error(error);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: error.message || "Google auth failed",
-        });
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Google auth failed",
+      });
     }
   };
 

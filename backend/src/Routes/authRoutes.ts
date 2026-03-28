@@ -8,9 +8,8 @@ import { container } from "../DI/container";
 import { TYPES } from "../DI/types";
 const router = express.Router();
 
-
 const authController = container.get<AdminAuthController>(
-  TYPES.AdminAuthController
+  TYPES.AdminAuthController,
 );
 
 router.route("/signup").post(asyncHandler(authController.register));
@@ -32,15 +31,30 @@ router.get("/auth/me", verifyAccessToken, (req, res) => {
   });
 });
 router.post("/logout", (req, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
+  // res.clearCookie("access_token", {
+  //   httpOnly: true,
+  //   secure: false,
+  //   sameSite: "strict",
+  // });
+  // res.clearCookie("refresh_token", {
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "strict",
+  // });
+
   res.clearCookie("access_token", {
     httpOnly: true,
-    secure: false,
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    domain: isProduction ? ".moobiworld.shop" : undefined,
   });
+
   res.clearCookie("refresh_token", {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    domain: isProduction ? ".moobiworld.shop" : undefined,
   });
   res.clearCookie("accessToken");
   return res.json({ success: true, message: "Logged out ready ayi mone" });
@@ -55,7 +69,7 @@ router
   .post(
     verifyAccessToken,
     upload,
-    asyncHandler(authController.registerRestaurant)
+    asyncHandler(authController.registerRestaurant),
   );
 
 export default router;

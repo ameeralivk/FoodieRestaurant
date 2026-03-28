@@ -42,47 +42,6 @@ export class UserWalletService implements IUserWalletService {
     };
   }
 
-  // async payWithWallet(
-  //   userId: string,
-  //   amount: number,
-  //   description: string,
-  // ): Promise<{ success: boolean; data: IUserWallet | null }> {
-  //   if (!userId) throw new AppError("User not found");
-  //   if (amount <= 0) throw new AppError("Invalid amount");
-
-  //   // Get wallet
-  //   let wallet = await this._userWalletRepo.getWallet(userId);
-
-  //   // If wallet does not exist, throw error
-  //   if (!wallet) {
-  //     throw new AppError("Wallet not found. Please add funds first.");
-  //   }
-
-  //   // Check balance
-  //   if (wallet.balance < amount) {
-  //     throw new AppError("Insufficient wallet balance");
-  //   }
-
-  //   // Debit wallet
-  //   const updatedWallet = await this._userWalletRepo.debitWallet(
-  //     userId,
-  //     amount,
-  //     description,
-  //     "wallet",
-  //   );
-  //   const cart = await this._userCartRepo.deleteByUserId(userId);
-  //   if (!cart || cart.items.length === 0) {
-  //     throw new AppError("Cart is Empty");
-  //   }
-
-  //   // 3️⃣ Create order
-  //   await this._orderRepo.addOrder(cart, `wallet-${Date.now()}`);
-
-  //   await this._userCartRepo.deleteByUserId(userId);
-
-  //   return { success: true, data: updatedWallet };
-  // }
-
    async payUsingWallet(userId: string, restaurantId: string, amount: number): Promise<{ success: boolean; message: string }> {
       const wallet = await this._userWalletRepo.getWallet(userId);
       if (!wallet || wallet.balance < amount) {

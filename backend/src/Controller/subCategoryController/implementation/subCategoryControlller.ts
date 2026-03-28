@@ -37,8 +37,8 @@ export class SubCategoryController implements ISubCategoryController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ success: true, message: MESSAGES.SUBCRIPTION_ADDED_FAILED });
       }
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 
@@ -123,8 +123,8 @@ export class SubCategoryController implements ISubCategoryController {
         message: "Subcategories fetched successfully",
         ...result,
       });
-    } catch (error: any) {
-      throw new AppError(error.message);
+    } catch (error) {
+      throw new AppError(error);
     }
   };
 }

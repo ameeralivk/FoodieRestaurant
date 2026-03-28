@@ -45,8 +45,12 @@ export class CartService implements ICartService {
     ) {
       throw new AppError("Stock exceeded");
     }
-    if(cartItem && item.maxQuantityPerOrder && cartItem.quantity + Number(quantity) > item.maxQuantityPerOrder){
-      throw new AppError("maxQuantityPerOrder is exceeded")
+    if (
+      cartItem &&
+      item.maxQuantityPerOrder &&
+      cartItem.quantity + Number(quantity) > item.maxQuantityPerOrder
+    ) {
+      throw new AppError("maxQuantityPerOrder is exceeded");
     }
 
     const newCartItem = {
@@ -57,7 +61,7 @@ export class CartService implements ICartService {
       quantity: Number(quantity),
       variant: variant ?? null,
       images: item.images,
-      maxQuantityPerOrder:item.maxQuantityPerOrder,
+      maxQuantityPerOrder: item.maxQuantityPerOrder,
       preparationTime: item.preparationTime,
     };
 
@@ -132,7 +136,11 @@ export class CartService implements ICartService {
       if (item && cartItem.quantity + 1 > item.stock) {
         throw new AppError("Stock exceeded");
       }
-       if (item && item.maxQuantityPerOrder && cartItem.quantity + 1 > item.maxQuantityPerOrder) {
+      if (
+        item &&
+        item.maxQuantityPerOrder &&
+        cartItem.quantity + 1 > item.maxQuantityPerOrder
+      ) {
         throw new AppError("maxQuantityPerOrder exceeded");
       }
       cartItem.quantity += 1;
@@ -140,7 +148,6 @@ export class CartService implements ICartService {
       cartItem.quantity += 1;
     } else {
       cartItem.quantity -= 1;
-
       if (cartItem.quantity <= 0) {
         // Remove item from cart
         cart.items = cart.items.filter((i: ICartItem) => {
@@ -158,6 +165,10 @@ export class CartService implements ICartService {
       }
     }
 
+    console.log(cart, "cart is here");
+    cart.totalAmount = cart.items.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
     const res = await this._cartRepo.saveCart(cart);
 
     if (res) {
