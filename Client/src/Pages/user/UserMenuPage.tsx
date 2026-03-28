@@ -57,7 +57,7 @@ const UserRestaurantPage: React.FC = () => {
     cleanTable(userTable) ??
     cleanTable(localTable) ??
     null;
- 
+
   const [scrolled, setScrolled] = useState(false);
 
   const { data: ItemsList } = useQuery<IItemResponse, Error>({
