@@ -28,13 +28,32 @@ const paymentController = container.get<PaymentController>(
 const app = express();
 const server = http.createServer(app);
 initSocket(server);
+// app.use(
+//   cors({
+//     origin: process.env.FRONTEND_BASE_URL,
+//     credentials: true,
+//     allowedHeaders: ["Authorization", "Content-Type"],
+//   }),
+// );
+
+const allowedOrigins = [
+  "https://moobiworld.shop",
+  "https://www.moobiworld.shop"
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_BASE_URL,
+    origin: function(origin, callback) {
+      if (!origin) return callback(null, true); // allow server-to-server requests
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     allowedHeaders: ["Authorization", "Content-Type"],
-  }),
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  })
 );
+
 app.use(cookieParser());
 connectRedis();
 connectDB();
