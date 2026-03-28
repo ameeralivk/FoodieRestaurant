@@ -13,6 +13,7 @@ interface registerFormData {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 export default function UserSignUpPage() {
@@ -20,16 +21,18 @@ export default function UserSignUpPage() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const dispatch = useDispatch();
   const { handleUserResendOtp, handleUserVerifyOtp } = createOtpHandlers(
     dispatch,
-    formData.email
+    formData.email,
   );
   const [error, setError] = useState({
     nameError: "",
     emailError: "",
     passwordError: "",
+    confirmPasswordError: "",
   });
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -43,7 +46,7 @@ export default function UserSignUpPage() {
 
     const { errors } = validateUserRegister(
       { ...formData, [name]: value },
-      name
+      name,
     );
 
     setError((prev) => ({
@@ -58,6 +61,7 @@ export default function UserSignUpPage() {
       name: formData.name,
       email: formData.email,
       password: formData.password,
+      confirmPassword: formData.confirmPassword,
     });
 
     if (!isValid) {
@@ -65,6 +69,7 @@ export default function UserSignUpPage() {
         nameError: errors.name || "",
         emailError: errors.email || "",
         passwordError: errors.password || "",
+        confirmPasswordError: errors.confirmPasswordError || "",
       });
       return;
     }
@@ -72,6 +77,7 @@ export default function UserSignUpPage() {
       nameError: "",
       emailError: "",
       passwordError: "",
+      confirmPasswordError: "",
     });
 
     const fetch = async () => {
@@ -80,7 +86,7 @@ export default function UserSignUpPage() {
         let res = await handleUserRegister(
           formData.name,
           formData.email,
-          formData.password
+          formData.password,
         );
 
         if (res.success) {
@@ -90,13 +96,15 @@ export default function UserSignUpPage() {
         } else {
           throw new Error("lfkdjslfjdasjfdsaf");
         }
-      } catch (error:any) {
+      } catch (error: any) {
         toast.dismiss(toastId);
-        showErrorToast(error)
+        showErrorToast(error);
       }
     };
     fetch();
   };
+
+  console.log(error, "error");
 
   return (
     <>
@@ -163,6 +171,22 @@ export default function UserSignUpPage() {
                 required
               />
               <ErrorPTag Text={error.passwordError} />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Enter Confirm password"
+                className="w-full px-4 py-3.5 bg-gray-50 border border-gray-300 rounded-lg text-base focus:outline-none focus:border-orange-500 focus:bg-white transition-all"
+                required
+              />
+              <ErrorPTag Text={error.confirmPasswordError} />
             </div>
 
             <button

@@ -57,35 +57,6 @@ const UserLandingPage: React.FC = () => {
   useEffect(() => {
     if (!userLocation) return;
 
-    // const fetchData = async () => {
-    //   setLoading(true);
-    //   try {
-    //     const response = await getAllRestaurent(false, page, limit, searchTerm);
-    //     if (response && response.success) {
-    //       await new Promise((res) => setTimeout(res, 300));
-
-    //       const updatedRestaurants = response.data.map((restaurant: any) => {
-    //         if (!restaurant.location?.coordinates) return restaurant;
-    //         const [lng, lat] = restaurant.location.coordinates;
-    //         const distance = getDistanceInKm(
-    //           userLocation.latitude,
-    //           userLocation.longitude,
-    //           lat,
-    //           lng,
-    //         );
-    //         return { ...restaurant, distance: `${distance.toFixed(1)} km` };
-    //       });
-
-    //       setRestaurants(updatedRestaurants);
-    //       setTotal(response.pagination.totalPages);
-    //     }
-    //   } catch (err) {
-    //     console.error(err);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
     const fetchData = async () => {
       setLoading(true);
 

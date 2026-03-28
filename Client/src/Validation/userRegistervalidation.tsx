@@ -2,15 +2,12 @@ interface FormData {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-export const validateUserRegister = (
-  data: FormData,
-  field?: string
-) => {
+export const validateUserRegister = (data: FormData, field?: string) => {
   let errors: any = {};
 
- 
   if (!field || field === "name") {
     if (!data.name.trim()) {
       errors.name = "Name is required";
@@ -32,6 +29,14 @@ export const validateUserRegister = (
       errors.password = "Password is required";
     } else if (data.password.length < 6) {
       errors.password = "Password must be at least 6 characters";
+    }
+  }
+
+  if (!field || field === "confirmPassword") {
+    if (!data.confirmPassword?.trim()) {
+      errors.confirmPasswordError = "Confirm Password is required";
+    } else if (data.password !== data.confirmPassword) {
+      errors.confirmPasswordError = "Passwords do not match";
     }
   }
 

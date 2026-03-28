@@ -88,7 +88,11 @@ const Navbar = ({
 
     const handleNotification = async () => {
       playSound();
-      const result = await getAllNotification(user?._id as string,undefined,"User");
+      const result = await getAllNotification(
+        user?._id as string,
+        undefined,
+        "User",
+      );
 
       if (result?.data) {
         setNotifications(result.data);
@@ -183,11 +187,11 @@ const Navbar = ({
               </button>
             )}
           </div>
-          <div
-            className="flex items-center w-full gap-3 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            <div className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20">
+          <div className="flex items-center w-full gap-3 cursor-pointer">
+            <div
+              className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20"
+              onClick={() => navigate("/user/login")}
+            >
               <ChefHat className="w-6 h-6" />
             </div>
             <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">

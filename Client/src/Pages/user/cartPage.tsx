@@ -152,7 +152,12 @@ const CartPage = () => {
         showErrorToast("cart not found");
         return;
       }
-      const res = await addInstruction(cartData?.cart._id, itemId, instruction,variant?variant:null);
+      const res = await addInstruction(
+        cartData?.cart._id,
+        itemId,
+        instruction,
+        variant ? variant : null,
+      );
       console.log(res, "response is here");
     } catch (error) {
       return;

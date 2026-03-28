@@ -137,7 +137,7 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
 
                 {toggleField && (
                   <th className="py-4 px-6 text-gray-300 font-semibold">
-                    Toggle
+                    Status
                   </th>
                 )}
 
@@ -201,37 +201,38 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                     {/* ACTIONS */}
                     {actions && (
                       <td className="py-4 px-6 text-center">
-                       <div className={`flex items-center justify-center gap-3 ${actionStyle ?? ""}`}>
+                        <div
+                          className={`flex items-center justify-center gap-3 ${actionStyle ?? ""}`}
+                        >
+                          {actions.map((action, idx) => {
+                            let icon = null;
+                            let color = "";
 
-                        {actions.map((action, idx) => {
-                          let icon = null;
-                          let color = "";
+                            switch (action.type) {
+                              case "view":
+                                icon = <Eye size={18} />;
+                                color = "text-blue-400 hover:text-blue-300";
+                                break;
+                              case "edit":
+                                icon = <Pencil size={18} />;
+                                color = "text-amber-400 hover:text-amber-300";
+                                break;
+                              case "delete":
+                                icon = <Trash2 size={18} />;
+                                color = "text-red-400 hover:text-red-300";
+                                break;
+                            }
 
-                          switch (action.type) {
-                            case "view":
-                              icon = <Eye size={18} />;
-                              color = "text-blue-400 hover:text-blue-300";
-                              break;
-                            case "edit":
-                              icon = <Pencil size={18} />;
-                              color = "text-amber-400 hover:text-amber-300";
-                              break;
-                            case "delete":
-                              icon = <Trash2 size={18} />;
-                              color = "text-red-400 hover:text-red-300";
-                              break;
-                          }
-
-                          return (
-                            <button
-                              key={idx}
-                              onClick={() => action.onClick(row)}
-                              className={color}
-                            >
-                              {icon}
-                            </button>
-                          );
-                        })}
+                            return (
+                              <button
+                                key={idx}
+                                onClick={() => action.onClick(row)}
+                                className={color}
+                              >
+                                {icon}
+                              </button>
+                            );
+                          })}
                         </div>
                       </td>
                     )}
@@ -276,7 +277,7 @@ const ReusableTable: React.FC<ReusableTableProps> = ({
                           onClick={() =>
                             handleDownloadQR(
                               row[qrField.urlAccessor],
-                              row._id || row.id || row.tableNo
+                              row._id || row.id || row.tableNo,
                             )
                           }
                           className="bg-blue-500 text-white px-3 ml-6 py-1 rounded hover:bg-blue-400"

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Check, Package, ChefHat, UserCheck } from "lucide-react";
 import type { IOrderItem } from "../../../../types/order";
@@ -50,7 +49,9 @@ const OrderItemsList: React.FC<Props> = ({ orderItems, total }) => {
         {orderItems.map((item) => (
           <div key={item.itemId} className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-gray-900">1x {item.itemName}</p>
+              <p className="font-medium text-gray-900">
+                {item.quantity} x {item.itemName}
+              </p>
               <p className="text-sm text-gray-500">₹{item.price.toFixed(2)}</p>
             </div>
 

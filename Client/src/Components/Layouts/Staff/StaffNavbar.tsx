@@ -115,23 +115,6 @@ const StaffNavbar = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const handleOrderCompleted = (order: IUserOrder) => {
-
-  //     playSound();
-
-  //     setPopup(order);
-
-  //     setTimeout(() => {
-  //       setPopup(null);
-  //     }, 4000);
-  //   };
-
-  //   Socket.on("order:completed", handleOrderCompleted);
-  //   return () => {
-  //     Socket.off("order:completed", handleOrderCompleted);
-  //   };
-  // }, []);
 
   useEffect(() => {
     if (!restaurantId || !role) return;

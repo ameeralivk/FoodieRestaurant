@@ -187,35 +187,6 @@ export const handleForgetPasswordSubmit = async (
   }
 };
 
-// export const handleresetPasswordForm = async (
-//   resetPassword: resetPassword,
-//   role: "admin" | "user"
-// ) => {
-//   try {
-//     const url =
-//       role === "admin"
-//         ? `/admin/auth/forget-password?token=${resetPassword.token}`
-//         : `/user/auth/forget-password?token=${resetPassword.token}`;
-
-//     const response = await api.patch(url, {
-//       email: resetPassword.email,
-//       newPassword: resetPassword.newPassword,
-//     });
-
-//     if (response.data.success || response.data.succes) {
-//       return { success: true, message: response.data.message };
-//     }
-//   } catch (error: any) {
-//     const message = axios.isAxiosError(error)
-//       ? error.response?.data?.message || "Something went wrong!"
-//       : error instanceof Error
-//       ? error.message
-//       : "An unknown error occurred";
-
-//     showErrorToast(message);
-//   }
-// };
-
 export const handleresetPasswordForm = async (
   resetPassword: resetPassword,
   role: "admin" | "user" | "staff",
