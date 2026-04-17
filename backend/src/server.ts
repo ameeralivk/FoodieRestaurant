@@ -36,15 +36,14 @@ initSocket(server);
 //   }),
 // );
 
-const allowedOrigins = [
-  "https://moobiworld.shop",
-  "https://www.moobiworld.shop"
-];
+const allowedOrigins = process.env.FRONTEND_ALLOWED_ORIGINS
+  ? process.env.FRONTEND_ALLOWED_ORIGINS.split(",")
+  : [];
 
 app.use(
   cors({
     origin: function(origin, callback) {
-      if (!origin) return callback(null, true); // allow server-to-server requests
+      if (!origin) return callback(null, true); 
       if (allowedOrigins.includes(origin)) return callback(null, true);
       callback(new Error("Not allowed by CORS"));
     },

@@ -25,6 +25,7 @@ import { TYPES } from "../../../DI/types";
 import { IUserRepository } from "../../../Repositories/user/interface/IUserRepository";
 import { IStaffRepository } from "../../../Repositories/staff/interface/IStaffRepository";
 import { AdminDocument } from "../../../models/admin";
+import { RefreshTokenFactory } from "../handler/refreshtokenFactory/refreshTokenFactory";
 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10);
 
 @injectable()
@@ -36,6 +37,8 @@ export class AdminAuthService implements IAdminAuthService {
     private _userRepo: IUserRepository,
     @inject(TYPES.staffRepository)
     private _staffRepository: IStaffRepository,
+     @inject(TYPES.RefreshTokenFactory)
+     private refreshTokenFactory: RefreshTokenFactory
   ) {}
 
   async register(
@@ -135,10 +138,7 @@ export class AdminAuthService implements IAdminAuthService {
       createdUser.admin._id,
       createdUser.admin?.role,
     );
-    generateRefreshToken(
-      createdUser.admin._id,
-      createdUser.admin?.role,
-    );
+    generateRefreshToken(createdUser.admin._id, createdUser.admin?.role);
     return {
       success: true,
       message: MESSAGES.OTP_VERIFY_SUCCESS,
@@ -157,97 +157,131 @@ export class AdminAuthService implements IAdminAuthService {
     return { success: true, message: MESSAGES.OTP_RESENT_SUCCESS };
   };
 
-  async refreshToken(refreshToken: string) {
+  // async refreshToken(refreshToken: string) {
+  //   if (!refreshToken) {
+  //     throw new Error(MESSAGES.NO_REFRESH_TOKEN_FOUND);
+  //   }
+
+  //   const decoded = verifyRefreshToken(refreshToken);
+  //   console.log(decoded,'decoded')
+  //   if (!decoded) {
+  //     throw {
+  //       status: HttpStatus.UNAUTHORIZED,
+  //       message: MESSAGES.INVALID_TOKEN,
+  //     };
+  //   }
+  //   if (decoded.role === "user") {
+  //     const user = await this._userRepo.findById(decoded.id);
+
+  //     if (!user) {
+  //       throw {
+  //         status: HttpStatus.NOT_FOUND,
+  //         message: MESSAGES.USER_NOT_FOUND,
+  //       };
+  //     }
+
+  //     if (user.isBlocked) {
+  //       throw {
+  //         status: HttpStatus.FORBIDDEN,
+  //         message: MESSAGES.ACCOUNT_IS_BLOCKED,
+  //       };
+  //     }
+
+  //     const newAccessToken = generateToken(decoded.id, decoded.role);
+  //     return { newAccessToken };
+  //   }
+  //   if (decoded.role === "superadmin") {
+  //     const superadmin = await this._adminAuthRepository.findById(decoded.id);
+
+  //     if (!superadmin) {
+  //       throw {
+  //         status: HttpStatus.NOT_FOUND,
+  //         message: MESSAGES.ADMIN_NOT_FOUND,
+  //       };
+  //     }
+  //     const newAccessToken = generateToken(decoded.id, decoded.role);
+  //     return { newAccessToken };
+  //   }
+  //   if (decoded.role === "admin") {
+  //     const admin = await this._adminAuthRepository.findById(decoded.id);
+
+  //     if (!admin) {
+  //       throw {
+  //         status: HttpStatus.NOT_FOUND,
+  //         message: MESSAGES.ADMIN_NOT_FOUND,
+  //       };
+  //     }
+
+  //     if (admin.isBlocked) {
+  //       throw {
+  //         status: HttpStatus.FORBIDDEN,
+  //         message: MESSAGES.ACCOUNT_IS_BLOCKED,
+  //       };
+  //     }
+
+  //     const newAccessToken = generateToken(decoded.id, decoded.role);
+  //     return { newAccessToken };
+  //   }
+  //   if (decoded.role === "chef") {
+  //     const staff = await this._staffRepository.findById(decoded.id);
+  //     if (!staff) {
+  //       throw {
+  //         status: HttpStatus.NOT_FOUND,
+  //         message: MESSAGES.STAFF_NOT_FOUND,
+  //       };
+  //     }
+  //     if (staff.isBlocked) {
+  //       throw {
+  //         status: HttpStatus.FORBIDDEN,
+  //         message: MESSAGES.ACCOUNT_IS_BLOCKED,
+  //       };
+  //     }
+  //     const newAccessToken = generateToken(decoded.id, decoded.role);
+  //     return { newAccessToken };
+  //   }
+  //   if (decoded.role === "staff") {
+  //     const staff = await this._staffRepository.findById(decoded.id);
+  //     if (!staff) {
+  //       throw {
+  //         status: HttpStatus.NOT_FOUND,
+  //         message: MESSAGES.STAFF_NOT_FOUND,
+  //       };
+  //     }
+  //     if (staff.isBlocked) {
+  //       throw {
+  //         status: HttpStatus.FORBIDDEN,
+  //         message: MESSAGES.ACCOUNT_IS_BLOCKED,
+  //       };
+  //     }
+  //     const newAccessToken = generateToken(decoded.id, decoded.role);
+  //     return { newAccessToken };
+  //   }
+
+  //   throw {
+  //     status: HttpStatus.UNAUTHORIZED,
+  //     message: MESSAGES.INVALID_TOKEN,
+  //   };
+  // }
+
+   async refreshToken(refreshToken: string) {
     if (!refreshToken) {
       throw new Error(MESSAGES.NO_REFRESH_TOKEN_FOUND);
     }
 
     const decoded = verifyRefreshToken(refreshToken);
+
     if (!decoded) {
       throw {
         status: HttpStatus.UNAUTHORIZED,
         message: MESSAGES.INVALID_TOKEN,
       };
     }
-    if (decoded.role === "user") {
-      const user = await this._userRepo.findById(decoded.id);
 
-      if (!user) {
-        throw {
-          status: HttpStatus.NOT_FOUND,
-          message: MESSAGES.USER_NOT_FOUND,
-        };
-      }
+    const handler = this.refreshTokenFactory.getHandler(decoded.role);
 
-      if (user.isBlocked) {
-        throw {
-          status: HttpStatus.FORBIDDEN,
-          message: MESSAGES.ACCOUNT_IS_BLOCKED,
-        };
-      }
+    const newAccessToken = await handler.handle(decoded);
 
-      const newAccessToken = generateToken(decoded.id, decoded.role);
-      return { newAccessToken };
-    }
-    if (decoded.role === "admin") {
-      const admin = await this._adminAuthRepository.findById(decoded.id);
-
-      if (!admin) {
-        throw {
-          status: HttpStatus.NOT_FOUND,
-          message: MESSAGES.ADMIN_NOT_FOUND,
-        };
-      }
-
-      if (admin.isBlocked) {
-        throw {
-          status: HttpStatus.FORBIDDEN,
-          message: MESSAGES.ACCOUNT_IS_BLOCKED,
-        };
-      }
-
-      const newAccessToken = generateToken(decoded.id, decoded.role);
-      return { newAccessToken };
-    }
-    if (decoded.role === "chef") {
-      const staff = await this._staffRepository.findById(decoded.id);
-      if (!staff) {
-        throw {
-          status: HttpStatus.NOT_FOUND,
-          message: MESSAGES.STAFF_NOT_FOUND,
-        };
-      }
-      if (staff.isBlocked) {
-        throw {
-          status: HttpStatus.FORBIDDEN,
-          message: MESSAGES.ACCOUNT_IS_BLOCKED,
-        };
-      }
-      const newAccessToken = generateToken(decoded.id, decoded.role);
-      return { newAccessToken };
-    }
-    if (decoded.role === "staff") {
-      const staff = await this._staffRepository.findById(decoded.id);
-      if (!staff) {
-        throw {
-          status: HttpStatus.NOT_FOUND,
-          message: MESSAGES.STAFF_NOT_FOUND,
-        };
-      }
-      if (staff.isBlocked) {
-        throw {
-          status: HttpStatus.FORBIDDEN,
-          message: MESSAGES.ACCOUNT_IS_BLOCKED,
-        };
-      }
-      const newAccessToken = generateToken(decoded.id, decoded.role);
-      return { newAccessToken };
-    }
-
-    throw {
-      status: HttpStatus.UNAUTHORIZED,
-      message: MESSAGES.INVALID_TOKEN,
-    };
+    return { newAccessToken };
   }
 
   createLink = async (

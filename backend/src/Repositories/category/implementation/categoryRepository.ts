@@ -63,4 +63,5 @@ export class CategoryRepository
   ): Promise<{ data: ICategory[]; total: number }> {
     return this.getAll(filter, { page, limit });
   }
+
 }

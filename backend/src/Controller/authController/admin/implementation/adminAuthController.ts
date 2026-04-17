@@ -158,7 +158,7 @@ export class AdminAuthController implements IAdminAuthController {
       }
 
       const { newAccessToken } =
-        await this._adminauthService.refreshToken(refreshToken);
+      await this._adminauthService.refreshToken(refreshToken);
       console.log(newAccessToken, "tocknfdlasfjdkasj");
       // res.cookie("access_token", newAccessToken, {
       //   httpOnly: true,

@@ -37,6 +37,7 @@ export class UserRepository
   }
 
   async findById(id: string) {
+
     return await this.getById(id);
   }
 

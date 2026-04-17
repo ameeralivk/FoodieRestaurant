@@ -6,7 +6,7 @@ export const MESSAGES = {
   OTP_RESENT_FAILED: "OTP verification Failed",
   OTP_SENT_SUCCESS: "OTP Sended to your Email",
   OTP_VERIFY_SUCCESS: "OTP Verification Successfully Completed",
-  NO_REFRESH_TOKEN_FOUND: "No refresh token found",
+  NO_REFRESH_TOKEN_FOUND: "Your session has expired. Please log in again.",
   INVALID_TOKEN: "The token is Invalid",
   OTP_INCORRECT: "Incorrect OTP Please Check Your OTP and Retry",
   ADMIN_NOT_FOUND:

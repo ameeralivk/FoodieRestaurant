@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import logger from "../config/logger";
 import HttpStatus from "../constants/htttpStatusCode";
 import { MESSAGES } from "../constants/messages";
+import { IDecoded } from "../services/admin/handler/IHandler";
 const generateToken = (
   id: string | mongoose.Types.ObjectId | undefined,
   role: string | undefined,
@@ -12,7 +13,7 @@ const generateToken = (
 
   return jwt.sign({ id: id, role: role }, process.env.JWT_SECRET as string, {
     expiresIn: "15m",
-  });
+  }) 
 };
 
 const generateRefreshToken = (
@@ -28,12 +29,30 @@ const generateRefreshToken = (
   );
 };
 
-const verifyRefreshToken = (refreshToken: string): JwtPayload | null => {
+// const verifyRefreshToken = (refreshToken: string): JwtPayload | null => {
+//   try {
+//     const decoded = jwt.verify(
+//       refreshToken,
+//       process.env.REFRESH_JWT_SECRET as string,
+//     ) as JwtPayload;
+
+//     return decoded;
+//   } catch (error) {
+//     console.error("JWT verification failed:", error);
+//     return null;
+//   }
+// };
+
+const verifyRefreshToken = (refreshToken: string): IDecoded | null => {
   try {
     const decoded = jwt.verify(
       refreshToken,
-      process.env.REFRESH_JWT_SECRET as string,
-    ) as JwtPayload;
+      process.env.REFRESH_JWT_SECRET as string
+    ) as IDecoded;
+
+    if (!decoded.id || !decoded.role) {
+      return null;
+    }
 
     return decoded;
   } catch (error) {

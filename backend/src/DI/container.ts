@@ -58,6 +58,11 @@ import { FeedbackRepository } from "../Repositories/feedback/implementation/feed
 import { NotificationController } from "../Controller/notificationController/implementation/notificationController";
 import { NotificationService } from "../services/notificationService/implementation/notificationService";
 import { NotificationRepository } from "../Repositories/notificationRepo/implementation/notificationRepo";
+import { UserRefreshHandler } from "../services/admin/handler/user.handle";
+import { AdminRefreshHandler } from "../services/admin/handler/admin.handler";
+import { SuperAdminRefreshHandler } from "../services/admin/handler/superadmin.handle";
+import { StaffRefreshHandler } from "../services/admin/handler/staff.handler";
+import { RefreshTokenFactory } from "../services/admin/handler/refreshtokenFactory/refreshTokenFactory";
 
 const container = new Container();
 //payment
@@ -154,4 +159,11 @@ container.bind(TYPES.NotificationController).to(NotificationController);
 container.bind(TYPES.NotificationService).to(NotificationService);
 container.bind(TYPES.NotificationRepository).to(NotificationRepository);
 
+
+//refreshHandler
+container.bind(TYPES.UserRefreshHandler).to(UserRefreshHandler);
+container.bind(TYPES.AdminRefreshHandler).to(AdminRefreshHandler);
+container.bind(TYPES.SuperAdminRefreshHandler).to(SuperAdminRefreshHandler);
+container.bind(TYPES.StaffRefreshHandler).to(StaffRefreshHandler)
+container.bind(TYPES.RefreshTokenFactory).to(RefreshTokenFactory)
 export { container };
