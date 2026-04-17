@@ -335,7 +335,8 @@ const UserLandingPage: React.FC = () => {
               ) : (
                 // restaurants.map((restaurant) => {
                 restaurants
-                  .filter((r) => r.status === "approved" && !r.isBlocked) // ✅ approved
+                  .filter((r) => r.status === "approved" && !r.isBlocked)
+                  .filter((r)=> isOpenNow(r.openingTime,r.closingTime))
                   .filter((r) => {
                     if (!r.distance) return true;
                     return parseFloat(r.distance) <= maxDistance;
@@ -420,7 +421,8 @@ const UserLandingPage: React.FC = () => {
                               <span className="bg-orange-50 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full border border-orange-100">
                                 Restaurant
                               </span>
-                              {restaurant.openingTime &&
+                              {
+                                restaurant.openingTime &&
                                 restaurant.closingTime && (
                                   <span
                                     className={`text-xs font-bold px-2.5 py-1 rounded-full border ${

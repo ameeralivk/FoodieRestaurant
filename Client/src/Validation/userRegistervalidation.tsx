@@ -4,6 +4,7 @@ interface FormData {
   password: string;
   confirmPassword: string;
 }
+import { passwordRegex } from "../constants/CommonRejex";
 
 export const validateUserRegister = (data: FormData, field?: string) => {
   let errors: any = {};
@@ -29,6 +30,9 @@ export const validateUserRegister = (data: FormData, field?: string) => {
       errors.password = "Password is required";
     } else if (data.password.length < 6) {
       errors.password = "Password must be at least 6 characters";
+    } else if(!passwordRegex.test(data.password)){
+       errors.password =
+      "Password must include uppercase, lowercase, number, and special character";
     }
   }
 
