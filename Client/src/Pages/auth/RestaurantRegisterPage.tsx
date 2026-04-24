@@ -84,14 +84,15 @@ const AdminRegisterPage = () => {
           setModalOpen(true);
           setLoading(false);
         } else {
+          setLoading(false)
           throw new Error("lfkdjslfjdasjfdsaf");
         }
       } catch (error) {
         toast.dismiss();
         if (error instanceof Error) {
+          setLoading(false)
           showErrorToast(error.message);
-        } else {
-        }
+        } 
       }
     }
   };

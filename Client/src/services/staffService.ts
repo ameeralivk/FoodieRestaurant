@@ -65,6 +65,12 @@ export const changeStaffStatus = async (
 export const getTotalOrders = async (
   restaurantId: string,
 ): Promise<{ success: boolean; data: IUserOrder[] }> => {
+  if(!restaurantId){
+     return {
+      success: false,
+      data: [],
+    };
+  }
   return apiRequest(HTTP_METHOD.GET,API_ROUTES.STAFF_OPERATIONS.GET_TOTAL_ORDERS(restaurantId));
 };
 

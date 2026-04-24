@@ -450,13 +450,13 @@ const ItemComponent = () => {
               placeholder: "Enter Stock : Optional",
               value: currentRow?.stock || "",
             },
-            {
-              name: "points",
-              label: "Points *",
-              type: "number",
-              placeholder: "Enter Points : Optional",
-              value: currentRow?.points || "",
-            },
+            // {
+            //   name: "points",
+            //   label: "Points *",
+            //   type: "number",
+            //   placeholder: "Enter Points : Optional",
+            //   value: currentRow?.points || "",
+            // },
             {
               name: "preparationTime",
               label: "PrepartionTime (minutes)",

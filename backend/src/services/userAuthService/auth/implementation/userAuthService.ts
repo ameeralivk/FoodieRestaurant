@@ -107,7 +107,6 @@ export class UserAuthService implements IUserAuthService {
   async verifyOtp(email: string, otp: string) {
     const redisOtpKey = `otp:${email}`;
     const redisDataKey = `userData:${email}`;
-
     const hashedOtp = await redisClient.get(redisOtpKey);
 
     if (!hashedOtp) {
@@ -132,7 +131,7 @@ export class UserAuthService implements IUserAuthService {
     const userData = JSON.parse(userDataString);
 
     const createdUser = await this._userAuthRepository.register(
-      userData.name ? userData.name : "",
+      userData.Name ? userData.Name : "",
       userData.Email,
       userData.password
     );
