@@ -85,7 +85,7 @@ export class UserAuthController implements IUserAuthController {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
-        domain: isProduction ? ".moobiworld.shop" : undefined,
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined,
         maxAge: refreshTokenMaxAge,
       });
       // res.cookie("access_token", token, {
@@ -99,7 +99,7 @@ export class UserAuthController implements IUserAuthController {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
-        domain: isProduction ? ".moobiworld.shop" : undefined,
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined,
         maxAge: accessTokenMaxAge,
       });
 
@@ -138,7 +138,7 @@ export class UserAuthController implements IUserAuthController {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ KEY FIX
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined, // ✅ fix www issue
         maxAge: refreshTokenMaxAge,
       });
 
@@ -146,7 +146,7 @@ export class UserAuthController implements IUserAuthController {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
 

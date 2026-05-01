@@ -41,7 +41,7 @@ export class StaffAuthController implements IStaffAuthController {
         httpOnly: true,
         secure: isProduction, // true in prod
         sameSite: isProduction ? "none" : "lax", // cross-site allowed in prod
-        domain: isProduction ? ".moobiworld.shop" : undefined, // matches prod domain
+        domain: isProduction ? "foodie.ameeralivk.buzz" : undefined, // matches prod domain
         maxAge: accessTokenMaxAge,
       });
 
@@ -49,7 +49,7 @@ export class StaffAuthController implements IStaffAuthController {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
-        domain: isProduction ? ".moobiworld.shop" : undefined,
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined,
         maxAge: refreshTokenMaxAge,
       });
       return res.status(HttpStatus.OK).json({

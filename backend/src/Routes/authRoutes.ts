@@ -47,14 +47,14 @@ router.post("/logout", (req, res) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax",
-    domain: isProduction ? ".moobiworld.shop" : undefined,
+    domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined,
   });
 
   res.clearCookie("refresh_token", {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax",
-    domain: isProduction ? ".moobiworld.shop" : undefined,
+    domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined,
   });
   res.clearCookie("accessToken");
   return res.json({ success: true, message: "Logged out ready ayi mone" });

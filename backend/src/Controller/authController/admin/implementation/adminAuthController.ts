@@ -118,7 +118,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ KEY FIX
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
+        domain: isProduction ? "foodie.ameeralivk.buzz" : undefined, // ✅ fix www issue
         maxAge: refreshTokenMaxAge,
       });
 
@@ -133,7 +133,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
 
@@ -170,7 +170,7 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: isProduction, // ✅ true in production
         sameSite: isProduction ? "none" : "lax", // ✅ cross-site allowed in prod
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ matches hosted domain
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined, // ✅ matches hosted domain
         maxAge: accessTokenMaxAge,
       });
       res.status(HttpStatus.OK).json({ accessToken: newAccessToken });
@@ -204,14 +204,14 @@ export class AdminAuthController implements IAdminAuthController {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ VERY IMPORTANT
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined, // ✅ fix www issue
         maxAge: accessTokenMaxAge,
       });
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: isProduction, // ✅ true in prod
         sameSite: isProduction ? "none" : "lax", // ✅ KEY FIX
-        domain: isProduction ? ".moobiworld.shop" : undefined, // ✅ fix www issue
+        domain: isProduction ?  "foodie.ameeralivk.buzz" : undefined, // ✅ fix www issue
         maxAge: refreshTokenMaxAge,
       });
       // res.cookie("refresh_token", refreshToken, {
