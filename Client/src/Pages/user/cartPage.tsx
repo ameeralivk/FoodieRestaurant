@@ -87,7 +87,7 @@ const CartPage = () => {
           setCartItems(cartData?.cart?.items ?? []);
         }
       }
-    } catch (error) {
+    } catch {
       setCartItems(cartData?.cart?.items ?? []);
     }
   };
@@ -131,7 +131,7 @@ const CartPage = () => {
           queryClient.invalidateQueries({ queryKey: ["ItemsList"] });
         }
       }
-    } catch (error) {
+    } catch {
       queryClient.invalidateQueries({ queryKey: ["ItemsList"] });
     }
   };
@@ -159,7 +159,7 @@ const CartPage = () => {
         variant ? variant : null,
       );
       console.log(res, "response is here");
-    } catch (error) {
+    } catch{
       return;
     }
   };

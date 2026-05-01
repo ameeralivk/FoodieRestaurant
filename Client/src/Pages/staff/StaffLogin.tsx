@@ -37,7 +37,7 @@ const StaffLogin: React.FC = () => {
           navigate(`/${data.role}/analytics`);
           showSuccessToast(result.message);
         }
-      } catch (error) {
+      } catch {
         return;
       }
     };

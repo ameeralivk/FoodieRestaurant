@@ -44,9 +44,9 @@ const RestaurentLoginPage = () => {
   const handleLoginButton = async () => {
     try {
       const valid = validateLoginForm(formData);
-      let len = Object.keys(valid.errors).length;
+      const len = Object.keys(valid.errors).length;
       if (len > 0) {
-        for (let key in valid.errors) {
+        for (const key in valid.errors) {
           const field = key as keyof FormData;
           setError((prev) => ({ ...prev, [field]: valid.errors[field] || "" }));
         }
@@ -76,7 +76,7 @@ const RestaurentLoginPage = () => {
       } else {
         navigate("/admin/onboarding");
       }
-    } catch (error: unknown) {
+    } catch {
       return
       // if (error instanceof Error) {
       //   showErrorToast(String(error));

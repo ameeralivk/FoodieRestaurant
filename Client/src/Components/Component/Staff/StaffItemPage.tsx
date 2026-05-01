@@ -141,7 +141,7 @@ const MyItemsSection: React.FC = () => {
     newStatus: ItemStatus,
     varient?: IVarientItemType,
   ) => {
-    let result = await updateOrder(
+    const result = await updateOrder(
       orderId,
       itemId,
       newStatus,

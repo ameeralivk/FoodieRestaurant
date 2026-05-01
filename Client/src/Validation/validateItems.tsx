@@ -34,7 +34,7 @@ export const validateItem = (data: IItem) => {
   }
 
   // Category (MANDATORY)
-  let categoryId = data.categoryId ? true : false;
+  const categoryId = data.categoryId ? true : false;
   if (!data.categoryName && !categoryId) {
     errors.categoryName = "Please select a main category";
   }
@@ -67,7 +67,7 @@ export const validateImages = (images?: File[]) => {
   if (images.length != 3) {
     return "You wand to updload minimum 3 images";
   }
-  for (let image of images) {
+  for (const image of images) {
     if (image.type) {
       if (!image.type.startsWith("image/")) {
         showErrorToast("Only image files are allowed");

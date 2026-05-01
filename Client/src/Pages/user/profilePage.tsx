@@ -7,7 +7,7 @@ import {
   Mail,
   Phone,
   Edit2,
-} from "lucide-react"; 
+} from "lucide-react";
 import UserModal from "../../Components/Elements/Reusable/userModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store/store";
@@ -78,10 +78,9 @@ export default function UserProfile() {
   });
   const [showOtpModal, setShowOtpModal] = useState(false);
 
-  
   async function verifyOtpApi(otp: string) {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const result = await verifyOtp(formData.email as string, otp);
       if (result.success) {
         dispatch(
@@ -91,11 +90,11 @@ export default function UserProfile() {
             email: formData.email,
           }),
         );
-        setIsLoading(false)
+        setIsLoading(false);
         showSuccessToast(result.message);
       }
     } catch (error) {
-      setIsLoading(false)
+      setIsLoading(false);
       console.log(error, "err");
       return;
     }
@@ -152,8 +151,11 @@ export default function UserProfile() {
       } else {
         showErrorToast(res.message);
       }
-    } catch (err: any) {
-      showErrorToast(err);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong";
+
+      showErrorToast(message);
     }
   };
 

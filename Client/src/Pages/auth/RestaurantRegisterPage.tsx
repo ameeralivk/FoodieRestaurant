@@ -51,10 +51,10 @@ const AdminRegisterPage = () => {
   };
 
   const handleSubmit = async () => {
-    let res = validateFullForm(formData);
-    let len = Object.keys(res.errors).length;
+    const res = validateFullForm(formData);
+    const len = Object.keys(res.errors).length;
     if (len > 0) {
-      for (let key in res.errors) {
+      for (const key in res.errors) {
         const field = key as keyof FormData;
         setError((prev) => ({ ...prev, [field]: res.errors[field] || "" }));
       }
@@ -77,7 +77,7 @@ const AdminRegisterPage = () => {
       try {
         const toastId = loadingToast();
         setLoading(true);
-        let res = await register(registerData);
+        const res = await register(registerData);
         if (res.message.success) {
           toast.dismiss(toastId);
           await AfterLoading("Sending OTP...", "✅ OTP sent successfully!");

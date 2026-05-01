@@ -22,15 +22,15 @@ export default function UserLoginForm() {
     password: "",
   });
   const [error, setError] = useState<Partial<Record<keyof FormData, string>>>(
-    {}
+    {},
   );
   const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const valid = validateLoginForm(formData);
-    let len = Object.keys(valid.errors).length;
+    const len = Object.keys(valid.errors).length;
     if (len > 0) {
-      for (let key in valid.errors) {
+      for (const key in valid.errors) {
         const field = key as keyof FormData;
         setError((prev) => ({ ...prev, [field]: valid.errors[field] || "" }));
       }
@@ -39,17 +39,20 @@ export default function UserLoginForm() {
     }
     const fetch = async () => {
       try {
-        let res = await handleUserLogin(
+        const res = await handleUserLogin(
           formData.email,
           formData.password,
-          dispatch
+          dispatch,
         );
 
         if (res?.success) {
           navigate("/user");
         }
-      } catch (error: any) {
-        showErrorToast(error);
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Something went wrong";
+
+        showErrorToast(message);
       }
     };
 

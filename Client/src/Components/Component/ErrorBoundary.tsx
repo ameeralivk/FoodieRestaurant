@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 import ErrorPage from "../../Pages/auth/ErrorPage";
 
@@ -21,9 +21,12 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, info: any) {
-    console.error("React Error Caught:", error, info);
-  }
+  // componentDidCatch(error: Error, info: any) {
+  //   console.error("React Error Caught:", error, info);
+  // }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+  console.error("React Error Caught:", error, info);
+}
 
   render() {
     if (this.state.hasError) {

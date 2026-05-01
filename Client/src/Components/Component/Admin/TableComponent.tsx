@@ -220,7 +220,7 @@ const TableComponent = () => {
             setModalErrors({});
             setCurrentRow({});
           }
-        } catch (error) {
+        } catch {
           return;
         }
       };

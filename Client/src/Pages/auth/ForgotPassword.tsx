@@ -25,7 +25,7 @@ const ForgetPasswordPage = () => {
       return;
     } else {
       setIsHidden(true);
-      let res =  await handleForgetPasswordSubmit({ email });
+      const res =  await handleForgetPasswordSubmit({ email });
       if(!res){
         setIsHidden(false)
          return

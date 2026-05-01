@@ -35,7 +35,7 @@ const OrderDetail: React.FC = () => {
     if (!order) return;
 
     try {
-      let res = await Promise.all(
+      const res = await Promise.all(
         Object.entries(feedbacks).map(([itemId, value]) =>
           AddFeedback(
             order.restaurantId,
@@ -53,9 +53,11 @@ const OrderDetail: React.FC = () => {
         showSuccessToast("Feedback Added successfully");
       }
       // optional: toast.success("Feedback submitted successfully");
-    } catch (error: any) {
-      console.error("Failed to submit feedback", error);
-      // optional: toast.error("Something went wrong");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+
+      console.error("Failed to submit feedback", message);
     }
   };
 
@@ -258,14 +260,14 @@ const OrderDetail: React.FC = () => {
           >
             Download Invoice
           </button>
-          {order?.orderStatus == "SERVED" && 
-           <button
-            onClick={() => setFeedbackOpen(true)}
-            className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-bold hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            Add Feedback
-          </button>
-          }
+          {order?.orderStatus == "SERVED" && (
+            <button
+              onClick={() => setFeedbackOpen(true)}
+              className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-bold hover:from-teal-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              Add Feedback
+            </button>
+          )}
         </div>
       </div>
       {restaurantId && (

@@ -83,7 +83,7 @@ export default function UserSignUpPage() {
     const fetch = async () => {
       const toastId = loadingToast();
       try {
-        let res = await handleUserRegister(
+        const res = await handleUserRegister(
           formData.name,
           formData.email,
           formData.password,
@@ -96,9 +96,13 @@ export default function UserSignUpPage() {
         } else {
           throw new Error("lfkdjslfjdasjfdsaf");
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast.dismiss(toastId);
-        showErrorToast(error);
+
+        const message =
+          error instanceof Error ? error.message : "Something went wrong";
+
+        showErrorToast(message);
       }
     };
     fetch();

@@ -21,7 +21,7 @@ export default function ForgotPassword() {
       return;
     } else {
       setIsHidden(true);
-      let res = await handleUserForgetPasswordSubmit({ email });
+      const res = await handleUserForgetPasswordSubmit({ email });
       if (!res) {
         setIsHidden(false);
         return;

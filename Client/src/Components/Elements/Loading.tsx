@@ -40,7 +40,7 @@ export const AfterLoading = async (
     });
 
     return true;
-  } catch (err) {
+  } catch{
     toast.update(loadingId, {
       render: "❌ Something went wrong!",
       type: "error",

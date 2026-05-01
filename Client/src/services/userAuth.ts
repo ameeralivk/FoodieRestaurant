@@ -127,14 +127,60 @@ export const userResendOtp = async (email: string) => {
   }
 };
 
+// export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
+//   const navigate = useNavigate();
+//   return useGoogleLogin({
+//     onSuccess: async (tokenResponse) => {
+//       try {
+//         const res = await api.post("/user/auth/googleAuth", {
+//           token: tokenResponse.access_token,
+//         });
+//         if (res.data.success) {
+//           const saveddata: AdminType = {
+//             name: res.data.data.name,
+//             phone: res.data.data.phone,
+//             _id: res.data.data._id,
+//             restaurantName: res.data.data.restaurantName,
+//             email: res.data.data.email,
+//             role: res.data.data.role,
+//             googleId: res.data.data.googleId,
+//             imageUrl: res.data.data.imageUrl,
+//             status: res.data.data.status,
+//           };
+
+//           dispatch(
+//             userLoginAction({
+//               user: saveddata,
+//             }),
+//           );
+
+//           showSuccessToast("Google login successful!");
+//           navigate("/user");
+//         } else {
+//           showErrorToast("Google authentication failed!");
+//         }
+//       } catch (err: unknown) {
+//         console.error(err);
+
+//         if (err instanceof Error) {
+//           showErrorToast(err.message);
+//         }
+//       }
+//     },
+//     onError: () => showErrorToast("Google authentication failed"),
+//   });
+// };
+
 export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
   const navigate = useNavigate();
+
   return useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
         const res = await api.post("/user/auth/googleAuth", {
           token: tokenResponse.access_token,
         });
+
         if (res.data.success) {
           const saveddata: AdminType = {
             name: res.data.data.name,
@@ -148,23 +194,25 @@ export const userGoogleLoginHandler = (dispatch: AppDispatch) => {
             status: res.data.data.status,
           };
 
-          dispatch(
-            userLoginAction({
-              user: saveddata,
-            }),
-          );
+          dispatch(userLoginAction({ user: saveddata }));
 
           showSuccessToast("Google login successful!");
           navigate("/user");
         } else {
           showErrorToast("Google authentication failed!");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
-        showErrorToast(err?.response.data.message || "Google login failed!");
+
+        if (err instanceof Error) {
+          showErrorToast(err.message);
+        }
       }
     },
-    onError: () => showErrorToast("Google authentication failed"),
+
+    onError: () => {
+      showErrorToast("Google authentication failed");
+    },
   });
 };
 
@@ -196,7 +244,7 @@ export const handleUserForgetPasswordSubmit = async (
       });
       return false;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     toast.update(loadingId, {
       render: axios.isAxiosError(error)
         ? error.response?.data?.message || "Something went wrong!"

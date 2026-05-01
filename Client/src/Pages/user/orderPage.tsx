@@ -125,7 +125,7 @@ const OrderHistory: React.FC = () => {
       if (!confirmed) return;
 
       cancelOrderMutation.mutate({ orderId, userId });
-    } catch (error) {
+    } catch  {
       return;
     }
   }

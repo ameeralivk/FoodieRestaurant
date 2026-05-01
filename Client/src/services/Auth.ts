@@ -124,7 +124,7 @@ export const useGoogleLoginHandler = (dispatch: AppDispatch) => {
 
 export const handleLogin = async (email: string, password: string) => {
   try {
-    let data = { email, password };
+    const data = { email, password };
     const response = await api.post("/admin/auth/login", data, {
       withCredentials: true,
     });
@@ -173,7 +173,7 @@ export const handleForgetPasswordSubmit = async (
       });
       return false;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     toast.update(loadingId, {
       render: axios.isAxiosError(error)
         ? error.response?.data?.message || "Something went wrong!"
@@ -213,7 +213,7 @@ export const handleresetPasswordForm = async (
         message: response.data.message,
       };
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     const message = axios.isAxiosError(error)
       ? error.response?.data?.message || "Something went wrong!"
       : error instanceof Error

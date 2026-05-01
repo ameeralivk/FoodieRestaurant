@@ -39,7 +39,7 @@ const StaffForgotPassword: React.FC = () => {
         showSuccessToast(result.message);
         setDisabledTime(120); // disable for 2 minutes
       }
-    } catch (error: any) {
+    } catch {
       // showErrorToast(
       //   error?.response?.data?.message || "Failed to send reset link",
       // );

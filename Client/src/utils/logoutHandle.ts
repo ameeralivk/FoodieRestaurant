@@ -1,9 +1,10 @@
 import Swal from "sweetalert2";
 import { logoutRequest } from "../services/Auth";
 import { userLogoutAction } from "../redux/slice/userSlice";
+import type { AppDispatch } from "../redux/store/store";
 
 interface LogoutHandlerParams {
-  dispatch: any;
+  dispatch: AppDispatch;
   navigate: (path: string) => void;
   showConfirm: (
     title: string,

@@ -192,7 +192,7 @@ const RestaurantMainRegistration = () => {
         rejectedAt: "",
       });
       setIsModalOpen(false);
-    } catch (error) {
+    } catch {
       alert("Reupload failed:");
     }
   }
