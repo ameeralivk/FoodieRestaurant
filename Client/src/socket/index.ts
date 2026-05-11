@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const Socket = io("wss://moobiworld.shop", {
+const Socket = io("https://foodie.ameeralivk.buzz", {
   transports: ["websocket"],
   autoConnect: true,
 });

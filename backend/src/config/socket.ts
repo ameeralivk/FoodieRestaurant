@@ -11,9 +11,10 @@ export const initSocket = (httpServer: HttpServer) => {
   //   },
   // });
 
-   io = new Server(httpServer, {
+  io = new Server(httpServer, {
     cors: {
-      origin: ["https://moobiworld.shop", "https://www.moobiworld.shop"],
+      // origin: ["https://moobiworld.shop", "https://www.moobiworld.shop"],
+      origin: ["https://foodie.ameeralivk.buzz"],
       methods: ["GET", "POST"],
       credentials: true,
     },
