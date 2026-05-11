@@ -54,76 +54,182 @@ const UserLandingPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   if (!userLocation) return;
+
+  //   const fetchData = async () => {
+  //     setLoading(true);
+
+  //     try {
+  //       const response = await getAllRestaurent(false, page, limit, searchTerm);
+  //       console.log(response, "ameer");
+  //       if (response && response.success) {
+  //         await new Promise((res) => setTimeout(res, 300));
+
+  //         // check subscription for each restaurant
+  //         const restaurantsWithPlan = await Promise.all(
+  //           response.data.map(async (restaurant: any) => {
+  //             try {
+  //               const planResponse = await getActivePlanByRestaurant(
+  //                 restaurant._id,
+  //               );
+
+  //               if (!planResponse?.data?.success) {
+  //                 return null; // remove restaurant
+  //               }
+
+  //               const itemsResponse = await getAllItems(
+  //                 restaurant._id,
+  //                 1,
+  //                 10,
+  //                 "",
+  //               );
+  //               if (!itemsResponse?.data || itemsResponse.data.length === 0) {
+  //                 return null;
+  //               }
+
+  //               if (!restaurant.location?.coordinates) return restaurant;
+
+  //               const [lng, lat] = restaurant.location.coordinates;
+
+  //               const distance = getDistanceInKm(
+  //                 userLocation.latitude,
+  //                 userLocation.longitude,
+  //                 lat,
+  //                 lng,
+  //               );
+
+  //               return {
+  //                 ...restaurant,
+  //                 distance: `${distance.toFixed(1)} km`,
+  //               };
+  //             } catch {
+  //               return null;
+  //             }
+  //           }),
+  //         );
+
+  //         // remove restaurants without active plan
+  //         const filteredRestaurants = restaurantsWithPlan.filter(Boolean);
+  //         setRestaurants(filteredRestaurants);
+  //         setTotal(response.pagination.totalPages);
+  //       }
+  //     } catch (err) {
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [userLocation, page, searchTerm]);
+
   useEffect(() => {
-    if (!userLocation) return;
+  if (!userLocation) return;
 
-    const fetchData = async () => {
-      setLoading(true);
+  const fetchData = async () => {
+    setLoading(true);
 
-      try {
-        const response = await getAllRestaurent(false, page, limit, searchTerm);
+    try {
+      let allRestaurants: any[] = [];
+      let currentPage = 1;
+      let totalPages = 1;
 
-        if (response && response.success) {
-          await new Promise((res) => setTimeout(res, 300));
+      // ✅ fetch ALL backend pages
+      while (currentPage <= totalPages) {
+        const response = await getAllRestaurent(
+          false,
+          currentPage,
+          limit,
+          searchTerm,
+        );
 
-          // check subscription for each restaurant
-          const restaurantsWithPlan = await Promise.all(
-            response.data.map(async (restaurant: any) => {
-              try {
-                const planResponse = await getActivePlanByRestaurant(
-                  restaurant._id,
-                );
+        if (!response?.success) break;
 
-                if (!planResponse?.data?.success) {
-                  return null; // remove restaurant
-                }
+        totalPages = response.pagination.totalPages;
 
-                const itemsResponse = await getAllItems(
-                  restaurant._id,
-                  1,
-                  10,
-                  "",
-                );
-                if (!itemsResponse?.data || itemsResponse.data.length === 0) {
-                  return null;
-                }
+        allRestaurants = [...allRestaurants, ...response.data];
 
-                if (!restaurant.location?.coordinates) return restaurant;
-
-                const [lng, lat] = restaurant.location.coordinates;
-
-                const distance = getDistanceInKm(
-                  userLocation.latitude,
-                  userLocation.longitude,
-                  lat,
-                  lng,
-                );
-
-                return {
-                  ...restaurant,
-                  distance: `${distance.toFixed(1)} km`,
-                };
-              } catch {
-                return null;
-              }
-            }),
-          );
-
-          // remove restaurants without active plan
-          const filteredRestaurants = restaurantsWithPlan.filter(Boolean);
-
-          setRestaurants(filteredRestaurants);
-          setTotal(response.pagination.totalPages);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+        currentPage++;
       }
-    };
 
-    fetchData();
-  }, [userLocation, page, searchTerm]);
+      // ✅ process ALL restaurants once
+      const processedRestaurants = await Promise.all(
+        allRestaurants.map(async (restaurant: any) => {
+          try {
+            const planResponse = await getActivePlanByRestaurant(
+              restaurant._id,
+            );
+
+            const itemsResponse = await getAllItems(
+              restaurant._id,
+              1,
+              10,
+              "",
+            );
+
+            const hasPlan = planResponse?.data?.success;
+
+            const hasItems =
+              itemsResponse?.data &&
+              itemsResponse.data.length > 0;
+
+            // remove invalid restaurants
+            if (!hasPlan || !hasItems) {
+              return null;
+            }
+
+            let distance = null;
+
+            if (restaurant.location?.coordinates?.length) {
+              const [lng, lat] = restaurant.location.coordinates;
+
+              distance = `${getDistanceInKm(
+                userLocation.latitude,
+                userLocation.longitude,
+                lat,
+                lng,
+              ).toFixed(1)} km`;
+            }
+
+            return {
+              ...restaurant,
+              distance,
+            };
+          } catch {
+            return null;
+          }
+        }),
+      );
+
+      // ✅ remove invalid restaurants
+      const validRestaurants =
+        processedRestaurants.filter(Boolean);
+
+      // ✅ LOCAL PAGINATION (CORRECT)
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+
+      const paginatedRestaurants = validRestaurants.slice(
+        startIndex,
+        endIndex,
+      );
+
+      setRestaurants(paginatedRestaurants);
+
+      // ✅ correct total pages
+      setTotal(
+        Math.ceil(validRestaurants.length / limit),
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [userLocation, page, searchTerm]);
 
   const handlePageChange = (page: number) => {
     setPage(page);
@@ -336,7 +442,7 @@ const UserLandingPage: React.FC = () => {
                 // restaurants.map((restaurant) => {
                 restaurants
                   .filter((r) => r.status === "approved" && !r.isBlocked)
-                  .filter((r)=> isOpenNow(r.openingTime,r.closingTime))
+                  .filter((r) => isOpenNow(r.openingTime, r.closingTime))
                   .filter((r) => {
                     if (!r.distance) return true;
                     return parseFloat(r.distance) <= maxDistance;
@@ -421,8 +527,7 @@ const UserLandingPage: React.FC = () => {
                               <span className="bg-orange-50 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full border border-orange-100">
                                 Restaurant
                               </span>
-                              {
-                                restaurant.openingTime &&
+                              {restaurant.openingTime &&
                                 restaurant.closingTime && (
                                   <span
                                     className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
