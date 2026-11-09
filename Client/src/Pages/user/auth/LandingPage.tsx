@@ -418,7 +418,6 @@ const UserLandingPage: React.FC = () => {
                 // restaurants.map((restaurant) => {
                 restaurants
                   .filter((r) => r.status === "approved" && !r.isBlocked)
-                  .filter((r) => isOpenNow(r.openingTime, r.closingTime))
                   .filter((r) => {
                     if (!r.distance) return true;
                     return parseFloat(r.distance) <= maxDistance;
