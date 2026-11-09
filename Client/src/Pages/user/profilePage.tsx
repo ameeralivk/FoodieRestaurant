@@ -340,11 +340,11 @@ export default function UserProfile() {
               <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                 <Mail className="w-5 h-5" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
                   Email
                 </p>
-                <p className="text-gray-900 font-medium">{email}</p>
+                <p className="text-gray-900 font-medium break-all">{email}</p>
               </div>
             </div>
 
@@ -352,11 +352,11 @@ export default function UserProfile() {
               <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
                 <Phone className="w-5 h-5" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
                   Phone
                 </p>
-                <p className="text-gray-900 font-medium">{phone}</p>
+                <p className="text-gray-900 font-medium break-all">{phone}</p>
               </div>
             </div>
           </div>

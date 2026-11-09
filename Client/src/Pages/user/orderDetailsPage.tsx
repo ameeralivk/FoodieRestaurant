@@ -107,9 +107,11 @@ const OrderDetail: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex justify-between">
-              <span className="text-gray-600">Order ID</span>
-              <span className="font-medium">#{order?.orderId}</span>
+            <div className="flex justify-between gap-3">
+              <span className="text-gray-600 shrink-0">Order ID</span>
+              <span className="font-medium text-right break-all">
+                #{order?.orderId}
+              </span>
             </div>
 
             <div className="flex justify-between">

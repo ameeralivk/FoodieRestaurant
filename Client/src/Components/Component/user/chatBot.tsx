@@ -9,6 +9,12 @@ export default function DraggableAIChatbot({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Chat window is capped so it always fits inside small/mobile viewports
+  const getChatSize = () => ({
+    width: Math.min(380, window.innerWidth - 32),
+    height: Math.min(500, window.innerHeight - 100),
+  });
+
   // Bubble position
   const [bubblePos, setBubblePos] = useState({
     x: window.innerWidth - 100,
@@ -16,9 +22,12 @@ export default function DraggableAIChatbot({
   });
 
   // Chat position (TOP-LEFT, no transform)
-  const [chatPos, setChatPos] = useState({
-    x: window.innerWidth / 2 - 190,
-    y: window.innerHeight / 2 - 250,
+  const [chatPos, setChatPos] = useState(() => {
+    const { width, height } = getChatSize();
+    return {
+      x: (window.innerWidth - width) / 2,
+      y: (window.innerHeight - height) / 2,
+    };
   });
 
   const [dragType, setDragType] = useState<"bubble" | "chat" | null>(null);
@@ -85,14 +94,15 @@ export default function DraggableAIChatbot({
       }
 
       if (dragType === "chat") {
+        const { width, height } = getChatSize();
         setChatPos({
           x: Math.max(
             0,
-            Math.min(e.clientX - dragOffset.x, window.innerWidth - 380)
+            Math.min(e.clientX - dragOffset.x, window.innerWidth - width)
           ),
           y: Math.max(
             0,
-            Math.min(e.clientY - dragOffset.y, window.innerHeight - 500)
+            Math.min(e.clientY - dragOffset.y, window.innerHeight - height)
           ),
         });
       }
@@ -160,7 +170,12 @@ export default function DraggableAIChatbot({
       {isOpen && (
         <div
           className="fixed bg-white rounded-2xl shadow-2xl flex flex-col"
-          style={{ left: chatPos.x, top: chatPos.y, width: 380, height: 500 }}
+          style={{
+            left: chatPos.x,
+            top: chatPos.y,
+            width: getChatSize().width,
+            height: getChatSize().height,
+          }}
         >
           {/* HEADER */}
           <div

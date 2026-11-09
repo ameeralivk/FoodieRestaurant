@@ -16,7 +16,7 @@ const CookingInstructionModal: React.FC<Props> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center">
+    <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-2xl p-5">
         <h2 className="text-lg font-bold mb-2">Cooking Instructions</h2>
 

@@ -47,15 +47,18 @@ const OrderItemsList: React.FC<Props> = ({ orderItems, total }) => {
 
       <div className="space-y-4 mb-6">
         {orderItems.map((item) => (
-          <div key={item.itemId} className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-gray-900">
+          <div
+            key={item.itemId}
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+          >
+            <div className="min-w-0">
+              <p className="font-medium text-gray-900 break-words">
                 {item.quantity} x {item.itemName}
               </p>
               <p className="text-sm text-gray-500">₹{item.price.toFixed(2)}</p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               {/* TIMER */}
               {item.itemStatus === "PREPARING" && (
                 <span className="text-sm font-mono text-gray-700">

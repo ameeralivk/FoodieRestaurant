@@ -55,7 +55,7 @@ const TableNumberModal: React.FC<TableNumberModalProps> = ({
       <div className="absolute inset-0 backdrop-blur-sm bg-white/30"></div>
 
       {/* Modal content */}
-      <div className="relative bg-white rounded-xl p-6 w-80 sm:w-96 shadow-lg">
+      <div className="relative bg-white rounded-xl p-6 w-[90vw] max-w-[320px] sm:w-96 sm:max-w-none shadow-lg">
         <h2 className="text-xl font-bold mb-4">Enter Your Table Number</h2>
 
         <input

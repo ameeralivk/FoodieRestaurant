@@ -40,7 +40,7 @@ const OrderSuccessPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-500 mb-1">Order Number</p>
-              <p className="text-lg font-semibold text-gray-900">{orderId}</p>
+              <p className="text-lg font-semibold text-gray-900 break-all">{orderId}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-1">Order Date</p>

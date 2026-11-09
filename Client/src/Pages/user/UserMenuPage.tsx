@@ -301,7 +301,7 @@ const UserRestaurantPage: React.FC = () => {
                   {!isOutOfStock && (
                     <button
                       onClick={(e) => handleAddToCart(e, item)}
-                      className="absolute bottom-2 right-2 bg-white text-orange-600 p-2 rounded-full shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-orange-50"
+                      className="absolute bottom-2 right-2 bg-white text-orange-600 p-2 rounded-full shadow-lg opacity-100 translate-y-0 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 hover:bg-orange-50"
                     >
                       <svg
                         className="w-5 h-5"

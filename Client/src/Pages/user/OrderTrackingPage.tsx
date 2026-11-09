@@ -114,10 +114,30 @@ const OrderTracking: React.FC = () => {
       }
     });
 
+    Socket.on("order:assigned", (data) => {
+      console.log("🔥 Received assigned:", data);
+      if (data.orderId === orderId) {
+        setLiveOrder((prev) =>
+          prev ? { ...prev, orderStatus: data.orderStatus } : prev,
+        );
+      }
+    });
+
+    Socket.on("order:statusUpdated", (data) => {
+      console.log("🔥 Received statusUpdated:", data);
+      if (data.orderId === orderId) {
+        setLiveOrder((prev) =>
+          prev ? { ...prev, orderStatus: data.orderStatus } : prev,
+        );
+      }
+    });
+
     return () => {
       console.log("🔴 Cleaning listeners");
       Socket.off("order:itemUpdated");
       Socket.off("order:completed");
+      Socket.off("order:assigned");
+      Socket.off("order:statusUpdated");
     };
   }, [orderId, userId, restaurantId]);
 
@@ -166,13 +186,15 @@ const OrderTracking: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="p-4 flex items-center justify-center mb-12">
-        <div className="w-full max-w-7xl bg-white rounded-2xl shadow-sm p-8">
+        <div className="w-full max-w-7xl bg-white rounded-2xl shadow-sm p-4 sm:p-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
               Order Tracking
             </h1>
-            <p className="text-sm text-gray-500">Order {order?.orderId}</p>
+            <p className="text-sm text-gray-500 break-all">
+              Order {order?.orderId}
+            </p>
           </div>
 
 

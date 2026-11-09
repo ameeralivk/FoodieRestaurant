@@ -161,7 +161,7 @@ const Navbar = ({
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
       <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className=" flex justify-between h-20 gap-12">
+        <div className=" flex justify-between items-center h-20 gap-3 md:gap-12">
           <ToastContainer />
           <div className="flex items-center">
             {showBackButton && (
@@ -187,18 +187,18 @@ const Navbar = ({
               </button>
             )}
           </div>
-          <div className="flex items-center w-full gap-3 cursor-pointer">
+          <div className="flex items-center min-w-0 flex-1 gap-3 cursor-pointer">
             <div
-              className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20"
+              className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20 shrink-0"
               onClick={() => navigate("/user/login")}
             >
               <ChefHat className="w-6 h-6" />
             </div>
-            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">
+            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight truncate">
               {restaurantName || "Foodie"}
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {user ? (
               <>
                 <button

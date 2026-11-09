@@ -26,7 +26,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center p-4">
       <div className="bg-white w-full max-w-2xl rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4">Order Feedback</h2>
 

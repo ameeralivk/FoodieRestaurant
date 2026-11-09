@@ -214,11 +214,11 @@ const OrderHistory: React.FC = () => {
       <Navbar showBackButton={true} />
       <ToastContainer />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
             Your Orders
           </h1>
-          <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold text-gray-700 shadow-sm border border-gray-100">
+          <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold text-gray-700 shadow-sm border border-gray-100 self-start sm:self-auto">
             Total Orders: {data?.total || 0}
           </div>
         </div>
@@ -237,14 +237,14 @@ const OrderHistory: React.FC = () => {
                   handleOrderClick(order.orderId, order.orderStatus)
                 }
               >
-                <div className="flex items-start justify-between gap-4 mb-6">
-                  <div className="flex gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+                  <div className="flex gap-4 min-w-0">
                     {/* Status Badge */}
                     <div className="flex-shrink-0">
                       {getStatusBadge(order.orderStatus)}
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1 break-all">
                         Order #{order.orderId}
                       </p>
                       <p className="text-sm font-semibold text-gray-900">
