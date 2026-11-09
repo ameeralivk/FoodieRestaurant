@@ -227,6 +227,15 @@ export class OrderService implements IOrderService {
     let IsAllItemAssigned = order?.items.every(
       (i) => i.itemStatus === "ASSIGNED",
     );
+
+    if (res && IsAllItemAssigned) {
+      const updatedOrder = await this._orderRepo.changeStatus(
+        String(res._id),
+        "ASSIGNED",
+      );
+      if (updatedOrder) order = updatedOrder;
+    }
+
     if (res) {
       const io = getIO();
       if (order?.userId) {
@@ -237,7 +246,7 @@ export class OrderService implements IOrderService {
         io.to(userRoom).emit("order:itemUpdated", {
           orderId,
           itemId,
-          orderStatus: "ASSIGNED",
+          orderStatus: order.orderStatus,
           order: order,
           message: `Your order item ${item?.itemName} is now ASSIGNED`,
         });
@@ -248,9 +257,6 @@ export class OrderService implements IOrderService {
         );
       }
 
-      if (IsAllItemAssigned) {
-        await this._orderRepo.changeStatus(String(res._id), "ASSIGNED");
-      }
       return {
         success: true,
         message: MESSAGES.CHEFID_ASSIGNED_SUCCESS,
